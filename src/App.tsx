@@ -1,12 +1,17 @@
-import Layout from './layout/Layout'
-import Homepage from './pages/Homepage'
+import Layout from "./layout/Layout";
+import HomePage from "./pages/HomePage";
+import { Routes, Route } from "react-router-dom";
+import QuizStarterPage from "./pages/QuizStarterPage";
 
 const App = () => {
   return (
     <Layout>
-      <Homepage/>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/starter" element={<QuizStarterPage />} />
+      </Routes>
     </Layout>
-  )
-}
+  );
+};
 
-export default App
+export default App;

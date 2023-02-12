@@ -9,7 +9,6 @@ const Navbar = () => {
       {/* adding the menu */}
       <ul className="flex items-center space-x-10 text-lg font-semibold">
         <li>Home</li>
-        <li>Explore</li>
         <li>About</li>
         <li>Contact</li>
       </ul>

@@ -21,14 +21,9 @@ const Homepage = () => {
         </p>
 
         {/* adding the buttons */}
-        <div className="space-x-6">
           <button className="border-2 border-[#00C8AC] px-6 py-2 rounded-lg font-bold text-lg bg-[#00C8AC] text-white transition-all ease-in-out duration-300 hover:shadow-[0_0_5px_#00C8AC]">
             Start Quiz
           </button>
-          <button className="border-2 border-[#00C8AC] px-6 py-2 rounded-lg font-bold text-lg transition-all ease-in-out duration-300 hover:shadow-[0_0_5px_#00C8AC]">
-            Explore
-          </button>
-        </div>
       </div>
     </div>
   );

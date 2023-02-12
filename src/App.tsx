@@ -1,8 +1,11 @@
-import React from 'react'
+import Layout from './layout/Layout'
+import Homepage from './pages/Homepage'
 
 const App = () => {
   return (
-    <div>App</div>
+    <Layout>
+      <Homepage/>
+    </Layout>
   )
 }
 

@@ -7,7 +7,7 @@ const Navbar = () => {
       <img className="w-20 rounded-full" src={logo} alt="logo image" />
 
       {/* adding the menu */}
-      <ul className="flex items-center space-x-10 text-lg font-semibold">
+      <ul className="flex items-center space-x-10 text-lg font-bold">
         <li>Home</li>
         <li>About</li>
         <li>Contact</li>

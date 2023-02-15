@@ -1,4 +1,6 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
+import { API_KEY } from "../config/config";
 
 export interface IData {
   id: number;
@@ -13,7 +15,6 @@ export interface IData {
   tags: object[];
   category: string;
   difficulty: string;
-  isButtonClicked: false;
 }
 
 interface IuserAnswer {
@@ -48,13 +49,26 @@ const initialState: Istate = {
   userAnswer: [],
 };
 
+// function to fetch the data from the api
+export const fetchData = createAsyncThunk(
+  "getdata",
+  async (option: Ioption) => {
+    try {
+      const { category, length, level } = option;
+      const response = await axios.get(
+        `https://quizapi.io/api/v1/questions?apiKey=${API_KEY}&category=${category}&difficulty=${level}&limit=${length}`
+      );
+      return response.data;
+    } catch (error) {
+      console.log("fail", error);
+    }
+  }
+);
+
 const quizSlice = createSlice({
   name: "quiz",
   initialState,
   reducers: {
-    data: (state, action) => {
-      state.data = [...action.payload];
-    },
     setOption: (state, action) => {
       state.option = { ...action.payload };
     },
@@ -63,10 +77,16 @@ const quizSlice = createSlice({
       state.userAnswer = [];
     },
   },
+  extraReducers: {
+    [fetchData.fulfilled.toString()]: (state, action) => {
+      state.data = action.payload;
+      console.log(state.data);
+    },
+  },
 });
 
 // exporting my reducers
-export const { data, setOption, setAnswers, removeAnswers } = quizSlice.actions;
+export const { setOption, setAnswers, removeAnswers } = quizSlice.actions;
 
 // exporting the slice reducer as deault
 export default quizSlice.reducer;

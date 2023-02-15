@@ -1,25 +1,24 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { IData, Istate } from "../redux/Slice";
-import { API_KEY } from "../config/config.example";
-import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { RootState } from "../redux/Store";
+import { fetchData } from "../redux/Slice";
+import { AppDispatch, RootState } from "../redux/Store";
 
 const Quiz = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
 
-  const { isButtonClicked } = useSelector(
-    (state: RootState) => state.quiz.option
-  );
+  const option = useSelector((state: RootState) => state.quiz.option);
 
   // redirect to homepage user is not visiting from starter page
   useEffect(() => {
-    if (!isButtonClicked) {
+    if (!(option.isButtonClicked)) {
       navigate("/");
       return;
     }
-  },[]);
+
+    dispatch(fetchData(option));
+  }, []);
 
   return (
     <div className="h-[85vh] flex items-center justify-center">

@@ -7,19 +7,19 @@ import { Link, useNavigate } from "react-router-dom";
 import { RootState } from "../redux/Store";
 
 const Quiz = () => {
+  const navigate = useNavigate();
+
   const { isButtonClicked } = useSelector(
     (state: RootState) => state.quiz.option
   );
 
-  const navigate = useNavigate();
-
-  // redirect to homepage is is not visiting from starter page
+  // redirect to homepage user is not visiting from starter page
   useEffect(() => {
     if (!isButtonClicked) {
       navigate("/");
       return;
     }
-  });
+  },[]);
 
   return (
     <div className="h-[85vh] flex items-center justify-center">

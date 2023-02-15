@@ -39,10 +39,10 @@ export interface Istate {
 const initialState: Istate = {
   data: [],
   option: {
-    evaluation: "",
-    level: "",
-    length: "",
-    category: "",
+    evaluation: "normal",
+    level: "Easy",
+    length: "5",
+    category: "uncategorized",
     isButtonClicked: false,
   },
   userAnswer: [],
@@ -55,15 +55,18 @@ const quizSlice = createSlice({
     data: (state, action) => {
       state.data = [...action.payload];
     },
-    option: (state, action) => {
+    setOption: (state, action) => {
       state.option = { ...action.payload };
     },
-    answers: (state, action) => {},
+    setAnswers: (state, action) => {},
+    removeAnswers: (state) => {
+      state.userAnswer = [];
+    },
   },
 });
 
 // exporting my reducers
-export const { data, option, answers } = quizSlice.actions;
+export const { data, setOption, setAnswers, removeAnswers } = quizSlice.actions;
 
 // exporting the slice reducer as deault
 export default quizSlice.reducer;

@@ -1,35 +1,37 @@
 import { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { option } from "../redux/Slice";
-import { Ioption } from "../redux/Slice";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { setOption } from "../redux/Slice";
+import { RootState } from "../redux/Store";
 
 const QuizStarterPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation();
 
-  // creating the object for storing the option value
-  const [userOption, setUserOption] = useState<Ioption>({
-    evaluation: "normal",
-    level: "Easy",
-    length: "5",
-    category: "uncategorized",
-    isButtonClicked: false,
-  });
+  // getting the option value from store
+  let { option } = useSelector((state: RootState) => state.quiz);
+
+  // for storing user input changes
+  const [userOption, setUserOption] = useState(option);
 
   // function for handling input change
   const handleUserOption = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = event.target;
-
     setUserOption({
       ...userOption,
       [name]: value,
     });
   };
 
-  // for checking that user is coming from correct route
-  useEffect(() => {}, []);
+  // function to set options on button click
+  const setNewOption = () => {
+    const obj = { ...userOption };
+    obj.isButtonClicked = true;
+    dispatch(setOption(obj));
+
+    // redirecting to quiz page
+    navigate("/quiz");
+  };
 
   return (
     <div className="min-h-[85vh] flex items-center justify-center">
@@ -41,8 +43,8 @@ const QuizStarterPage = () => {
         <p className="font-semibold">Customize the quiz before moving ahead</p>
 
         {/* adding the options for user */}
-        <div className="flex flex-col space-y-5">
-          <div className="grid grid-cols-2 gap-5">
+        <div className="flex flex-col items-center space-y-10">
+          <div className="grid grid-cols-2 gap-3">
             {/* result evaluation system */}
             <div className="font-semibold">
               <label
@@ -133,14 +135,12 @@ const QuizStarterPage = () => {
           </div>
 
           {/* adding the button */}
-          <Link to={"/quiz"}>
-            <button
-              onClick={() => dispatch(option(userOption))}
-              className="border-2 border-[#00C8AC] px-6 py-2 rounded-lg font-bold text-lg bg-[#00C8AC] text-white transition-all ease-in-out duration-300 hover:shadow-[0_0_5px_#00C8AC]"
-            >
-              Start the Skill Battle
-            </button>
-          </Link>
+          <button
+            onClick={setNewOption}
+            className="border-2 border-[#00C8AC] px-4 py-1 rounded-md font-bold text-xl bg-[#00C8AC] text-white transition-all ease-in-out duration-300 hover:shadow-[0_0_5px_#00C8AC]"
+          >
+            Start the Skill Battle
+          </button>
         </div>
       </div>
     </div>

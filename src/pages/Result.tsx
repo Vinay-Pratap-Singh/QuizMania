@@ -9,13 +9,13 @@ const Result = () => {
   const navigate = useNavigate();
   const checkUser = useSelector((state: RootState) => state.quiz.userAnswer);
 
-  // redirect to homepage is is not visiting from starter page
+  // redirect to homepage user is not visiting from quiz page
   useEffect(() => {
     if (checkUser.length === 0) {
       navigate("/");
       return;
     }
-  });
+  },[]);
 
   return (
     <div className="flex flex-col items-center justify-center text-center">

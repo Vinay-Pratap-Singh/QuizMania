@@ -1,7 +1,22 @@
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import AnswerResult from "../components/AnswerResult";
 import PieChart from "../components/PieChart";
+import { RootState } from "../redux/Store";
 
 const Result = () => {
+  const navigate = useNavigate();
+  const checkUser = useSelector((state: RootState) => state.quiz.userAnswer);
+
+  // redirect to homepage is is not visiting from starter page
+  useEffect(() => {
+    if (checkUser.length === 0) {
+      navigate("/");
+      return;
+    }
+  });
+
   return (
     <div className="flex flex-col items-center justify-center text-center">
       <main className="flex flex-col items-center justify-center text-center gap-5">
@@ -47,7 +62,7 @@ const Result = () => {
       </main>
 
       {/* displaying the quiz Q&A summary */}
-      <AnswerResult/>
+      <AnswerResult />
     </div>
   );
 };

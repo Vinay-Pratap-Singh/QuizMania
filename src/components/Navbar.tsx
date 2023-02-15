@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import logo from "../assets/logo.png";
 
 const Navbar = () => {
@@ -8,7 +9,9 @@ const Navbar = () => {
 
       {/* adding the menu */}
       <ul className="flex items-center space-x-10 text-lg font-bold">
-        <li>Home</li>
+        <Link to={"/"}>
+          <li>Home</li>
+        </Link>
         <li>About</li>
         <li>Contact</li>
       </ul>

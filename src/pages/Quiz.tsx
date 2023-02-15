@@ -1,8 +1,30 @@
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { IData, Istate } from "../redux/Slice";
+import { API_KEY } from "../config/config.example";
+import { useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { RootState } from "../redux/Store";
+
 const Quiz = () => {
+  const { isButtonClicked } = useSelector(
+    (state: RootState) => state.quiz.option
+  );
+
+  const navigate = useNavigate();
+
+  // redirect to homepage is is not visiting from starter page
+  useEffect(() => {
+    if (!isButtonClicked) {
+      navigate("/");
+      return;
+    }
+  });
+
   return (
     <div className="h-[85vh] flex items-center justify-center">
       {/* creating the quiz template */}
-      <form className="w-1/2 flex flex-col py-5 px-10 space-y-5 rounded-lg shadow-[0_0_10px_#00C8AC]">
+      <form className="w-1/2 flex flex-col py-5 px-10 space-y-5 rounded-lg shadow-md">
         {/* header part of card */}
         <header className="w-full flex items-center justify-between font-semibold">
           <h1>
@@ -51,9 +73,11 @@ const Quiz = () => {
           </div>
 
           {/* adding the submit button */}
-          <button className="border-2 border-[#00C8AC] px-3 py-1 rounded-md font-bold text-lg bg-[#00C8AC] text-white transition-all ease-in-out duration-300 hover:shadow-[0_0_5px_#00C8AC] w-fit self-center">
-            Submit Answers
-          </button>
+          <Link to={"/result"}>
+            <button className="border-2 border-[#00C8AC] px-3 py-1 rounded-md font-bold text-lg bg-[#00C8AC] text-white transition-all ease-in-out duration-300 hover:shadow-[0_0_5px_#00C8AC] w-fit self-center">
+              Submit Answers
+            </button>
+          </Link>
         </section>
       </form>
     </div>

@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import mainImage from "../assets/mainImage.png";
 
 const Homepage = () => {
@@ -21,9 +22,11 @@ const Homepage = () => {
         </p>
 
         {/* adding the buttons */}
+        <Link to={"/starter"}>
           <button className="border-2 border-[#00C8AC] px-6 py-2 rounded-lg font-bold text-lg bg-[#00C8AC] text-white transition-all ease-in-out duration-300 hover:shadow-[0_0_5px_#00C8AC]">
             Start Quiz
           </button>
+        </Link>
       </div>
     </div>
   );

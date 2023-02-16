@@ -17,8 +17,9 @@ export interface IData {
   difficulty: string;
 }
 
-interface IuserAnswer {
-  id: string;
+export interface IuserAnswer {
+  id: number;
+  index: number;
   correctAnswer: string;
   userAnswer: string;
 }
@@ -59,9 +60,7 @@ export const fetchData = createAsyncThunk(
         `https://quizapi.io/api/v1/questions?apiKey=${API_KEY}&category=${category}&difficulty=${level}&limit=${length}`
       );
       return response.data;
-    } catch (error) {
-      console.log("fail", error);
-    }
+    } catch (error) {}
   }
 );
 
@@ -77,11 +76,10 @@ const quizSlice = createSlice({
       state.userAnswer = [];
     },
   },
-  extraReducers: {
-    [fetchData.fulfilled.toString()]: (state, action) => {
+  extraReducers: (builder) => {
+    builder.addCase(fetchData.fulfilled, (state, action) => {
       state.data = action.payload;
-      console.log(state.data);
-    },
+    });
   },
 });
 

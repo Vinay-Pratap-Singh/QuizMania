@@ -1,6 +1,28 @@
 import { AiOutlineGoogle } from "react-icons/ai";
+import { useState } from "react";
 
 const Signup = () => {
+  interface IinputData {
+    name: string;
+    email: string;
+    password: string;
+  }
+
+  const [inputData, setInputData] = useState<IinputData>({
+    name: "",
+    email: "",
+    password: "",
+  });
+
+  // function to handle input change
+  const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setInputData({
+      ...inputData,
+      [name]: value,
+    });
+  };
+
   return (
     <div className="h-[85vh] flex items-center justify-center">
       {/* creating the login form */}
@@ -25,6 +47,8 @@ const Signup = () => {
             type="text"
             placeholder="Enter your name"
             required
+            value={inputData.name}
+            onChange={handleInput}
           />
         </div>
 
@@ -35,8 +59,11 @@ const Signup = () => {
             type="email"
             placeholder="Enter your email"
             required
+            value={inputData.email}
+            onChange={handleInput}
           />
         </div>
+
         <div className="flex flex-col w-full">
           <label className="font-semibold text-lg">Password</label>
           <input
@@ -44,6 +71,8 @@ const Signup = () => {
             type="password"
             placeholder="Enter your password"
             required
+            value={inputData.password}
+            onChange={handleInput}
           />
         </div>
 

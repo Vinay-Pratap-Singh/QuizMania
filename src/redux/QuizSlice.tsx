@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { API_KEY } from "../config/config";
 
 export interface IData {
   id: number;
@@ -50,22 +49,6 @@ const initialState: Istate = {
   userAnswer: [],
 };
 
-// function to fetch the data from the api
-export const fetchData = createAsyncThunk(
-  "getdata",
-  async (option: Ioption) => {
-    try {
-      const { category, length, level } = option;
-      const response = await axios.get(
-        `https://quizapi.io/api/v1/questions?apiKey=${API_KEY}&category=${category}&difficulty=${level}&limit=${Number(length)}`
-      );
-      console.log(length);
-      
-      return response.data;
-    } catch (error) {}
-  }
-);
-
 const quizSlice = createSlice({
   name: "quiz",
   initialState,
@@ -77,13 +60,6 @@ const quizSlice = createSlice({
     removeAnswers: (state) => {
       state.userAnswer = [];
     },
-  },
-  extraReducers: (builder) => {
-    builder.addCase(fetchData.fulfilled, (state, action) => {
-      state.data = action.payload;
-      console.log(state.data);
-      
-    });
   },
 });
 

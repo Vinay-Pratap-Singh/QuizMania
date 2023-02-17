@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setOption } from "../redux/Slice";
+import { setOption } from "../redux/QuizSlice";
 import { RootState } from "../redux/Store";
 
 const QuizStarterPage = () => {

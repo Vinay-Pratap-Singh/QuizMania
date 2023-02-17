@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { fetchData, IuserAnswer } from "../redux/Slice";
+import { fetchData, IuserAnswer } from "../redux/QuizSlice";
 import { AppDispatch, RootState } from "../redux/Store";
 import { useRef } from "react";
 
@@ -13,8 +13,8 @@ const Quiz = () => {
   const [index, setIndex] = useState<number>(0);
   const [userAnswer, setUserAnswer] = useState<IuserAnswer[]>([]);
   const [value, setValue] = useState([]);
-  const data = useSelector((state: RootState) => state.quiz.data)
-  
+  const data = useSelector((state: RootState) => state.quiz.data);
+
   // const data = [
   //   {
   //     id: 89,

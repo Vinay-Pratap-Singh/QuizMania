@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import mainImage from "../assets/mainImage.png";
-import { removeAnswers, setOption } from "../redux/Slice";
+import { removeAnswers, setOption } from "../redux/QuizSlice";
 import { RootState } from "../redux/Store";
 
 const Homepage = () => {

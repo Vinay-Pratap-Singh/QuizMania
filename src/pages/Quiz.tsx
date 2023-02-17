@@ -13,107 +13,109 @@ const Quiz = () => {
   const [index, setIndex] = useState<number>(0);
   const [userAnswer, setUserAnswer] = useState<IuserAnswer[]>([]);
   const [value, setValue] = useState([]);
-  const data = [
-    {
-      id: 89,
-      question: "How to list only the running containers?",
-      description:
-        "To list running Docker containers, execute the following command: $ docker ps",
-      answers: {
-        answer_a: "docker list",
-        answer_b: "docker ps",
-        answer_c: "docker run",
-        answer_d: "docker print",
-        answer_e: null,
-        answer_f: null,
-      },
-      multiple_correct_answers: "false",
-      correct_answers: {
-        answer_a_correct: "false",
-        answer_b_correct: "true",
-        answer_c_correct: "false",
-        answer_d_correct: "false",
-        answer_e_correct: "false",
-        answer_f_correct: "false",
-      },
-      correct_answer: "answer_a",
-      explanation: null,
-      tip: null,
-      tags: [
-        {
-          name: "Docker",
-        },
-      ],
-      category: "uncategorized",
-      difficulty: "Easy",
-    },
-    {
-      id: 89,
-      question: "i am question 2",
-      description:
-        "To list running Docker containers, execute the following command: $ docker ps",
-      answers: {
-        answer_a: "sw",
-        answer_b: "de ps",
-        answer_c: "de run",
-        answer_d: "gtrgt print",
-        answer_e: null,
-        answer_f: null,
-      },
-      multiple_correct_answers: "false",
-      correct_answers: {
-        answer_a_correct: "false",
-        answer_b_correct: "true",
-        answer_c_correct: "false",
-        answer_d_correct: "false",
-        answer_e_correct: "false",
-        answer_f_correct: "false",
-      },
-      correct_answer: "answer_a",
-      explanation: null,
-      tip: null,
-      tags: [
-        {
-          name: "Docker",
-        },
-      ],
-      category: "uncategorized",
-      difficulty: "Easy",
-    },
-    {
-      id: 89,
-      question: "i am question 3",
-      description:
-        "To list running Docker containers, execute the following command: $ docker ps",
-      answers: {
-        answer_a: "gtkg",
-        answer_b: "frf",
-        answer_c: "lel",
-        answer_d: "lwlwl",
-        answer_e: null,
-        answer_f: null,
-      },
-      multiple_correct_answers: "false",
-      correct_answers: {
-        answer_a_correct: "false",
-        answer_b_correct: "true",
-        answer_c_correct: "false",
-        answer_d_correct: "false",
-        answer_e_correct: "false",
-        answer_f_correct: "false",
-      },
-      correct_answer: "answer_a",
-      explanation: null,
-      tip: null,
-      tags: [
-        {
-          name: "Docker",
-        },
-      ],
-      category: "uncategorized",
-      difficulty: "Easy",
-    },
-  ];
+  const data = useSelector((state: RootState) => state.quiz.data)
+  
+  // const data = [
+  //   {
+  //     id: 89,
+  //     question: "How to list only the running containers?",
+  //     description:
+  //       "To list running Docker containers, execute the following command: $ docker ps",
+  //     answers: {
+  //       answer_a: "docker list",
+  //       answer_b: "docker ps",
+  //       answer_c: "docker run",
+  //       answer_d: "docker print",
+  //       answer_e: null,
+  //       answer_f: null,
+  //     },
+  //     multiple_correct_answers: "false",
+  //     correct_answers: {
+  //       answer_a_correct: "false",
+  //       answer_b_correct: "true",
+  //       answer_c_correct: "false",
+  //       answer_d_correct: "false",
+  //       answer_e_correct: "false",
+  //       answer_f_correct: "false",
+  //     },
+  //     correct_answer: "answer_a",
+  //     explanation: null,
+  //     tip: null,
+  //     tags: [
+  //       {
+  //         name: "Docker",
+  //       },
+  //     ],
+  //     category: "uncategorized",
+  //     difficulty: "Easy",
+  //   },
+  //   {
+  //     id: 89,
+  //     question: "i am question 2",
+  //     description:
+  //       "To list running Docker containers, execute the following command: $ docker ps",
+  //     answers: {
+  //       answer_a: "sw",
+  //       answer_b: "de ps",
+  //       answer_c: "de run",
+  //       answer_d: "gtrgt print",
+  //       answer_e: null,
+  //       answer_f: null,
+  //     },
+  //     multiple_correct_answers: "false",
+  //     correct_answers: {
+  //       answer_a_correct: "false",
+  //       answer_b_correct: "true",
+  //       answer_c_correct: "false",
+  //       answer_d_correct: "false",
+  //       answer_e_correct: "false",
+  //       answer_f_correct: "false",
+  //     },
+  //     correct_answer: "answer_a",
+  //     explanation: null,
+  //     tip: null,
+  //     tags: [
+  //       {
+  //         name: "Docker",
+  //       },
+  //     ],
+  //     category: "uncategorized",
+  //     difficulty: "Easy",
+  //   },
+  //   {
+  //     id: 89,
+  //     question: "i am question 3",
+  //     description:
+  //       "To list running Docker containers, execute the following command: $ docker ps",
+  //     answers: {
+  //       answer_a: "gtkg",
+  //       answer_b: "frf",
+  //       answer_c: "lel",
+  //       answer_d: "lwlwl",
+  //       answer_e: null,
+  //       answer_f: null,
+  //     },
+  //     multiple_correct_answers: "false",
+  //     correct_answers: {
+  //       answer_a_correct: "false",
+  //       answer_b_correct: "true",
+  //       answer_c_correct: "false",
+  //       answer_d_correct: "false",
+  //       answer_e_correct: "false",
+  //       answer_f_correct: "false",
+  //     },
+  //     correct_answer: "answer_a",
+  //     explanation: null,
+  //     tip: null,
+  //     tags: [
+  //       {
+  //         name: "Docker",
+  //       },
+  //     ],
+  //     category: "uncategorized",
+  //     difficulty: "Easy",
+  //   },
+  // ];
   const inputFields1 = useRef<HTMLInputElement | null>(null);
   const inputFields2 = useRef<HTMLInputElement | null>(null);
   const inputFields3 = useRef<HTMLInputElement | null>(null);
@@ -160,7 +162,7 @@ const Quiz = () => {
       return;
     }
 
-    // dispatch(fetchData(option));
+    dispatch(fetchData(option));
   }, []);
 
   return (
@@ -189,11 +191,11 @@ const Quiz = () => {
                 ref={inputFields1}
                 type="radio"
                 id="option1"
-                value={data[index]?.answers?.answer_a}
+                // value={data[index]?.answers?.answer_a}
                 name="option"
                 onChange={handleUserInput}
               />
-              <label htmlFor="option1">{data[index]?.answers?.answer_a}</label>
+              <label htmlFor="option1"></label>
             </div>
 
             <div className="space-x-2">
@@ -201,11 +203,11 @@ const Quiz = () => {
                 ref={inputFields2}
                 type="radio"
                 id="option2"
-                value={data[index]?.answers?.answer_b}
+                // value={data[index]?.answers?.answer_b}
                 name="option"
                 onChange={handleUserInput}
               />
-              <label htmlFor="option2">{data[index]?.answers?.answer_b}</label>
+              <label htmlFor="option2"></label>
             </div>
 
             <div className="space-x-2">
@@ -213,11 +215,11 @@ const Quiz = () => {
                 ref={inputFields3}
                 type="radio"
                 id="option3"
-                value={data[index]?.answers?.answer_c}
+                // value={data[index]?.answers?.answer_c}
                 name="option"
                 onChange={handleUserInput}
               />
-              <label htmlFor="option3">{data[index]?.answers?.answer_c}</label>
+              <label htmlFor="option3"></label>
             </div>
 
             <div className="space-x-2">
@@ -225,11 +227,11 @@ const Quiz = () => {
                 ref={inputFields4}
                 type="radio"
                 id="option4"
-                value={data[index]?.answers?.answer_d}
+                // value={data[index]?.answers?.answer_d}
                 name="option"
                 onChange={handleUserInput}
               />
-              <label htmlFor="option4">{data[index]?.answers?.answer_d}</label>
+              <label htmlFor="option4"></label>
             </div>
           </div>
 

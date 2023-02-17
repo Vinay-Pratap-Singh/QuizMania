@@ -57,8 +57,10 @@ export const fetchData = createAsyncThunk(
     try {
       const { category, length, level } = option;
       const response = await axios.get(
-        `https://quizapi.io/api/v1/questions?apiKey=${API_KEY}&category=${category}&difficulty=${level}&limit=${length}`
+        `https://quizapi.io/api/v1/questions?apiKey=${API_KEY}&category=${category}&difficulty=${level}&limit=${Number(length)}`
       );
+      console.log(length);
+      
       return response.data;
     } catch (error) {}
   }
@@ -79,6 +81,8 @@ const quizSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(fetchData.fulfilled, (state, action) => {
       state.data = action.payload;
+      console.log(state.data);
+      
     });
   },
 });

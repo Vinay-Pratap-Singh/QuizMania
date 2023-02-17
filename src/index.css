@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+/* css reset */
+*{
+  margin: 0;
+  padding: 0;
+  outline: 0;
+  box-sizing: border-box;
+}
+
 /* designing the body */
 body {
   max-width: 1440px;

@@ -4,6 +4,7 @@ import Homepage from "./pages/HomePage";
 import QuizStarterPage from "./pages/QuizStarterPage";
 import Quiz from "./pages/Quiz";
 import Result from "./pages/Result";
+import Login from "./pages/Login";
 
 const App = () => {
   return (
@@ -13,6 +14,7 @@ const App = () => {
         <Route path="/starter" element={<QuizStarterPage />} />
         <Route path="/quiz" element={<Quiz />} />
         <Route path="/result" element={<Result />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
     </Layout>
   );

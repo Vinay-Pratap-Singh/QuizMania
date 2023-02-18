@@ -15,6 +15,7 @@ const Homepage = () => {
     dispatch(setOption(obj));
     dispatch(removeAnswers);
   }, []);
+
   return (
     <div className="h-[85vh] flex items-center justify-center gap-16">
       {/* creating the container for image */}

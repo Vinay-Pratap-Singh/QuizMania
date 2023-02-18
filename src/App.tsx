@@ -5,11 +5,13 @@ import QuizStarterPage from "./pages/QuizStarterPage";
 import Quiz from "./pages/Quiz";
 import Result from "./pages/Result";
 import Login from "./pages/Login";
-import Signup from "./pages/Singup";
+import Signup from "./pages/Signup";
+import {Toaster} from "react-hot-toast"
 
 const App = () => {
   return (
     <Layout>
+      <Toaster/>
       <Routes>
         <Route path="/" element={<Homepage />}></Route>
         <Route path="/starter" element={<QuizStarterPage />} />

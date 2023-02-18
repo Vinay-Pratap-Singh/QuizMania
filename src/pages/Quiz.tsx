@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
-import { fetchData, IuserAnswer } from "../redux/QuizSlice";
-import { AppDispatch, RootState } from "../redux/Store";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { IuserAnswer } from "../redux/QuizSlice";
+import { RootState } from "../redux/Store";
 import { useRef } from "react";
 
 const Quiz = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
 
   const option = useSelector((state: RootState) => state.quiz.option);
   const [index, setIndex] = useState<number>(0);
@@ -15,107 +14,6 @@ const Quiz = () => {
   const [value, setValue] = useState([]);
   const data = useSelector((state: RootState) => state.quiz.data);
 
-  // const data = [
-  //   {
-  //     id: 89,
-  //     question: "How to list only the running containers?",
-  //     description:
-  //       "To list running Docker containers, execute the following command: $ docker ps",
-  //     answers: {
-  //       answer_a: "docker list",
-  //       answer_b: "docker ps",
-  //       answer_c: "docker run",
-  //       answer_d: "docker print",
-  //       answer_e: null,
-  //       answer_f: null,
-  //     },
-  //     multiple_correct_answers: "false",
-  //     correct_answers: {
-  //       answer_a_correct: "false",
-  //       answer_b_correct: "true",
-  //       answer_c_correct: "false",
-  //       answer_d_correct: "false",
-  //       answer_e_correct: "false",
-  //       answer_f_correct: "false",
-  //     },
-  //     correct_answer: "answer_a",
-  //     explanation: null,
-  //     tip: null,
-  //     tags: [
-  //       {
-  //         name: "Docker",
-  //       },
-  //     ],
-  //     category: "uncategorized",
-  //     difficulty: "Easy",
-  //   },
-  //   {
-  //     id: 89,
-  //     question: "i am question 2",
-  //     description:
-  //       "To list running Docker containers, execute the following command: $ docker ps",
-  //     answers: {
-  //       answer_a: "sw",
-  //       answer_b: "de ps",
-  //       answer_c: "de run",
-  //       answer_d: "gtrgt print",
-  //       answer_e: null,
-  //       answer_f: null,
-  //     },
-  //     multiple_correct_answers: "false",
-  //     correct_answers: {
-  //       answer_a_correct: "false",
-  //       answer_b_correct: "true",
-  //       answer_c_correct: "false",
-  //       answer_d_correct: "false",
-  //       answer_e_correct: "false",
-  //       answer_f_correct: "false",
-  //     },
-  //     correct_answer: "answer_a",
-  //     explanation: null,
-  //     tip: null,
-  //     tags: [
-  //       {
-  //         name: "Docker",
-  //       },
-  //     ],
-  //     category: "uncategorized",
-  //     difficulty: "Easy",
-  //   },
-  //   {
-  //     id: 89,
-  //     question: "i am question 3",
-  //     description:
-  //       "To list running Docker containers, execute the following command: $ docker ps",
-  //     answers: {
-  //       answer_a: "gtkg",
-  //       answer_b: "frf",
-  //       answer_c: "lel",
-  //       answer_d: "lwlwl",
-  //       answer_e: null,
-  //       answer_f: null,
-  //     },
-  //     multiple_correct_answers: "false",
-  //     correct_answers: {
-  //       answer_a_correct: "false",
-  //       answer_b_correct: "true",
-  //       answer_c_correct: "false",
-  //       answer_d_correct: "false",
-  //       answer_e_correct: "false",
-  //       answer_f_correct: "false",
-  //     },
-  //     correct_answer: "answer_a",
-  //     explanation: null,
-  //     tip: null,
-  //     tags: [
-  //       {
-  //         name: "Docker",
-  //       },
-  //     ],
-  //     category: "uncategorized",
-  //     difficulty: "Easy",
-  //   },
-  // ];
   const inputFields1 = useRef<HTMLInputElement | null>(null);
   const inputFields2 = useRef<HTMLInputElement | null>(null);
   const inputFields3 = useRef<HTMLInputElement | null>(null);
@@ -161,8 +59,6 @@ const Quiz = () => {
       navigate("/");
       return;
     }
-
-    dispatch(fetchData(option));
   }, []);
 
   return (

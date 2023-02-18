@@ -1,14 +1,13 @@
 import { AiOutlineGoogle } from "react-icons/ai";
 import { useState } from "react";
+import { createAccount, IuserSignupData } from "../redux/AuthSlice";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../redux/Store";
 
 const Signup = () => {
-  interface IinputData {
-    name: string;
-    email: string;
-    password: string;
-  }
+  const dispatch = useDispatch<AppDispatch>();
 
-  const [inputData, setInputData] = useState<IinputData>({
+  const [inputData, setInputData] = useState<IuserSignupData>({
     name: "",
     email: "",
     password: "",
@@ -21,6 +20,12 @@ const Signup = () => {
       ...inputData,
       [name]: value,
     });
+  };
+
+  // function to handle create account
+  const createNewAccount = (event: React.MouseEvent<HTMLElement>) => {
+    event.preventDefault();
+    dispatch(createAccount(inputData));
   };
 
   return (
@@ -47,6 +52,7 @@ const Signup = () => {
             type="text"
             placeholder="Enter your name"
             required
+            name="name"
             value={inputData.name}
             onChange={handleInput}
           />
@@ -59,6 +65,7 @@ const Signup = () => {
             type="email"
             placeholder="Enter your email"
             required
+            name="email"
             value={inputData.email}
             onChange={handleInput}
           />
@@ -71,6 +78,7 @@ const Signup = () => {
             type="password"
             placeholder="Enter your password"
             required
+            name="password"
             value={inputData.password}
             onChange={handleInput}
           />
@@ -83,7 +91,10 @@ const Signup = () => {
         </p>
 
         {/* adding the submit button */}
-        <button className="bg-[#1fe8cd] w-full rounded-sm text-white font-bold py-2 hover:bg-[#15dbc0] transition-all duration-300 ease-in-out">
+        <button
+          onClick={createNewAccount}
+          className="bg-[#1fe8cd] w-full rounded-sm text-white font-bold py-2 hover:bg-[#15dbc0] transition-all duration-300 ease-in-out"
+        >
           Create Account
         </button>
       </form>

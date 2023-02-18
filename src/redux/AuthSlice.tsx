@@ -1,4 +1,8 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import {
+  createAsyncThunk,
+  createSlice,
+  getDefaultMiddleware,
+} from "@reduxjs/toolkit";
 import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
@@ -8,6 +12,9 @@ import {
 } from "firebase/auth";
 import { firebaseAuth } from "../config/firebase";
 import toast from "react-hot-toast";
+
+// for disabling the serializableCheck
+// const customizedMiddleware=getDefaultMiddleware({serializableCheck:false})
 
 interface Istate {
   isLoggedIn: boolean;
@@ -30,26 +37,26 @@ export interface IuserSignupData {
 export const createAccountUsingEmail = createAsyncThunk(
   "/auth/signup",
   async (userData: IuserSignupData) => {
-    try {
-      // creating the user account using email and password
-      const res = await createUserWithEmailAndPassword(
-        firebaseAuth,
-        userData.email,
-        userData.password
-      );
-      console.log(res);
+    // creating the user account using email and password
+    const res = await createUserWithEmailAndPassword(
+      firebaseAuth,
+      userData.email,
+      userData.password
+    );
 
-      //  updating the user profile details
-      firebaseAuth.currentUser &&
-        (await updateProfile(firebaseAuth.currentUser, {
-          displayName: userData.name,
-        }));
-      return { ...res, user: { ...res.user } };
-    } catch (error: any) {
-      console.log(error);
-      toast.error(error?.message);
-      toast.error("Failed to Create Account");
-    }
+    toast.promise(createAccountUsingEmail as unknown as Promise<unknown>, {
+      loading: "Loading.....",
+      success: "Account Created Successfully",
+      error: "Failed to Create Account",
+    });
+
+    //  updating the user profile details
+    firebaseAuth.currentUser &&
+      (await updateProfile(firebaseAuth.currentUser, {
+        displayName: userData.name,
+      }));
+
+    return res.user;
   }
 );
 
@@ -61,10 +68,7 @@ export const createAccountUsingGoogle = createAsyncThunk(
       // creating the user account using the google account
       const provider = new GoogleAuthProvider();
       const res = await signInWithPopup(firebaseAuth, provider);
-      console.log(res);
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   }
 );
 
@@ -91,9 +95,7 @@ export const loginUsingEmail = createAsyncThunk(
         userData.email,
         userData.password
       );
-      console.log(res);
     } catch (error: any) {
-      console.log(error);
       toast.error(error?.message);
       toast.error("Failed to Create Account");
     }
@@ -108,18 +110,15 @@ const authSlice = createSlice({
     builder
       .addCase(createAccountUsingEmail.pending, () => {
         toast.loading("Wait! Creating your account...");
-        console.log("loading");
       })
       .addCase(createAccountUsingEmail.fulfilled, (state, action) => {
         toast.remove();
         toast.success("Account Created Successfully");
         state.isLoggedIn = true;
-        console.log("success");
       })
       .addCase(createAccountUsingEmail.rejected, (state, action) => {
         toast.remove();
         toast.error("Failed to Create Account");
-        console.log("fail");
       });
   },
 });

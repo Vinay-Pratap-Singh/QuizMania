@@ -1,5 +1,5 @@
 import { FcGoogle } from "react-icons/fc";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   createAccountUsingEmail,
   createAccountUsingGoogle,
@@ -7,8 +7,9 @@ import {
 } from "../redux/AuthSlice";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../redux/Store";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 
 const Signup = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -21,6 +22,12 @@ const Signup = () => {
 
   // for disabling the button from click
   const [disabled, setDisabled] = useState<boolean>(false);
+
+  // to get the password input box
+  const inputBox = useRef<HTMLInputElement | null>(null);
+
+  // for show and hide password
+  const [passwordStatus, setPasswordStatus] = useState<boolean>(false);
 
   // function to handle input change
   const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,14 +63,21 @@ const Signup = () => {
       return;
     }
 
-    // checking the password and email
+    // checking the password and email with regex code
     if (
       !inputData.email.match(
         /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
-      ) ||
-      !inputData.password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/)
+      )
     ) {
-      toast.error("Invalid email or password");
+      toast.error("Invalid Email");
+      setDisabled(false);
+      return;
+    }
+
+    if (!inputData.password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/)) {
+      toast.error(
+        "Password should contain Uppercase, Lowercase, Number and Symbol"
+      );
       setDisabled(false);
       return;
     }
@@ -114,7 +128,7 @@ const Signup = () => {
           </div>
 
           <div className="flex flex-col w-full">
-            <label className="font-semibold text-lg">Name</label>
+            <label className="font-semibold">Name</label>
             <input
               className="border border-white border-b-black"
               type="text"
@@ -127,7 +141,7 @@ const Signup = () => {
           </div>
 
           <div className="flex flex-col w-full">
-            <label className="font-semibold text-lg">Email</label>
+            <label className="font-semibold text">Email</label>
             <input
               className="border border-white border-b-black"
               type="email"
@@ -139,21 +153,28 @@ const Signup = () => {
             />
           </div>
 
-          <div className="flex flex-col w-full">
-            <label className="font-semibold text-lg">Password</label>
+          <div className="flex flex-col w-full relative">
+            <label className="font-semibold text">Password</label>
             <input
               className="border border-white border-b-black"
-              type="password"
+              type={passwordStatus ? "text" : "password"}
               placeholder="Enter your password"
               required
               name="password"
               value={inputData.password}
               onChange={handleInput}
             />
+
+            <div
+              onClick={() => setPasswordStatus(!passwordStatus)}
+              className="absolute cursor-pointer right-0 top-6 text-xl"
+            >
+              {passwordStatus ? <AiFillEye /> : <AiFillEyeInvisible />}
+            </div>
           </div>
 
           {/* signup page option */}
-          <p>
+          <p className="font-medium">
             Already have an account?{" "}
             <Link to={"/login"}>
               <span className="text-[#00C8AC] font-semibold">Login</span>
@@ -170,9 +191,6 @@ const Signup = () => {
           </button>
         </form>
       </div>
-
-      {/* adding the toaster component */}
-      <Toaster />
     </div>
   );
 };

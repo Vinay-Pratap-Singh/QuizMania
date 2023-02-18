@@ -5,7 +5,7 @@ import {
   IuserLoginData,
   loginUsingEmail,
 } from "../redux/AuthSlice";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../redux/Store";
 import { Link } from "react-router-dom";

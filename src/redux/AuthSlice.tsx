@@ -1,8 +1,4 @@
-import {
-  createAsyncThunk,
-  createSlice,
-  getDefaultMiddleware,
-} from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
@@ -12,9 +8,6 @@ import {
 } from "firebase/auth";
 import { firebaseAuth } from "../config/firebase";
 import toast from "react-hot-toast";
-
-// for disabling the serializableCheck
-// const customizedMiddleware=getDefaultMiddleware({serializableCheck:false})
 
 interface Istate {
   isLoggedIn: boolean;
@@ -44,31 +37,24 @@ export const createAccountUsingEmail = createAsyncThunk(
       userData.password
     );
 
-    toast.promise(createAccountUsingEmail as unknown as Promise<unknown>, {
-      loading: "Loading.....",
-      success: "Account Created Successfully",
-      error: "Failed to Create Account",
-    });
-
     //  updating the user profile details
     firebaseAuth.currentUser &&
       (await updateProfile(firebaseAuth.currentUser, {
         displayName: userData.name,
       }));
 
-    return res.user;
+    return res;
   }
 );
 
 // function to create account using google account
-export const createAccountUsingGoogle = createAsyncThunk(
-  "/auth/signup/google",
+export const usingGoogleAuthentication = createAsyncThunk(
+  "/auth/google",
   async () => {
-    try {
-      // creating the user account using the google account
-      const provider = new GoogleAuthProvider();
-      const res = await signInWithPopup(firebaseAuth, provider);
-    } catch (error) {}
+    // creating the user account using the google account
+    const provider = new GoogleAuthProvider();
+    const res = await signInWithPopup(firebaseAuth, provider);
+    return res;
   }
 );
 
@@ -88,17 +74,14 @@ export interface IuserLoginData {
 export const loginUsingEmail = createAsyncThunk(
   "auth/login",
   async (userData: IuserLoginData) => {
-    try {
-      // creating the user account using email and password
-      const res = await signInWithEmailAndPassword(
-        firebaseAuth,
-        userData.email,
-        userData.password
-      );
-    } catch (error: any) {
-      toast.error(error?.message);
-      toast.error("Failed to Create Account");
-    }
+    // creating the user account using email and password
+    const res = await signInWithEmailAndPassword(
+      firebaseAuth,
+      userData.email,
+      userData.password
+    );
+
+    return res;
   }
 );
 
@@ -111,14 +94,38 @@ const authSlice = createSlice({
       .addCase(createAccountUsingEmail.pending, () => {
         toast.loading("Wait! Creating your account...");
       })
-      .addCase(createAccountUsingEmail.fulfilled, (state, action) => {
+      .addCase(createAccountUsingEmail.fulfilled, () => {
         toast.remove();
-        toast.success("Account Created Successfully");
-        state.isLoggedIn = true;
+        toast.success("Login to your account");
+        toast.success("Account created successfully");
       })
-      .addCase(createAccountUsingEmail.rejected, (state, action) => {
+      .addCase(createAccountUsingEmail.rejected, () => {
         toast.remove();
         toast.error("Failed to Create Account");
+      })
+      .addCase(usingGoogleAuthentication.pending, () => {
+        toast.loading("Wait! Fetching the data...");
+      })
+      .addCase(usingGoogleAuthentication.fulfilled, (state) => {
+        toast.remove();
+        toast.success("Logged in successfully");
+        state.isLoggedIn = true;
+      })
+      .addCase(usingGoogleAuthentication.rejected, () => {
+        toast.remove();
+        toast.error("Failed to logged in using google account");
+      })
+      .addCase(loginUsingEmail.pending, () => {
+        toast.loading("Wait! verifying your credential...");
+      })
+      .addCase(loginUsingEmail.fulfilled, (state) => {
+        toast.remove();
+        toast.success("Logged in successfully");
+        state.isLoggedIn = true;
+      })
+      .addCase(loginUsingEmail.rejected, () => {
+        toast.remove();
+        toast.error("Failed to logged in");
       });
   },
 });

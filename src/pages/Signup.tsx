@@ -2,8 +2,8 @@ import { FcGoogle } from "react-icons/fc";
 import { useRef, useState } from "react";
 import {
   createAccountUsingEmail,
-  createAccountUsingGoogle,
   IuserSignupData,
+  usingGoogleAuthentication,
 } from "../redux/AuthSlice";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../redux/Store";
@@ -100,7 +100,7 @@ const Signup = () => {
     setDisabled(true);
 
     event.preventDefault();
-    dispatch(createAccountUsingGoogle());
+    dispatch(usingGoogleAuthentication());
 
     setDisabled(false);
   };

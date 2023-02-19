@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import {
-  createAccountUsingGoogle,
+  usingGoogleAuthentication,
   IuserLoginData,
   loginUsingEmail,
 } from "../redux/AuthSlice";
@@ -56,9 +56,7 @@ const Login = () => {
   };
 
   // function to handle login using google account
-  const createNewAccountUsingGoogle = (
-    event: React.MouseEvent<HTMLElement>
-  ) => {
+  const loginUsingGoogleAccount = (event: React.MouseEvent<HTMLElement>) => {
     if (disabled) {
       return;
     }
@@ -66,7 +64,7 @@ const Login = () => {
     setDisabled(true);
 
     event.preventDefault();
-    dispatch(createAccountUsingGoogle());
+    dispatch(usingGoogleAuthentication());
 
     setDisabled(false);
   };
@@ -77,7 +75,7 @@ const Login = () => {
         {/* adding the google auth button */}
         <button
           disabled={disabled}
-          onClick={createNewAccountUsingGoogle}
+          onClick={loginUsingGoogleAccount}
           className="w-full rounded-sm font-bold py-2 border hover:border-black transition-all ease-in-out duration-300 flex items-center justify-center gap-2"
         >
           <FcGoogle size={20} />
@@ -94,7 +92,7 @@ const Login = () => {
           </div>
 
           <div className="flex flex-col w-full">
-            <label className="font-semibold text-lg">Email</label>
+            <label className="font-semibold">Email</label>
             <input
               className="border border-white border-b-black"
               type="email"
@@ -106,7 +104,7 @@ const Login = () => {
           </div>
 
           <div className="flex flex-col w-full">
-            <label className="font-semibold text-lg">Password</label>
+            <label className="font-semibold">Password</label>
             <input
               className="border border-white border-b-black"
               type="password"

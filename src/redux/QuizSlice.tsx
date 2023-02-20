@@ -47,6 +47,19 @@ const initialState: Istate = {
   userAnswer: [],
 };
 
+// interface for chart data
+interface IchartDatasets {
+  label: string;
+  data: number[];
+  backgroundColor: string[];
+  hoverOffset: number;
+}
+
+export interface IchartData {
+  labels: string[];
+  datasets: IchartDatasets[];
+}
+
 const quizSlice = createSlice({
   name: "quiz",
   initialState,

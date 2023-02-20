@@ -3,19 +3,36 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import AnswerResult from "../components/AnswerResult";
 import PieChart from "../components/PieChart";
+import { IchartData } from "../redux/QuizSlice";
 import { RootState } from "../redux/Store";
 
 const Result = () => {
   const navigate = useNavigate();
   const checkUser = useSelector((state: RootState) => state.quiz.userAnswer);
 
+  const data: IchartData = {
+    labels: ["Correct Answers", "Incorrect Answers", "Not Attempted"],
+    datasets: [
+      {
+        label: "Quiz Result",
+        data: [5, 3, 2],
+        backgroundColor: [
+          "rgb(255, 99, 132)",
+          "rgb(54, 162, 235)",
+          "rgb(255, 205, 86)",
+        ],
+        hoverOffset: 4,
+      },
+    ],
+  };
+
   // redirect to homepage user is not visiting from quiz page
-  useEffect(() => {
-    if (checkUser.length === 0) {
-      navigate("/");
-      return;
-    }
-  },[]);
+  // useEffect(() => {
+  //   if (checkUser.length === 0) {
+  //     navigate("/");
+  //     return;
+  //   }
+  // },[]);
 
   return (
     <div className="flex flex-col items-center justify-center text-center">
@@ -33,19 +50,19 @@ const Result = () => {
         {/* section for displaying the result */}
         <section className="flex items-center gap-10">
           {/* total question card */}
-          <div className="shadow-md rounded-md py-2 px-6">
+          <div className="shadow-md rounded-md py-2 px-6 w-48">
             <h3 className="font-semibold">Total Questions</h3>
             <p className="font-bold text-2xl">10</p>
           </div>
 
           {/* correct answers card */}
-          <div className="shadow-md rounded-md py-2 px-6">
+          <div className="shadow-md rounded-md py-2 px-6 w-48">
             <h3 className="font-semibold">Correct Answers</h3>
             <p className="font-bold text-2xl">05</p>
           </div>
 
           {/* incorrect answers card */}
-          <div className="shadow-md rounded-md py-2 px-6">
+          <div className="shadow-md rounded-md py-2 px-6 w-48">
             <h3 className="font-semibold">Incorrect Answers</h3>
             <p className="font-bold text-2xl">03</p>
           </div>
@@ -58,7 +75,7 @@ const Result = () => {
         </section>
 
         {/* displaying the result pie chart */}
-        <PieChart />
+        <PieChart {...data} />
       </main>
 
       {/* displaying the quiz Q&A summary */}

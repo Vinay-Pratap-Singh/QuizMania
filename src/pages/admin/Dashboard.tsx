@@ -36,20 +36,16 @@ const Dashboard = () => {
         {/* section for displaying the result */}
         <section className="flex items-center gap-10">
           {/* total student card */}
-          <Link to={"/dashboard/student/record"}>
           <div className="shadow-md rounded-md py-2 px-6 w-48 cursor-pointer">
             <h3 className="font-semibold">Total Students</h3>
             <p className="font-bold text-2xl">50</p>
           </div>
-          </Link>
 
           {/* total category card */}
-          <Link to={"/dashboard/question/category"}>
           <div className="shadow-md rounded-md py-2 px-6 w-48 cursor-pointer">
             <h3 className="font-semibold">Total Categories</h3>
             <p className="font-bold text-2xl">5</p>
           </div>
-          </Link>
 
           {/* total question card */}
           <div className="shadow-md rounded-md py-2 px-6 w-48 cursor-pointer">

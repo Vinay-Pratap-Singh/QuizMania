@@ -1,15 +1,10 @@
-import { AiOutlineArrowLeft, AiOutlineSearch } from "react-icons/ai";
+import { AiOutlineSearch } from "react-icons/ai";
 import { BsTrash } from "react-icons/bs";
-import { Link } from "react-router-dom";
 
 const StudentsRecord = () => {
   return (
     <div className="flex justify-center">
       <div className="py-6 w-[60%] relative">
-        <Link to={"/dashboard/admin"}>
-          <AiOutlineArrowLeft className="absolute top-12 text-xl font-bold" />
-        </Link>
-
         <header className="space-y-2 text-center">
           <h2 className="text-4xl font-bold">Students Record</h2>
           <p className="font-semibold">

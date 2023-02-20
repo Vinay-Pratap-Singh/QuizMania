@@ -17,7 +17,7 @@ const Homepage = () => {
   }, []);
 
   return (
-    <div className="h-[85vh] flex items-center justify-center gap-16">
+    <div className="h-[100vh] flex items-center justify-center gap-16 w-full">
       {/* creating the container for image */}
       <div>
         <img className="w-80 drop-shadow-lg" src={mainImage} alt="mainImage" />

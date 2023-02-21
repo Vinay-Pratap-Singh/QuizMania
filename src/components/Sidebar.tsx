@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import logo from "../assets/logo.png";
 import {
@@ -8,15 +9,27 @@ import {
 import { MdOutlineCategory, MdOutlineDashboard } from "react-icons/md";
 import { GrContact, GrOverview } from "react-icons/gr";
 import { BsCaretDown, BsCaretUp } from "react-icons/bs";
-import { useRef, useState } from "react";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../redux/Store";
+import { isUserLoggedIn, logout } from "../redux/AuthSlice";
 
 const Sidebar = () => {
+  const dispatch = useDispatch<AppDispatch>();
+
   // for toggling login and logout button
-  const isLoggedIn: boolean = true;
+  const isLoggedIn: boolean = useSelector(
+    (state: RootState) => state.auth.isLoggedIn
+  );
   const userRole: string = "admin";
 
   // for getting drop down menu
   const [dropDownMenu, setDropDownMenu] = useState<boolean>(false);
+
+  // checking that the user is logged in or not
+  useEffect(() => {
+    dispatch(isUserLoggedIn());
+  }, []);
 
   return (
     <div className="w-72 border-[1px] h-[100vh] border-r-gray-300 relative">
@@ -93,7 +106,10 @@ const Sidebar = () => {
       {/* adding the login, signup and logout button */}
       <div className="absolute bottom-0 font-semibold w-full p-4">
         {isLoggedIn ? (
-          <button className="w-full border-2 py-1 border-[#00C8AC] rounded-sm bg-[#00C8AC] text-white transition-all ease-in-out duration-300 hover:shadow-[0_0_5px_#00C8AC]">
+          <button
+            onClick={() => dispatch(logout())}
+            className="w-full border-2 py-1 border-[#00C8AC] rounded-sm bg-[#00C8AC] text-white transition-all ease-in-out duration-300 hover:shadow-[0_0_5px_#00C8AC]"
+          >
             Logout
           </button>
         ) : (

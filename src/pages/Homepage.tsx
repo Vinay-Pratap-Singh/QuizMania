@@ -1,21 +1,7 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import mainImage from "../assets/mainImage.png";
-import { removeAnswers, setOption } from "../redux/QuizSlice";
-import { RootState } from "../redux/Store";
 
 const Homepage = () => {
-  const dispatch = useDispatch();
-  const { option } = useSelector((state: RootState) => state.quiz);
-
-  // setting user answer to blank and isButtonClicked to false to restirct route misuse
-  useEffect(() => {
-    const obj = { ...option, isButtonClicked: false };
-    dispatch(setOption(obj));
-    dispatch(removeAnswers);
-  }, []);
-
   return (
     <div className="h-[100vh] flex items-center justify-center gap-16 w-full">
       {/* creating the container for image */}

@@ -4,6 +4,7 @@ import {
   GoogleAuthProvider,
   signInWithEmailAndPassword,
   signInWithPopup,
+  signOut,
   updateProfile,
 } from "firebase/auth";
 import { firebaseAuth } from "../config/firebase";
@@ -12,12 +13,14 @@ import toast from "react-hot-toast";
 interface Istate {
   isLoggedIn: boolean;
   role: string;
+  name: string | null;
 }
 
 // creating the initial state
 const initialState: Istate = {
   isLoggedIn: false,
   role: "",
+  name: "",
 };
 
 export interface IuserSignupData {
@@ -58,13 +61,6 @@ export const usingGoogleAuthentication = createAsyncThunk(
   }
 );
 
-// function to check user is logged in or not
-export const isLoggedIn = () => {
-  const check = firebaseAuth.currentUser;
-  if (check) return true;
-  else return false;
-};
-
 export interface IuserLoginData {
   email: string;
   password: string;
@@ -85,19 +81,41 @@ export const loginUsingEmail = createAsyncThunk(
   }
 );
 
+// function to logout the user
+export const logout = createAsyncThunk("/auth/logout", async () => {
+  const res = await signOut(firebaseAuth);
+  return res;
+});
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {},
+  reducers: {
+    isUserLoggedIn: (state) => {
+      const user = firebaseAuth.currentUser;
+      if (!user) {
+        state.isLoggedIn = false;
+        state.name = "";
+      } else {
+        state.isLoggedIn = true;
+        state.name = user.displayName;
+      }
+    },
+    logout: (state) => {
+      state.isLoggedIn = false;
+      state.name = "";
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(createAccountUsingEmail.pending, () => {
         toast.loading("Wait! Creating your account...");
       })
-      .addCase(createAccountUsingEmail.fulfilled, () => {
+      .addCase(createAccountUsingEmail.fulfilled, (state, action) => {
         toast.remove();
-        toast.success("Login to your account");
         toast.success("Account created successfully");
+        state.name = action.payload.user.displayName;
+        state.isLoggedIn = true;
       })
       .addCase(createAccountUsingEmail.rejected, () => {
         toast.remove();
@@ -106,9 +124,10 @@ const authSlice = createSlice({
       .addCase(usingGoogleAuthentication.pending, () => {
         toast.loading("Wait! Fetching the data...");
       })
-      .addCase(usingGoogleAuthentication.fulfilled, (state) => {
+      .addCase(usingGoogleAuthentication.fulfilled, (state, action) => {
         toast.remove();
         toast.success("Logged in successfully");
+        state.name = action.payload.user.displayName;
         state.isLoggedIn = true;
       })
       .addCase(usingGoogleAuthentication.rejected, () => {
@@ -125,13 +144,21 @@ const authSlice = createSlice({
       })
       .addCase(loginUsingEmail.rejected, () => {
         toast.remove();
-        toast.error("Failed to logged in");
+        toast.error("Invalid Credential");
+      })
+      .addCase(logout.fulfilled, (state) => {
+        state.isLoggedIn = false;
+        state.name = "";
+        toast.success("Logout Successful");
+      })
+      .addCase(logout.rejected, () => {
+        toast.error("Failed to logout");
       });
   },
 });
 
 // exporting my reducers
-export const {} = authSlice.actions;
+export const { isUserLoggedIn } = authSlice.actions;
 
 // exporting the slice reducer as deault
 export default authSlice.reducer;

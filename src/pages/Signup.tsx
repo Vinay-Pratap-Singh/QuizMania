@@ -1,18 +1,19 @@
 import { FcGoogle } from "react-icons/fc";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   createAccountUsingEmail,
   IuserSignupData,
   usingGoogleAuthentication,
 } from "../redux/AuthSlice";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../redux/Store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../redux/Store";
 import toast from "react-hot-toast";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 
 const Signup = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
 
   const [inputData, setInputData] = useState<IuserSignupData>({
     name: "",
@@ -28,6 +29,9 @@ const Signup = () => {
 
   // for show and hide password
   const [passwordStatus, setPasswordStatus] = useState<boolean>(false);
+
+  // getting logged in status
+  const { isLoggedIn } = useSelector((state: RootState) => state.auth);
 
   // function to handle input change
   const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -105,8 +109,15 @@ const Signup = () => {
     setDisabled(false);
   };
 
+  // redirect to homepage if logged in
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/");
+    }
+  }, [isLoggedIn]);
+
   return (
-    <div className="h-[85vh] flex items-center justify-center">
+    <div className="h-[100vh] w-full flex items-center justify-center">
       <div className="shadow-md rounded-md flex flex-col gap-4 p-4 items-center w-80 ">
         {/* adding the google auth button */}
         <button

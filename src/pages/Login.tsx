@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import {
   usingGoogleAuthentication,
@@ -6,12 +6,14 @@ import {
   loginUsingEmail,
 } from "../redux/AuthSlice";
 import toast from "react-hot-toast";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../redux/Store";
-import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../redux/Store";
+import { Link, useNavigate } from "react-router-dom";
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 
 const Login = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
 
   const [inputData, setInputData] = useState<IuserLoginData>({
     email: "",
@@ -20,6 +22,12 @@ const Login = () => {
 
   // for disabling the button from click
   const [disabled, setDisabled] = useState<boolean>(false);
+
+  // for show and hide password
+  const [passwordStatus, setPasswordStatus] = useState<boolean>(false);
+
+  // getting logged in status
+  const { isLoggedIn } = useSelector((state: RootState) => state.auth);
 
   // function to handle input change
   const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -69,8 +77,15 @@ const Login = () => {
     setDisabled(false);
   };
 
+  // redirect to homepage if logged in
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/");
+    }
+  }, [isLoggedIn]);
+
   return (
-    <div className="h-[85vh] flex items-center justify-center">
+    <div className="h-[100vh] w-full flex items-center justify-center">
       <div className="shadow-md rounded-md flex flex-col gap-4 items-center w-80 p-4">
         {/* adding the google auth button */}
         <button
@@ -103,16 +118,22 @@ const Login = () => {
             />
           </div>
 
-          <div className="flex flex-col w-full">
+          <div className="flex flex-col w-full relative">
             <label className="font-semibold">Password</label>
             <input
               className="border border-white border-b-black"
-              type="password"
+              type={passwordStatus ? "text" : "password"}
               name="password"
               onChange={handleInput}
               placeholder="Enter your password"
               required
             />
+            <div
+              onClick={() => setPasswordStatus(!passwordStatus)}
+              className="absolute cursor-pointer right-0 top-6 text-xl"
+            >
+              {passwordStatus ? <AiFillEye /> : <AiFillEyeInvisible />}
+            </div>
           </div>
 
           {/* signup page option */}

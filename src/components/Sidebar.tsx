@@ -7,60 +7,84 @@ import {
 } from "react-icons/ai";
 import { MdOutlineCategory, MdOutlineDashboard } from "react-icons/md";
 import { GrContact, GrOverview } from "react-icons/gr";
-import { BsCaretDown } from "react-icons/bs";
+import { BsCaretDown, BsCaretUp } from "react-icons/bs";
+import { useRef, useState } from "react";
 
 const Sidebar = () => {
   // for toggling login and logout button
-  const isLoggedIn = false;
+  const isLoggedIn: boolean = true;
+  const userRole: string = "admin";
+
+  // for getting drop down menu
+  const [dropDownMenu, setDropDownMenu] = useState<boolean>(false);
 
   return (
     <div className="w-72 border-[1px] h-[100vh] border-r-gray-300 relative">
       {/* creating the header part of menu */}
       <header className="flex flex-col gap-2 items-center py-3 border-[1px] border-b-gray-300 border-t-transparent border-l-transparent border-r-transparent">
         <img className="w-24" src={logo} alt="logo image" />
-        <h3 className="font-medium text-xl">Vinay Pratap Singh</h3>
+        {isLoggedIn ? (
+          <h3 className="font-medium text-xl">Vinay Pratap Singh</h3>
+        ) : (
+          <p></p>
+        )}
       </header>
 
       {/* creating the body part of side bar */}
       <ul className="p-4 font-medium space-y-4">
-        <li className="flex items-center gap-2">
+        <li className="flex items-center gap-2 cursor-pointer hover:text-[#00C8AC] hover:pl-2 transition-all ease-in-out duration-300">
           <AiOutlineHome className="text-xl" />
           <p>Home</p>
         </li>
 
-        <li className="relative">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <MdOutlineDashboard className="text-xl" />
-              <p>Dashboard</p>
+        {isLoggedIn ? (
+          <li className="relative">
+            <div
+              onClick={() => setDropDownMenu(!dropDownMenu)}
+              className="flex items-center justify-between cursor-pointer hover:text-[#00C8AC] hover:pl-2 transition-all ease-in-out duration-300"
+            >
+              <div className="flex items-center gap-2">
+                <MdOutlineDashboard className="text-xl" />
+                <p>Dashboard</p>
+              </div>
+              {userRole === "admin" ? (
+                <div>{dropDownMenu ? <BsCaretUp /> : <BsCaretDown />}</div>
+              ) : (
+                <p></p>
+              )}
             </div>
-            <BsCaretDown />
-          </div>
 
-          <ul className="pl-8 pt-2 space-y-2">
-            <li className="flex items-center gap-2">
-              <GrOverview className="text-lg" />
-              <p>Overview</p>
-            </li>
+            {dropDownMenu && userRole === "admin" ? (
+              <ul className="pl-8 pt-2 space-y-2">
+                <li className="flex items-center gap-2 cursor-pointer hover:text-[#00C8AC] hover:pl-2 transition-all ease-in-out duration-300">
+                  <GrOverview className="text-lg" />
+                  <p>Overview</p>
+                </li>
 
-            <li className="flex items-center gap-2">
-              <AiOutlineDatabase className="text-xl" />
-              <p>Students</p>
-            </li>
+                <li className="flex items-center gap-2 cursor-pointer hover:text-[#00C8AC] hover:pl-2 transition-all ease-in-out duration-300">
+                  <AiOutlineDatabase className="text-xl" />
+                  <p>Students</p>
+                </li>
 
-            <li className="flex items-center gap-2">
-              <MdOutlineCategory className="text-xl" />
-              <p>Category</p>
-            </li>
-          </ul>
-        </li>
+                <li className="flex items-center gap-2 cursor-pointer hover:text-[#00C8AC] hover:pl-2 transition-all ease-in-out duration-300">
+                  <MdOutlineCategory className="text-xl" />
+                  <p>Category</p>
+                </li>
+              </ul>
+            ) : (
+              <p></p>
+            )}
+          </li>
+        ) : (
+          <p></p>
+        )}
 
-        <li className="flex items-center gap-2">
+        <li className="flex items-center gap-2 cursor-pointer hover:text-[#00C8AC] hover:pl-2 transition-all ease-in-out duration-300">
           <GrContact className="text-lg" />
           <p>Contact Us</p>
         </li>
 
-        <li className="flex items-center gap-2">
+        <li className="flex items-center gap-2 cursor-pointer hover:text-[#00C8AC] hover:pl-2 transition-all ease-in-out duration-300">
           <AiOutlineUser className="text-xl" />
           <p>About Us</p>
         </li>

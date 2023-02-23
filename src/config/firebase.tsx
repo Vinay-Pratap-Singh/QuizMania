@@ -10,6 +10,7 @@ import {
   FIREBASE_PROJECT_ID,
   FIREBASE_STORAGE_BUCKET,
 } from "./config";
+import { getFirestore } from "firebase/firestore";
 
 // firebase configurations
 const firebaseConfig = {
@@ -25,3 +26,4 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 export const firebaseAuth = getAuth(app);
+export const db = getFirestore(app);

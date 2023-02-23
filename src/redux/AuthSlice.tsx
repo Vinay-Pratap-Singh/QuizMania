@@ -7,8 +7,9 @@ import {
   signOut,
   updateProfile,
 } from "firebase/auth";
-import { firebaseAuth } from "../config/firebase";
+import { db, firebaseAuth } from "../config/firebase";
 import toast from "react-hot-toast";
+import { collection, doc, getDoc, setDoc } from "firebase/firestore";
 
 interface Istate {
   isLoggedIn: boolean;
@@ -45,6 +46,12 @@ export const createAccountUsingEmail = createAsyncThunk(
       (await updateProfile(firebaseAuth.currentUser, {
         displayName: userData.name,
       }));
+
+    // adding the role and name data to firestore
+    await setDoc(doc(db, "user", `${res.user.uid}`), {
+      name: userData.name,
+      role: "user",
+    });
 
     return res;
   }
@@ -87,6 +94,13 @@ export const logout = createAsyncThunk("/auth/logout", async () => {
   return res;
 });
 
+// function to get user data from collection
+export const getUserData = createAsyncThunk("/user/data", async (uid) => {
+  const collectionData = doc(db, "user", `${uid}`);
+  const userData = await getDoc(collectionData);
+  return userData;
+});
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -101,10 +115,6 @@ const authSlice = createSlice({
         state.name = user.displayName;
       }
     },
-    logout: (state) => {
-      state.isLoggedIn = false;
-      state.name = "";
-    },
   },
   extraReducers: (builder) => {
     builder
@@ -117,9 +127,12 @@ const authSlice = createSlice({
         state.name = action.payload.user.displayName;
         state.isLoggedIn = true;
       })
-      .addCase(createAccountUsingEmail.rejected, () => {
+      .addCase(createAccountUsingEmail.rejected, (state, action) => {
         toast.remove();
         toast.error("Failed to Create Account");
+        const message: string | undefined = action.error.message as string;
+        toast.error(message);
+        console.log(action.error);
       })
       .addCase(usingGoogleAuthentication.pending, () => {
         toast.loading("Wait! Fetching the data...");

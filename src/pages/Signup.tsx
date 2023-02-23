@@ -2,6 +2,7 @@ import { FcGoogle } from "react-icons/fc";
 import { useEffect, useRef, useState } from "react";
 import {
   createAccountUsingEmail,
+  getUserData,
   IuserSignupData,
   usingGoogleAuthentication,
 } from "../redux/AuthSlice";

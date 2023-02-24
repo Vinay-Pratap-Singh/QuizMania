@@ -50,7 +50,7 @@ const Sidebar = () => {
           <p>Home</p>
         </li>
 
-        {isLoggedIn ? (
+        {isLoggedIn && (
           <li className="relative">
             <div
               onClick={() => setDropDownMenu(!dropDownMenu)}
@@ -60,14 +60,12 @@ const Sidebar = () => {
                 <MdOutlineDashboard className="text-xl" />
                 <p>Dashboard</p>
               </div>
-              {userRole === "admin" ? (
+              {userRole === "admin" && (
                 <div>{dropDownMenu ? <BsCaretUp /> : <BsCaretDown />}</div>
-              ) : (
-                <p></p>
               )}
             </div>
 
-            {dropDownMenu && userRole === "admin" ? (
+            {dropDownMenu && userRole === "admin" && (
               <ul className="pl-8 pt-2 space-y-2">
                 <li className="flex items-center gap-2 cursor-pointer hover:text-[#00C8AC] hover:pl-2 transition-all ease-in-out duration-300">
                   <GrOverview className="text-lg" />
@@ -84,12 +82,8 @@ const Sidebar = () => {
                   <p>Category</p>
                 </li>
               </ul>
-            ) : (
-              <p></p>
             )}
           </li>
-        ) : (
-          <p></p>
         )}
 
         <li className="flex items-center gap-2 cursor-pointer hover:text-[#00C8AC] hover:pl-2 transition-all ease-in-out duration-300">

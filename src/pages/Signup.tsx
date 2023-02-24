@@ -2,7 +2,6 @@ import { FcGoogle } from "react-icons/fc";
 import { useEffect, useRef, useState } from "react";
 import {
   createAccountUsingEmail,
-  getUserData,
   IuserSignupData,
   usingGoogleAuthentication,
 } from "../redux/AuthSlice";
@@ -24,9 +23,6 @@ const Signup = () => {
 
   // for disabling the button from click
   const [disabled, setDisabled] = useState<boolean>(false);
-
-  // to get the password input box
-  const inputBox = useRef<HTMLInputElement | null>(null);
 
   // for show and hide password
   const [passwordStatus, setPasswordStatus] = useState<boolean>(false);

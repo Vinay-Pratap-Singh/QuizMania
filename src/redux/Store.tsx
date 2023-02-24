@@ -1,11 +1,13 @@
 import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
 import AuthSlice from "./AuthSlice";
 import quizReducer from "./QuizSlice";
+import CategorySlice from "./CategorySlice";
 
 export const store = configureStore({
   reducer: {
     quiz: quizReducer,
     auth: AuthSlice,
+    category: CategorySlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ serializableCheck: false }),

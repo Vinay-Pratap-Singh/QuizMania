@@ -9,7 +9,7 @@ import {
 } from "firebase/auth";
 import { db, firebaseAuth } from "../config/firebase";
 import toast from "react-hot-toast";
-import { collection, doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 
 interface Istate {
   isLoggedIn: boolean;
@@ -52,7 +52,6 @@ export const createAccountUsingEmail = createAsyncThunk(
       name: userData.name,
       role: "user",
     });
-
     return res;
   }
 );
@@ -94,13 +93,6 @@ export const logout = createAsyncThunk("/auth/logout", async () => {
   return res;
 });
 
-// function to get user data from collection
-export const getUserData = createAsyncThunk("/user/data", async (uid) => {
-  const collectionData = doc(db, "user", `${uid}`);
-  const userData = await getDoc(collectionData);
-  return userData;
-});
-
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -118,6 +110,7 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // cases for creating account using email and password
       .addCase(createAccountUsingEmail.pending, () => {
         toast.loading("Wait! Creating your account...");
       })
@@ -134,6 +127,7 @@ const authSlice = createSlice({
         toast.error(message);
         console.log(action.error);
       })
+      // cases for creating account using google authentication
       .addCase(usingGoogleAuthentication.pending, () => {
         toast.loading("Wait! Fetching the data...");
       })
@@ -147,6 +141,7 @@ const authSlice = createSlice({
         toast.remove();
         toast.error("Failed to logged in using google account");
       })
+      // cases for user login using email and password
       .addCase(loginUsingEmail.pending, () => {
         toast.loading("Wait! verifying your credential...");
       })
@@ -159,6 +154,7 @@ const authSlice = createSlice({
         toast.remove();
         toast.error("Invalid Credential");
       })
+      // cases for user logout
       .addCase(logout.fulfilled, (state) => {
         state.isLoggedIn = false;
         state.name = "";
@@ -173,5 +169,5 @@ const authSlice = createSlice({
 // exporting my reducers
 export const { isUserLoggedIn } = authSlice.actions;
 
-// exporting the slice reducer as deault
+// exporting the slice as default
 export default authSlice.reducer;

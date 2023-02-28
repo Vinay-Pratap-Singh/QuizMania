@@ -90,6 +90,7 @@ const categorySlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
+    // for setting the data in state
     builder.addCase(getCategory.fulfilled, (state, action) => {
       return action?.payload!;
     });

@@ -1,7 +1,11 @@
 import { GrAdd, GrEdit, GrTrash } from "react-icons/gr";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addCategory, getCategory } from "../../redux/CategorySlice";
+import {
+  addCategory,
+  deleteCategory,
+  getCategory,
+} from "../../redux/CategorySlice";
 import { AppDispatch, RootState } from "../../redux/Store";
 import { toast } from "react-hot-toast";
 
@@ -12,14 +16,27 @@ const Category = () => {
 
   const [userInput, setUserInput] = useState<string>("");
 
-  const createNewCategory = async () => {
+  // function to dispatch create new category from toolkit thunk
+  const handleCreateCategory = async () => {
     if (!userInput) return toast.error("Name cannot be empty");
     await dispatch(addCategory(userInput));
 
     // empty the input field
     setUserInput("");
+
+    // dispatching the getCategory to update the slice data
+    dispatch(getCategory());
   };
 
+  // function to dispatch delete category from toolkit thunk
+  const handleDeleteCategory = async (id: string) => {
+    await dispatch(deleteCategory(id));
+
+    // dispatching the getCategory to update the slice data
+    await dispatch(getCategory());
+  };
+
+  // for getting the category data on page render
   useEffect(() => {
     dispatch(getCategory());
   }, []);
@@ -32,7 +49,10 @@ const Category = () => {
         </h2>
 
         <div className=" shadow-md rounded-md flex flex-col gap-4 items-center w-96 h-[75%] p-4">
-          <header className="border border-gray-500 rounded-3xl w-full flex items-center justify-between font-medium pl-4">
+          <form
+            onSubmit={handleCreateCategory}
+            className="border border-gray-500 rounded-3xl w-full flex items-center justify-between font-medium pl-4"
+          >
             <input
               className="py-1"
               type="text"
@@ -41,30 +61,31 @@ const Category = () => {
               onChange={(event) => setUserInput(event.target.value)}
             />
             <button
-              onClick={createNewCategory}
+              type="submit"
               className="rounded-tr-3xl rounded-br-3xl bg-[#00C8AC] h-full w-10 pl-3"
             >
               <GrAdd />
             </button>
-          </header>
+          </form>
 
           {/* list of existing categories */}
           <ul className="border border-gray-500 rounded-sm w-full h-full">
             {categoryData &&
               categoryData.map((element) => {
-                console.log(element);
                 return (
                   <li
                     key={element?.id}
                     className="flex items-center justify-between px-3 py-1 font-medium"
                   >
-                    <p>{element?.categoryName!}</p>
+                    <p>{element?.categoryName}</p>
                     <div className="flex items-center gap-3">
                       <button>
                         <GrEdit />
                       </button>
                       <button>
-                        <GrTrash />
+                        <GrTrash
+                          onClick={() => handleDeleteCategory(element?.id)}
+                        />
                       </button>
                     </div>
                   </li>

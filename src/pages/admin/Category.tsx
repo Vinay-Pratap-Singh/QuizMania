@@ -1,18 +1,28 @@
 import { GrAdd, GrEdit, GrTrash } from "react-icons/gr";
-import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { addCategory } from "../../redux/CategorySlice";
-import { AppDispatch } from "../../redux/Store";
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { addCategory, getCategory } from "../../redux/CategorySlice";
+import { AppDispatch, RootState } from "../../redux/Store";
+import { toast } from "react-hot-toast";
 
 const Category = () => {
-  const dispath = useDispatch<AppDispatch>();
+  const dispatch = useDispatch<AppDispatch>();
+
+  const categoryData = useSelector((state: RootState) => state.category);
 
   const [userInput, setUserInput] = useState<string>("");
 
-  const createNewCategory = () => {
-    dispath(addCategory(userInput));
-    console.log("working");
+  const createNewCategory = async () => {
+    if (!userInput) return toast.error("Name cannot be empty");
+    await dispatch(addCategory(userInput));
+
+    // empty the input field
+    setUserInput("");
   };
+
+  useEffect(() => {
+    dispatch(getCategory());
+  }, []);
 
   return (
     <div className="h-[100vh] w-full flex items-center justify-center">
@@ -40,39 +50,26 @@ const Category = () => {
 
           {/* list of existing categories */}
           <ul className="border border-gray-500 rounded-sm w-full h-full">
-            <li className="flex items-center justify-between px-3 py-1 font-medium">
-              <p>HTML</p>
-              <div className="flex items-center gap-3">
-                <button>
-                  <GrEdit />
-                </button>
-                <button>
-                  <GrTrash />
-                </button>
-              </div>
-            </li>
-            <li className="flex items-center justify-between px-3 py-1 font-medium">
-              <p>CSS</p>
-              <div className="flex items-center gap-3">
-                <button>
-                  <GrEdit />
-                </button>
-                <button>
-                  <GrTrash />
-                </button>
-              </div>
-            </li>
-            <li className="flex items-center justify-between px-3 py-1 font-medium">
-              <p>JavaScript</p>
-              <div className="flex items-center gap-3">
-                <button>
-                  <GrEdit />
-                </button>
-                <button>
-                  <GrTrash />
-                </button>
-              </div>
-            </li>
+            {categoryData &&
+              categoryData.map((element) => {
+                console.log(element);
+                return (
+                  <li
+                    key={element?.id}
+                    className="flex items-center justify-between px-3 py-1 font-medium"
+                  >
+                    <p>{element?.categoryName!}</p>
+                    <div className="flex items-center gap-3">
+                      <button>
+                        <GrEdit />
+                      </button>
+                      <button>
+                        <GrTrash />
+                      </button>
+                    </div>
+                  </li>
+                );
+              })}
           </ul>
         </div>
       </div>

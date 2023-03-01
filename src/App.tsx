@@ -10,6 +10,8 @@ import { Toaster } from "react-hot-toast";
 import Dashboard from "./pages/admin/Dashboard";
 import StudentsRecord from "./pages/admin/StudentRecord";
 import Category from "./pages/admin/Category";
+import Question from "./pages/admin/Question";
+import AddQuestion from "./pages/admin/AddQuestion";
 
 const App = () => {
   return (
@@ -23,8 +25,10 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/dashboard/admin" element={<Dashboard />} />
-        <Route path="/dashboard/student/record" element={<StudentsRecord />} />
-        <Route path="/dashboard/question/category" element={<Category />} />
+        <Route path="/dashboard/admin/student" element={<StudentsRecord />} />
+        <Route path="/dashboard/admin/category" element={<Category />} />
+        <Route path="/dashboard/admin/question" element={<Question />} />
+        <Route path="/dashboard/admin/addquestion" element={<AddQuestion />} />
       </Routes>
     </Layout>
   );

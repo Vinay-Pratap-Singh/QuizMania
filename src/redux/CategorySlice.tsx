@@ -5,20 +5,22 @@ import {
   deleteDoc,
   doc,
   getDocs,
+  updateDoc,
 } from "firebase/firestore";
 import { toast } from "react-hot-toast";
 import { db } from "../config/firebase";
 
-interface IstateData {
+export interface IcategoryStateData {
   categoryName: string;
   id: string;
 }
 
-const initialState: IstateData[] = [];
+const initialState: IcategoryStateData[] = [];
 
+// for getting the category data
 export const getCategory = createAsyncThunk("category/get", async () => {
   try {
-    let categories: IstateData[] = [];
+    let categories: IcategoryStateData[] = [];
     const query = getDocs(collection(db, "category"));
 
     toast.promise(query, {
@@ -42,6 +44,7 @@ export const getCategory = createAsyncThunk("category/get", async () => {
   }
 });
 
+// for adding the new category
 export const addCategory = createAsyncThunk(
   "category/add",
   async (newCategory: string) => {
@@ -65,6 +68,7 @@ export const addCategory = createAsyncThunk(
   }
 );
 
+// for deleting the category
 export const deleteCategory = createAsyncThunk(
   "category/delete",
   async (id: string) => {
@@ -74,6 +78,29 @@ export const deleteCategory = createAsyncThunk(
         loading: "Deleting the category...",
         success: "Category deleted successfully",
         error: "Failed to delete category",
+      });
+
+      const response = await res;
+
+      return response;
+    } catch (error) {
+      toast.error("Operation Failed");
+    }
+  }
+);
+
+// for updating the existing category
+export const updateCategory = createAsyncThunk(
+  "category/update",
+  async (data: IcategoryStateData) => {
+    try {
+      const ref = doc(db, "category", data.id);
+      const res = updateDoc(ref, { categoryName: data.categoryName });
+
+      toast.promise(res, {
+        loading: "Updating the category...",
+        success: "Category updated successfully",
+        error: "Failed to update category",
       });
 
       const response = await res;

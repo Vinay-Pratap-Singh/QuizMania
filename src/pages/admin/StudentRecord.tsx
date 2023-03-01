@@ -6,7 +6,10 @@ const StudentsRecord = () => {
     <div className="flex justify-center">
       <div className="py-6 w-[60%] relative">
         <header className="space-y-2 text-center">
-          <h2 className="text-4xl font-bold">Students Record</h2>
+          <h2 className="text-4xl font-bold">
+            Welcome to the{" "}
+            <span className="text-[#00C8AC]">Student Record</span>
+          </h2>
           <p className="font-semibold">
             It is a list of all the registered user on our platform
           </p>

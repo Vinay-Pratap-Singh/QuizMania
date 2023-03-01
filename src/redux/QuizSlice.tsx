@@ -1,4 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { addDoc, collection } from "firebase/firestore";
+import { toast } from "react-hot-toast";
+import { db } from "../config/firebase";
+import { InewQuestionData } from "../config/interfaces";
 export interface IData {
   id: number;
   question: string;
@@ -59,6 +63,30 @@ export interface IchartData {
   labels: string[];
   datasets: IchartDatasets[];
 }
+
+// function to add new question to the database
+export const addNewQuestion = createAsyncThunk(
+  "add/question",
+  async (data: InewQuestionData) => {
+    try {
+      const res = addDoc(collection(db, "questions"), {
+        ...data,
+      });
+
+      toast.promise(res, {
+        loading: "Adding the question...",
+        success: "Question added successfully",
+        error: "Failed to add question",
+      });
+
+      const response = await res;
+
+      return response;
+    } catch (error) {
+      toast.error("Operation Failed");
+    }
+  }
+);
 
 const quizSlice = createSlice({
   name: "quiz",

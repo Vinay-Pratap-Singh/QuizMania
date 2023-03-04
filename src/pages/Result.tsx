@@ -7,9 +7,6 @@ import { IchartData } from "../redux/QuizSlice";
 import { RootState } from "../redux/Store";
 
 const Result = () => {
-  const navigate = useNavigate();
-  const checkUser = useSelector((state: RootState) => state.quiz.userAnswer);
-
   const data: IchartData = {
     labels: ["Correct Answers", "Incorrect Answers", "Not Attempted"],
     datasets: [
@@ -25,14 +22,6 @@ const Result = () => {
       },
     ],
   };
-
-  // redirect to homepage user is not visiting from quiz page
-  // useEffect(() => {
-  //   if (checkUser.length === 0) {
-  //     navigate("/");
-  //     return;
-  //   }
-  // },[]);
 
   return (
     <div className="flex flex-col items-center justify-center text-center">

@@ -197,9 +197,7 @@ const AddQuestion = () => {
                 required
                 onChange={handleInputBox}
               >
-                <option value="" selected>
-                  Choose Me
-                </option>
+                <option value="">Choose Me</option>
                 <option value="option1">Option1</option>
                 <option value="option2">Option2</option>
                 <option value="option3">Option3</option>
@@ -218,9 +216,7 @@ const AddQuestion = () => {
                 required
                 onChange={handleInputBox}
               >
-                <option value="" selected>
-                  Choose Me
-                </option>
+                <option value="">Choose Me</option>
                 <option value="html">HTML</option>
                 <option value="css">CSS</option>
                 <option value="js">JS</option>

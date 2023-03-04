@@ -1,8 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, getDocs } from "firebase/firestore";
 import { toast } from "react-hot-toast";
 import { db } from "../config/firebase";
-import { InewQuestionData } from "../config/interfaces";
+import {
+  ImyQuestionData,
+  InewQuestionData,
+  IquizSliceState,
+} from "../config/interfaces";
 export interface IData {
   id: number;
   question: string;
@@ -39,17 +43,17 @@ export interface Istate {
   userAnswer: IuserAnswer[];
 }
 
-const initialState: Istate = {
-  data: [],
-  option: {
-    evaluation: "normal",
-    level: "Easy",
-    length: "5",
-    category: "uncategorized",
-    isButtonClicked: false,
-  },
-  userAnswer: [],
-};
+// const initialState: Istate = {
+//   data: [],
+//   option: {
+//     evaluation: "normal",
+//     level: "Easy",
+//     length: "5",
+//     category: "uncategorized",
+//     isButtonClicked: false,
+//   },
+//   userAnswer: [],
+// };
 
 // interface for chart data
 interface IchartDatasets {
@@ -64,9 +68,62 @@ export interface IchartData {
   datasets: IchartDatasets[];
 }
 
+const initialState: IquizSliceState = {
+  questions: [],
+};
+
+// function to get all questions
+export const getAllQuestion = createAsyncThunk("question/display", async () => {
+  try {
+    let questions: ImyQuestionData[] = [];
+    const query = getDocs(collection(db, "questions"));
+
+    toast.promise(query, {
+      loading: "Fetching the data",
+      success: "Data fetched successfully",
+      error: "Failed to fetch data",
+    });
+
+    const querySnapshot = await query;
+
+    querySnapshot.forEach((doc) => {
+      // destructuring the data
+      const {
+        question,
+        option1,
+        option2,
+        option3,
+        option4,
+        correctOption,
+        categoryName,
+        description,
+      } = doc.data();
+
+      // adding the id to the data
+      const myQuestion: ImyQuestionData = {
+        id: doc.id,
+        question,
+        option1,
+        option2,
+        option3,
+        option4,
+        correctOption,
+        categoryName,
+        description,
+      };
+
+      questions.push(myQuestion);
+    });
+
+    return questions;
+  } catch (error) {
+    toast.error("Try again!!");
+  }
+});
+
 // function to add new question to the database
 export const addNewQuestion = createAsyncThunk(
-  "add/question",
+  "/question/add",
   async (data: InewQuestionData) => {
     try {
       const res = addDoc(collection(db, "questions"), {
@@ -91,19 +148,17 @@ export const addNewQuestion = createAsyncThunk(
 const quizSlice = createSlice({
   name: "quiz",
   initialState,
-  reducers: {
-    setOption: (state, action) => {
-      state.option = { ...action.payload };
-    },
-    setAnswers: (state, action) => {},
-    removeAnswers: (state) => {
-      state.userAnswer = [];
-    },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder.addCase(getAllQuestion.fulfilled, (state, action) => {
+      // setting the data in state while mentioning that the payload will be there always
+      state.questions = action.payload!;
+    });
   },
 });
 
 // exporting my reducers
-export const { setOption, setAnswers, removeAnswers } = quizSlice.actions;
+export const {} = quizSlice.actions;
 
 // exporting the slice reducer as deault
 export default quizSlice.reducer;

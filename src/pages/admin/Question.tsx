@@ -1,6 +1,18 @@
+import { useEffect } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
+import { useDispatch } from "react-redux";
+import { getAllQuestion } from "../../redux/QuizSlice";
+import { AppDispatch } from "../../redux/Store";
 
 const Question = () => {
+  const dispatch = useDispatch<AppDispatch>();
+
+  // getting the data of questions from store
+
+  useEffect(() => {
+    dispatch(getAllQuestion());
+  }, []);
+
   return (
     <div className="min-h-[100vh] w-full p-5">
       <h2 className="text-4xl font-bold text-center mb-10">

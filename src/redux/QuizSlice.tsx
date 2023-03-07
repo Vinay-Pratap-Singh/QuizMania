@@ -1,5 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { addDoc, collection, getDocs } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+} from "firebase/firestore";
 import { toast } from "react-hot-toast";
 import { db } from "../config/firebase";
 import {
@@ -134,6 +140,28 @@ export const addNewQuestion = createAsyncThunk(
         loading: "Adding the question...",
         success: "Question added successfully",
         error: "Failed to add question",
+      });
+
+      const response = await res;
+
+      return response;
+    } catch (error) {
+      toast.error("Operation Failed");
+    }
+  }
+);
+
+// function to delete a question from database
+export const deleteQuestion = createAsyncThunk(
+  "question/delete",
+  async (id: string) => {
+    try {
+      const res = deleteDoc(doc(db, "questions", id));
+
+      toast.promise(res, {
+        loading: "Deleting the question...",
+        success: "Question deleted successfully",
+        error: "Failed to delete question",
       });
 
       const response = await res;

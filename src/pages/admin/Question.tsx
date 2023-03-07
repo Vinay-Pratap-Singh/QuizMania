@@ -1,20 +1,37 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
-import { useDispatch } from "react-redux";
-import { getAllQuestion } from "../../redux/QuizSlice";
-import { AppDispatch } from "../../redux/Store";
+import { useDispatch, useSelector } from "react-redux";
+import { ImyQuestionData } from "../../config/interfaces";
+import { deleteQuestion, getAllQuestion } from "../../redux/QuizSlice";
+import { AppDispatch, RootState } from "../../redux/Store";
 
 const Question = () => {
   const dispatch = useDispatch<AppDispatch>();
 
-  // getting the data of questions from store
+  const [questions, setQuestions] = useState<ImyQuestionData[]>(
+    useSelector((state: RootState) => state.quiz.questions)
+  );
+
+  // function to dispath get all question operation for question
+  const dispatchGetAllQuestions = async () => {
+    // getting all the question data
+    const res = await dispatch(getAllQuestion());
+    // @ts-ignore
+    setQuestions([...res.payload]);
+  };
+
+  // function to dispath delete operation for question
+  const dispatchDeleteOperation = async (id: string) => {
+    await dispatch(deleteQuestion(id));
+    dispatchGetAllQuestions();
+  };
 
   useEffect(() => {
-    dispatch(getAllQuestion());
+    dispatchGetAllQuestions();
   }, []);
 
   return (
-    <div className="min-h-[100vh] w-full p-5">
+    <div className="min-h-[100vh] w-full p-5 ml-60">
       <h2 className="text-4xl font-bold text-center mb-10">
         Welcome to the <span className="text-[#00C8AC]">Question Page</span>
       </h2>
@@ -87,41 +104,51 @@ const Question = () => {
           </thead>
 
           <tbody>
-            <tr className="align-text-top border border-gray-600 font-medium">
-              <td className="p-2 text-center border border-r-gray-600 border-b-gray-600">
-                1
-              </td>
-              <td className="p-2 border border-r-gray-600 border-b-gray-600">
-                What is HTML?
-              </td>
-              <td className="p-2 border border-r-gray-600 border-b-gray-600">
-                Programming Language
-              </td>
-              <td className="p-2 border border-r-gray-600 border-b-gray-600">
-                Scripting Language
-              </td>
-              <td className="p-2 border border-r-gray-600 border-b-gray-600">
-                Markup Language
-              </td>
-              <td className="p-2 border border-r-gray-600 border-b-gray-600">
-                None
-              </td>
-              <td className="p-2 border border-r-gray-600 border-b-gray-600">
-                Markup Language
-              </td>
-              <td className="p-2 border border-r-gray-600 border-b-gray-600">
-                HTML
-              </td>
-              <td className="p-2 border border-r-gray-600 border-b-gray-600">
-                HTML stands for Hyper Text Markup Language
-              </td>
-              <td className="w-14 text-center py-1 font-medium text-green-600 border border-r-gray-600 border-t-gray-600 border-b-gray-600">
-                Edit
-              </td>
-              <td className="w-14 text-center py-1 font-medium text-red-600">
-                Delete
-              </td>
-            </tr>
+            {questions.map((element, index) => {
+              return (
+                <tr
+                  key={element?.id}
+                  className="align-text-top border border-gray-600 font-medium"
+                >
+                  <td className="p-2 text-center border border-r-gray-600 border-b-gray-600">
+                    {index + 1}
+                  </td>
+                  <td className="p-2 border border-r-gray-600 border-b-gray-600">
+                    {element?.question}
+                  </td>
+                  <td className="p-2 border border-r-gray-600 border-b-gray-600">
+                    {element?.option1}
+                  </td>
+                  <td className="p-2 border border-r-gray-600 border-b-gray-600">
+                    {element?.option2}
+                  </td>
+                  <td className="p-2 border border-r-gray-600 border-b-gray-600">
+                    {element?.option3}
+                  </td>
+                  <td className="p-2 border border-r-gray-600 border-b-gray-600">
+                    {element?.option4}
+                  </td>
+                  <td className="p-2 border border-r-gray-600 border-b-gray-600">
+                    {element?.correctOption}
+                  </td>
+                  <td className="p-2 border border-r-gray-600 border-b-gray-600">
+                    {element?.categoryName}
+                  </td>
+                  <td className="p-2 border border-r-gray-600 border-b-gray-600">
+                    {element?.description}
+                  </td>
+                  <td className="w-14 text-center py-1 font-medium text-green-600 border border-r-gray-600 border-t-gray-600 border-b-gray-600 cursor-pointer">
+                    Edit
+                  </td>
+                  <td
+                    className="w-14 text-center py-1 font-medium text-red-600 cursor-pointer"
+                    onClick={() => dispatchDeleteOperation(element?.id)}
+                  >
+                    Delete
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

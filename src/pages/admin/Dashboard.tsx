@@ -21,7 +21,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center text-center w-full min-h-[100vh]">
+    <div className="flex flex-col items-center justify-center text-center w-full min-h-[100vh] ml-60">
       <main className="flex flex-col items-center justify-center text-center gap-5">
         <header className="space-y-5">
           <h1 className="text-4xl font-bold">

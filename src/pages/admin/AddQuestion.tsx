@@ -3,21 +3,26 @@ import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../redux/Store";
-import { addNewQuestion } from "../../redux/QuizSlice";
+import { addNewQuestion, updateQuestion } from "../../redux/QuizSlice";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const AddQuestion = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+
+  // getting the data from useLocation
+  const { state } = useLocation();
 
   // for storing user input
   const [inputData, setInputData] = useState<InewQuestionData>({
-    question: "",
-    option1: "",
-    option2: "",
-    option3: "",
-    option4: "",
-    correctOption: "",
-    categoryName: "",
-    description: "",
+    question: state.question,
+    option1: state.option1,
+    option2: state.option2,
+    option3: state.option3,
+    option4: state.option4,
+    correctOption: state.correctOption,
+    categoryName: state.categoryName,
+    description: state.description,
   });
 
   // function to handle input box
@@ -55,8 +60,22 @@ const AddQuestion = () => {
       return;
     }
 
-    //   calling the api to add data
-    await dispatch(addNewQuestion(inputData));
+    // checking for the new question
+    if (!state.id) {
+      // calling the api to add data
+      await dispatch(addNewQuestion(inputData));
+    } else {
+      const newData = {
+        id: state.id,
+        ...inputData,
+      };
+
+      // updating the existing question
+      await dispatch(updateQuestion(newData));
+
+      // sending the user to questions page again
+      navigate("/dashboard/admin/question");
+    }
 
     //   resetting the input value
     setInputData({
@@ -76,7 +95,8 @@ const AddQuestion = () => {
       {/* container for question card */}
       <div className=" shadow-md rounded-md flex flex-col gap-4 items-center w-full mx-[5%] h-[90%] p-4">
         <h2 className="text-2xl font-bold relative">
-          Add New <span className="text-[#00C8AC]">Question</span>
+          {state.id ? "Update Your" : "Add New"}{" "}
+          <span className="text-[#00C8AC]">Question</span>
         </h2>
 
         <form
@@ -226,7 +246,7 @@ const AddQuestion = () => {
 
           {/* button to submit */}
           <button className="col-span-2 font-semibold text-lg border-2 py-1 text-center border-[#00C8AC] rounded-sm bg-[#00C8AC] text-white transition-all ease-in-out duration-300 hover:shadow-[0_0_5px_#00C8AC]">
-            Add New Question
+            {state.id ? "Update Question" : "Add New Question"}
           </button>
         </form>
       </div>

@@ -3,7 +3,7 @@ import mainImage from "../assets/mainImage.png";
 
 const Homepage = () => {
   return (
-    <div className="h-[100vh] flex items-center justify-center gap-16 w-full">
+    <div className="h-[100vh] flex items-center justify-center gap-16 w-full ml-60">
       {/* creating the container for image */}
       <div>
         <img className="w-80 drop-shadow-lg" src={mainImage} alt="mainImage" />

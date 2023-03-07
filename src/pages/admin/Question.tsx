@@ -1,18 +1,20 @@
 import { useEffect, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 import { ImyQuestionData } from "../../config/interfaces";
 import { deleteQuestion, getAllQuestion } from "../../redux/QuizSlice";
 import { AppDispatch, RootState } from "../../redux/Store";
 
 const Question = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
 
   const [questions, setQuestions] = useState<ImyQuestionData[]>(
     useSelector((state: RootState) => state.quiz.questions)
   );
 
-  // function to dispath get all question operation for question
+  // function to dispatch get all question operation for question
   const dispatchGetAllQuestions = async () => {
     // getting all the question data
     const res = await dispatch(getAllQuestion());
@@ -20,10 +22,27 @@ const Question = () => {
     setQuestions([...res.payload]);
   };
 
-  // function to dispath delete operation for question
+  // function to dispatch delete operation for question
   const dispatchDeleteOperation = async (id: string) => {
     await dispatch(deleteQuestion(id));
     dispatchGetAllQuestions();
+  };
+
+  // function to handle add question button click
+  const handleAddQuestionClick = () => {
+    const data: ImyQuestionData = {
+      id: "",
+      question: "",
+      option1: "",
+      option2: "",
+      option3: "",
+      option4: "",
+      correctOption: "",
+      categoryName: "",
+      description: "",
+    };
+
+    navigate("/dashboard/admin/addquestion", { state: { ...data } });
   };
 
   useEffect(() => {
@@ -52,7 +71,10 @@ const Question = () => {
               <AiOutlineSearch size={24} />
             </button>
           </form>
-          <button className="border-2 py-1 px-2 text-center border-[#00C8AC] rounded-sm bg-[#00C8AC] text-white transition-all ease-in-out duration-300 hover:shadow-[0_0_5px_#00C8AC] font-semibold">
+          <button
+            onClick={handleAddQuestionClick}
+            className="border-2 py-1 px-2 text-center border-[#00C8AC] rounded-sm bg-[#00C8AC] text-white transition-all ease-in-out duration-300 hover:shadow-[0_0_5px_#00C8AC] font-semibold"
+          >
             Add Question
           </button>
         </header>
@@ -137,7 +159,14 @@ const Question = () => {
                   <td className="p-2 border border-r-gray-600 border-b-gray-600">
                     {element?.description}
                   </td>
-                  <td className="w-14 text-center py-1 font-medium text-green-600 border border-r-gray-600 border-t-gray-600 border-b-gray-600 cursor-pointer">
+                  <td
+                    onClick={() =>
+                      navigate("/dashboard/admin/addquestion", {
+                        state: { ...element },
+                      })
+                    }
+                    className="w-14 text-center py-1 font-medium text-green-600 border border-r-gray-600 border-t-gray-600 border-b-gray-600 cursor-pointer"
+                  >
                     Edit
                   </td>
                   <td

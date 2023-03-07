@@ -5,6 +5,7 @@ import {
   deleteDoc,
   doc,
   getDocs,
+  updateDoc,
 } from "firebase/firestore";
 import { toast } from "react-hot-toast";
 import { db } from "../config/firebase";
@@ -162,6 +163,41 @@ export const deleteQuestion = createAsyncThunk(
         loading: "Deleting the question...",
         success: "Question deleted successfully",
         error: "Failed to delete question",
+      });
+
+      const response = await res;
+
+      return response;
+    } catch (error) {
+      toast.error("Operation Failed");
+    }
+  }
+);
+
+// function to update the question in the database
+export const updateQuestion = createAsyncThunk(
+  "questions/update",
+  async (data: ImyQuestionData) => {
+    try {
+      const docRef = doc(db, "questions", data.id);
+      const newData: InewQuestionData = {
+        question: data.question,
+        option1: data.option1,
+        option2: data.option2,
+        option3: data.option3,
+        option4: data.option4,
+        correctOption: data.correctOption,
+        categoryName: data.categoryName,
+        description: data.description,
+      };
+      const res = updateDoc(docRef, {
+        ...newData,
+      });
+
+      toast.promise(res, {
+        loading: "Updating the question...",
+        success: "Question updated successfully",
+        error: "Failed to update question",
       });
 
       const response = await res;

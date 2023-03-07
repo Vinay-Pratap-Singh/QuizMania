@@ -1,10 +1,11 @@
 import { InewQuestionData } from "../../config/interfaces";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../redux/Store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../redux/Store";
 import { addNewQuestion, updateQuestion } from "../../redux/QuizSlice";
 import { useLocation, useNavigate } from "react-router-dom";
+import { getCategory } from "../../redux/CategorySlice";
 
 const AddQuestion = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -12,6 +13,9 @@ const AddQuestion = () => {
 
   // getting the data from useLocation
   const { state } = useLocation();
+
+  // getting all the categories list
+  const categoryList = useSelector((state: RootState) => state.category);
 
   // for storing user input
   const [inputData, setInputData] = useState<InewQuestionData>({
@@ -89,6 +93,13 @@ const AddQuestion = () => {
       description: "",
     });
   };
+
+  // for getting the categories from database
+  useEffect(() => {
+    (async () => {
+      await dispatch(getCategory());
+    })();
+  }, []);
 
   return (
     <div className="h-[100vh] w-full flex items-center justify-center ml-60">
@@ -237,9 +248,13 @@ const AddQuestion = () => {
                 onChange={handleInputBox}
               >
                 <option value="">Choose Me</option>
-                <option value="html">HTML</option>
-                <option value="css">CSS</option>
-                <option value="js">JS</option>
+                {categoryList.map((element) => {
+                  return (
+                    <option key={element.id} value={element?.categoryName}>
+                      {element?.categoryName}
+                    </option>
+                  );
+                })}
               </select>
             </div>
           </div>

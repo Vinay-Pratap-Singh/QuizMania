@@ -24,9 +24,9 @@ export const getCategory = createAsyncThunk("category/get", async () => {
     const query = getDocs(collection(db, "category"));
 
     toast.promise(query, {
-      loading: "Fetching the data",
-      success: "Data fetched successfully",
-      error: "Failed to fetch data",
+      loading: "Fetching the categories",
+      success: "Categories fetched successfully",
+      error: "Failed to fetch categories",
     });
 
     const querySnapshot = await query;

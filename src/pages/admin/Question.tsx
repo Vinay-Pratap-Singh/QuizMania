@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { ImyQuestionData } from "../../config/interfaces";
+import { getCategory } from "../../redux/CategorySlice";
 import { deleteQuestion, getAllQuestion } from "../../redux/QuizSlice";
 import { AppDispatch, RootState } from "../../redux/Store";
 
@@ -10,9 +11,14 @@ const Question = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  const [questions, setQuestions] = useState<ImyQuestionData[]>(
-    useSelector((state: RootState) => state.quiz.questions)
-  );
+  // for storing the orignal questions list
+  const orgQuestions = useSelector((state: RootState) => state.quiz.questions);
+
+  // for storing the filtered list of questions
+  const [filteredQuestions, setFilteredQuestions] = useState(orgQuestions);
+
+  // getting all the categories list
+  const categoryList = useSelector((state: RootState) => state.category);
 
   // function to dispatch get all question operation for question
   const dispatchGetAllQuestions = async () => {
@@ -45,8 +51,36 @@ const Question = () => {
     navigate("/dashboard/admin/addquestion", { state: { ...data } });
   };
 
+  // filtering the category name
+  const filterQuestions = (event: ChangeEvent<HTMLInputElement>) => {
+    const value = event.currentTarget.value;
+    if (value === "all") {
+      setFilteredQuestions([...orgQuestions]);
+      return;
+    }
+
+    const newData = orgQuestions.filter((element) => {
+      return element.categoryName === value;
+    });
+
+    setFilteredQuestions(newData);
+  };
+
+  // for getting the question from database
   useEffect(() => {
-    dispatchGetAllQuestions();
+    (async () => {
+      await dispatchGetAllQuestions();
+    })();
+
+    // setting the filtered question list
+    setFilteredQuestions([...orgQuestions]);
+  }, []);
+
+  // for getting the categories from database
+  useEffect(() => {
+    (async () => {
+      await dispatch(getCategory());
+    })();
   }, []);
 
   return (
@@ -106,14 +140,20 @@ const Question = () => {
               </th>
               <th className="p-2 border border-r-gray-600 border-b-gray-600">
                 <select
+                  // @ts-ignore
+                  onChange={filterQuestions}
                   name="category"
                   id="category"
                   className="bg-transparent"
                 >
                   <option value="all">All</option>
-                  <option value="html">HTML</option>
-                  <option value="css">CSS</option>
-                  <option value="js">JS</option>
+                  {categoryList.map((element) => {
+                    return (
+                      <option key={element.id} value={element?.categoryName}>
+                        {element?.categoryName}
+                      </option>
+                    );
+                  })}
                 </select>
               </th>
               <th className="p-2 border border-r-gray-600 border-b-gray-600">
@@ -126,7 +166,7 @@ const Question = () => {
           </thead>
 
           <tbody>
-            {questions.map((element, index) => {
+            {filteredQuestions.map((element, index) => {
               return (
                 <tr
                   key={element?.id}

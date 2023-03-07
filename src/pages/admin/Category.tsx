@@ -17,7 +17,11 @@ const Category = () => {
   const [userInput, setUserInput] = useState<string>("");
 
   // function to dispatch create new category from toolkit thunk
-  const handleCreateCategory = async () => {
+  const handleCreateCategory = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
+    event.preventDefault();
+
     if (!userInput) return toast.error("Name cannot be empty");
     await dispatch(addCategory(userInput));
 
@@ -42,12 +46,19 @@ const Category = () => {
   }, []);
 
   return (
-    <div className="h-[100vh] w-full flex items-center justify-center">
-      <div className="flex flex-col gap-10 items-center h-[80%]">
-        <h2 className="text-4xl font-bold relative">
-          Welcome to the <span className="text-[#00C8AC]">Category Page</span>
-        </h2>
+    <div className="h-[100vh] w-full flex items-center justify-center ml-60">
+      <div className="flex flex-col gap-10 items-center h-[80%] w-full">
+        <header className="text-center w-full space-y-2">
+          <h2 className="text-4xl font-bold relative">
+            Welcome to the <span className="text-[#00C8AC]">Category Page</span>
+          </h2>
+          <p>
+            Select the category name carefully because the name will be stored
+            as it is in the database without any change
+          </p>
+        </header>
 
+        {/* card for category */}
         <div className=" shadow-md rounded-md flex flex-col gap-4 items-center w-96 h-[75%] p-4">
           <form
             onSubmit={handleCreateCategory}

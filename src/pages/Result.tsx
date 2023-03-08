@@ -24,11 +24,12 @@ const Result = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center text-center">
+    <div className="flex flex-col items-center justify-center text-center min-h-[100vh] w-full ml-60 my-10">
       <main className="flex flex-col items-center justify-center text-center gap-5">
         <header className="space-y-5">
           <h1 className="text-4xl font-bold">
-            Congrats on completing the Quiz
+            Congrats on completing the{" "}
+            <span className="text-[#00C8AC]">Quiz</span>
           </h1>
           <p className="font-semibold">
             "You are among those who not only start, but also complete the quiz

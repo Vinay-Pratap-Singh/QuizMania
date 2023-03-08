@@ -12,7 +12,9 @@ const Question = () => {
   const navigate = useNavigate();
 
   // for storing the orignal questions list
-  const orgQuestions = useSelector((state: RootState) => state.quiz.questions);
+  const [orgQuestions, setOrgQuestions] = useState(
+    useSelector((state: RootState) => state.quiz.questions)
+  );
 
   // for storing the filtered list of questions
   const [filteredQuestions, setFilteredQuestions] = useState(orgQuestions);
@@ -25,7 +27,7 @@ const Question = () => {
     // getting all the question data
     const res = await dispatch(getAllQuestion());
     // @ts-ignore
-    setQuestions([...res.payload]);
+    setOrgQuestions([...res.payload]);
   };
 
   // function to dispatch delete operation for question
@@ -68,9 +70,7 @@ const Question = () => {
 
   // for getting the question from database
   useEffect(() => {
-    (async () => {
-      await dispatchGetAllQuestions();
-    })();
+    dispatchGetAllQuestions();
 
     // setting the filtered question list
     setFilteredQuestions([...orgQuestions]);

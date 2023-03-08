@@ -1,6 +1,13 @@
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
+
 const Quiz = () => {
+  // getting the data from location
+  const userPreference = useLocation().state;
+  console.log(userPreference);
+
   return (
-    <div className="h-[85vh] flex items-center justify-center">
+    <div className="h-[100vh] w-full ml-60 flex items-center justify-center">
       {/* creating the quiz template */}
       <form className="w-1/2 flex flex-col py-5 px-10 space-y-5 rounded-lg shadow-md">
         {/* header part of card */}

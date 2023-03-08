@@ -1,6 +1,6 @@
 const AnswerResult = () => {
   return (
-    <div className="my-10">
+    <div className="mt-10">
       <h1 className="font-bold text-center text-2xl mb-5">
         Result Summary with Description
       </h1>

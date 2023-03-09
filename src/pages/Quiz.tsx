@@ -1,10 +1,45 @@
 import { useEffect } from "react";
+import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
+import { RootState } from "../redux/Store";
 
 const Quiz = () => {
   // getting the data from location
-  const userPreference = useLocation().state;
-  console.log(userPreference);
+  // const userPreference = useLocation().state;
+
+  // getting the questions from the database
+  // const allQuestions = useSelector((state: RootState) => state.quiz.questions);
+
+  // getting the questions of a specific category
+  // const specificQuestions = allQuestions.filter((element) => {
+  //   return element.categoryName === userPreference.category;
+  // });
+
+  // total number of question for the quiz
+  // const noOfQuestions = Number(userPreference.length);
+
+  // for storing the questions to be displayed
+  const quizQuestions = [];
+
+  // const selectRandomQuestions = (noOfQuestions: number) => {
+  //   const indexes: number[] = [];
+
+  //   while (indexes.length < noOfQuestions) {
+  //     const randomValue = Math.floor(Math.random() * noOfQuestions);
+  //     for (let i = 0; i < indexes.length; i++) {
+  //       if (indexes[i] === randomValue) {
+  //         continue;
+  //       }
+  //       indexes.push(randomValue);
+  //     }
+  //   }
+
+  //   console.log(indexes);
+  // };
+  // selectRandomQuestions(5);
+  console.log(Math.floor(Math.random() * 5));
+
+  setInterval(() => {}, 1000);
 
   return (
     <div className="h-[100vh] w-full ml-60 flex items-center justify-center">

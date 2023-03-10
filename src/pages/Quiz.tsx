@@ -21,25 +21,26 @@ const Quiz = () => {
   // for storing the questions to be displayed
   const quizQuestions = [];
 
-  // const selectRandomQuestions = (noOfQuestions: number) => {
-  //   const indexes: number[] = [];
+  const selectRandomQuestions = (noOfQuestions: number) => {
+    const indexes: number[] = [];
 
-  //   while (indexes.length < noOfQuestions) {
-  //     const randomValue = Math.floor(Math.random() * noOfQuestions);
-  //     for (let i = 0; i < indexes.length; i++) {
-  //       if (indexes[i] === randomValue) {
-  //         continue;
-  //       }
-  //       indexes.push(randomValue);
-  //     }
-  //   }
+    while (indexes.length < noOfQuestions) {
+      const randomValue = Math.floor(Math.random() * 20);
+      let flag = true;
+      indexes.forEach((element) => {
+        if (element === randomValue) {
+          flag = false;
+        }
+      });
+      if (flag) {
+        indexes.push(randomValue);
+      }
+    }
 
-  //   console.log(indexes);
-  // };
-  // selectRandomQuestions(5);
+    console.log(indexes);
+  };
+  selectRandomQuestions(10);
   console.log(Math.floor(Math.random() * 5));
-
-  setInterval(() => {}, 1000);
 
   return (
     <div className="h-[100vh] w-full ml-60 flex items-center justify-center">

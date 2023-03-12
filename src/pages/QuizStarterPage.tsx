@@ -12,7 +12,7 @@ const QuizStarterPage = () => {
   // for holding user preference
   const [userPreference, setUserPreference] = useState({
     length: "",
-    category: "uncategorized",
+    category: "",
   });
 
   // getting all the categories list
@@ -95,7 +95,7 @@ const QuizStarterPage = () => {
                 required
                 onChange={handleInputChange}
               >
-                <option value="uncategorized">Uncategorized</option>
+                <option value="">Choose Me</option>
                 {categoryList.map((element) => {
                   return (
                     <option key={element.id} value={element?.categoryName}>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { getAllQuestion } from "../redux/QuizSlice";
@@ -28,6 +28,11 @@ const Quiz = () => {
   // for storing the questions to be displayed
   const questionsToBeDisplayed: ImyQuestionData[] = [];
 
+  // for storing the answers selected by user
+  const [answersSelectedByUser, setAnswersSelectedByUser] = useState<string[]>(
+    []
+  );
+
   // function to select the random questions from a specific category to display
   const selectRandomQuestions = (noOfQuestions: number) => {
     const indexes: number[] = [];
@@ -55,7 +60,10 @@ const Quiz = () => {
     });
   };
 
-  if (specificCategoryQuestions.length !== 0) {
+  if (
+    specificCategoryQuestions.length !== 0 &&
+    specificCategoryQuestions.length > noOfQuestions
+  ) {
     selectRandomQuestions(noOfQuestions);
   }
 
@@ -67,6 +75,12 @@ const Quiz = () => {
     }
 
     setCurrentIndex(currentIndex - 1);
+
+    // removing the seleted options
+    const inputElements = document.querySelectorAll("input");
+    inputElements.forEach((element) => {
+      element.checked = false;
+    });
   };
 
   // function to handle the next button click
@@ -77,6 +91,22 @@ const Quiz = () => {
     }
 
     setCurrentIndex(currentIndex + 1);
+
+    // removing the seleted options
+    const inputElements = document.querySelectorAll("input");
+    inputElements.forEach((element) => {
+      element.checked = false;
+    });
+  };
+
+  // function to get the selected option of user
+  const handleRadioButtonChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { value } = event.target;
+    const answers = [...answersSelectedByUser];
+    answers[currentIndex] = value;
+    setAnswersSelectedByUser([...answers]);
   };
 
   // for loading the questions from database
@@ -84,6 +114,13 @@ const Quiz = () => {
     (async () => {
       await dispatch(getAllQuestion());
     })();
+
+    // assigning empty value as default for the answers
+    const answer = [];
+    for (let i = 0; i < noOfQuestions; i++) {
+      answer.push("");
+    }
+    setAnswersSelectedByUser([...answer]);
   }, []);
 
   return (
@@ -106,12 +143,15 @@ const Quiz = () => {
           </h1>
 
           {/* creating the options */}
-          <div className="grid grid-cols-2 gap-y-5 gap-x-10 font-semibold">
+          <div
+            className="grid grid-cols-2 gap-y-5 gap-x-10 font-semibold"
+            onChange={handleRadioButtonChange}
+          >
             <div className="space-x-2">
               <input
                 type="radio"
                 id="option1"
-                value={questionsToBeDisplayed[currentIndex]?.option1}
+                value="option1"
                 name="option"
                 className="cursor-pointer"
               />
@@ -124,7 +164,7 @@ const Quiz = () => {
               <input
                 type="radio"
                 id="option2"
-                value={questionsToBeDisplayed[currentIndex]?.option2}
+                value="option2"
                 name="option"
                 className="cursor-pointer"
               />
@@ -137,7 +177,7 @@ const Quiz = () => {
               <input
                 type="radio"
                 id="option3"
-                value={questionsToBeDisplayed[currentIndex]?.option3}
+                value="option3"
                 name="option"
                 className="cursor-pointer"
               />
@@ -150,7 +190,7 @@ const Quiz = () => {
               <input
                 type="radio"
                 id="option4"
-                value={questionsToBeDisplayed[currentIndex]?.option4}
+                value="option4"
                 name="option"
                 className="cursor-pointer"
               />

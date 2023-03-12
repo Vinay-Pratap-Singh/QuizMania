@@ -1,31 +1,43 @@
-import { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
-import { RootState } from "../redux/Store";
+import { getAllQuestion } from "../redux/QuizSlice";
+import { AppDispatch, RootState } from "../redux/Store";
+import { ImyQuestionData } from "../config/interfaces";
 
 const Quiz = () => {
+  const dispatch = useDispatch<AppDispatch>();
+
   // getting the data from location
-  // const userPreference = useLocation().state;
+  const userPreference = useLocation().state;
 
   // getting the questions from the database
-  // const allQuestions = useSelector((state: RootState) => state.quiz.questions);
+  const allQuestions = useSelector((state: RootState) => state.quiz.questions);
 
-  // getting the questions of a specific category
-  // const specificQuestions = allQuestions.filter((element) => {
-  //   return element.categoryName === userPreference.category;
-  // });
+  // getting the questions of a specific category based on user option
+  const specificCategoryQuestions = allQuestions.filter((element) => {
+    return element?.categoryName === userPreference?.category;
+  });
 
   // total number of question for the quiz
-  // const noOfQuestions = Number(userPreference.length);
+  const noOfQuestions: number = Number(userPreference?.length) | 0;
+
+  // to maintain the index count
+  let [currentIndex, setCurrentIndex] = useState<number>(0);
 
   // for storing the questions to be displayed
-  const quizQuestions = [];
+  const questionsToBeDisplayed: ImyQuestionData[] = [];
 
+  // function to select the random questions from a specific category to display
   const selectRandomQuestions = (noOfQuestions: number) => {
     const indexes: number[] = [];
 
+    // getting the random question from specific category question list
     while (indexes.length < noOfQuestions) {
-      const randomValue = Math.floor(Math.random() * 20);
+      const randomValue = Math.floor(
+        Math.random() * specificCategoryQuestions.length
+      );
+
       let flag = true;
       indexes.forEach((element) => {
         if (element === randomValue) {
@@ -37,25 +49,60 @@ const Quiz = () => {
       }
     }
 
-    console.log(indexes);
+    // adding those index questions to the array to display
+    indexes.forEach((element) => {
+      questionsToBeDisplayed.push(specificCategoryQuestions[element]);
+    });
   };
-  selectRandomQuestions(10);
-  console.log(Math.floor(Math.random() * 5));
+
+  if (specificCategoryQuestions.length !== 0) {
+    selectRandomQuestions(noOfQuestions);
+  }
+
+  // function to handle the previous button click
+  const handlePreviousButtonClick = () => {
+    if (currentIndex === 0) {
+      setCurrentIndex(noOfQuestions - 1);
+      return;
+    }
+
+    setCurrentIndex(currentIndex - 1);
+  };
+
+  // function to handle the next button click
+  const handleNextButtonClick = () => {
+    if (currentIndex === noOfQuestions - 1) {
+      setCurrentIndex(0);
+      return;
+    }
+
+    setCurrentIndex(currentIndex + 1);
+  };
+
+  // for loading the questions from database
+  useEffect(() => {
+    (async () => {
+      await dispatch(getAllQuestion());
+    })();
+  }, []);
 
   return (
     <div className="h-[100vh] w-full ml-60 flex items-center justify-center">
       {/* creating the quiz template */}
-      <form className="w-1/2 flex flex-col py-5 px-10 space-y-5 rounded-lg shadow-md">
+      <div className="w-1/2 flex flex-col py-5 px-10 space-y-5 rounded-lg shadow-md">
         {/* header part of card */}
         <header className="w-full flex items-center justify-between font-semibold">
-          <h1>5 of 10</h1>
+          <h1>
+            {currentIndex + 1} of {noOfQuestions}
+          </h1>
           <h1>Timer : 04 : 30 min</h1>
         </header>
 
         {/* question and option section */}
         <section className="space-y-5 flex flex-col">
           <h1 className="font-bold">
-            <span className="text-[#00C8AC]">Ques 1.</span> What is computer?
+            <span className="text-[#00C8AC]">Ques {currentIndex + 1}.</span>{" "}
+            {questionsToBeDisplayed[currentIndex]?.question}
           </h1>
 
           {/* creating the options */}
@@ -64,49 +111,67 @@ const Quiz = () => {
               <input
                 type="radio"
                 id="option1"
-                // value={data[index]?.answers?.answer_a}
+                value={questionsToBeDisplayed[currentIndex]?.option1}
                 name="option"
+                className="cursor-pointer"
               />
-              <label htmlFor="option1"></label>
+              <label htmlFor="option1" className="align-middle cursor-pointer">
+                {questionsToBeDisplayed[currentIndex]?.option1}
+              </label>
             </div>
 
             <div className="space-x-2">
               <input
                 type="radio"
                 id="option2"
-                // value={data[index]?.answers?.answer_b}
+                value={questionsToBeDisplayed[currentIndex]?.option2}
                 name="option"
+                className="cursor-pointer"
               />
-              <label htmlFor="option2"></label>
+              <label htmlFor="option2" className="align-middle cursor-pointer">
+                {questionsToBeDisplayed[currentIndex]?.option2}
+              </label>
             </div>
 
             <div className="space-x-2">
               <input
                 type="radio"
                 id="option3"
-                // value={data[index]?.answers?.answer_c}
+                value={questionsToBeDisplayed[currentIndex]?.option3}
                 name="option"
+                className="cursor-pointer"
               />
-              <label htmlFor="option3"></label>
+              <label htmlFor="option3" className="align-middle cursor-pointer">
+                {questionsToBeDisplayed[currentIndex]?.option3}
+              </label>
             </div>
 
             <div className="space-x-2">
               <input
                 type="radio"
                 id="option4"
-                // value={data[index]?.answers?.answer_d}
+                value={questionsToBeDisplayed[currentIndex]?.option4}
                 name="option"
+                className="cursor-pointer"
               />
-              <label htmlFor="option4"></label>
+              <label htmlFor="option4" className="align-middle cursor-pointer">
+                {questionsToBeDisplayed[currentIndex]?.option4}
+              </label>
             </div>
           </div>
 
           {/* adding previous and next button */}
           <div className="flex items-center justify-between">
-            <button className="w-24 border-2 border-[#00C8AC] py-1 rounded-md font-bold text-[#00C8AC] transition-all ease-in-out duration-300 hover:shadow-[0_0_5px_#00C8AC]">
+            <button
+              onClick={handlePreviousButtonClick}
+              className="w-24 border-2 border-[#00C8AC] py-1 rounded-md font-bold text-[#00C8AC] transition-all ease-in-out duration-300 hover:shadow-[0_0_5px_#00C8AC]"
+            >
               Previous
             </button>
-            <button className="w-24 border-2 border-[#00C8AC] py-1 rounded-md font-bold text-[#00C8AC] transition-all ease-in-out duration-300 hover:shadow-[0_0_5px_#00C8AC]">
+            <button
+              onClick={handleNextButtonClick}
+              className="w-24 border-2 border-[#00C8AC] py-1 rounded-md font-bold text-[#00C8AC] transition-all ease-in-out duration-300 hover:shadow-[0_0_5px_#00C8AC]"
+            >
               Next
             </button>
           </div>
@@ -116,7 +181,7 @@ const Quiz = () => {
             Submit Answers
           </button>
         </section>
-      </form>
+      </div>
     </div>
   );
 };

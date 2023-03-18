@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { getAllQuestion } from "../redux/QuizSlice";
 import { AppDispatch, RootState } from "../redux/Store";
 import { ImyQuestionData } from "../config/interfaces";
 
 const Quiz = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
 
   // getting the data from location
   const userPreference = useLocation().state;
@@ -121,18 +122,26 @@ const Quiz = () => {
       answer.push("");
     }
     setAnswersSelectedByUser([...answer]);
+
+    if (specificCategoryQuestions.length < noOfQuestions) navigate("/starter");
   }, []);
 
   return (
     <div className="h-[100vh] w-full ml-60 flex items-center justify-center">
       {/* creating the quiz template */}
-      <div className="w-1/2 flex flex-col py-5 px-10 space-y-5 rounded-lg shadow-md">
+      <div className="w-3/4 flex flex-col py-5 px-10 space-y-5 rounded-lg shadow-md">
         {/* header part of card */}
-        <header className="w-full flex items-center justify-between font-semibold">
-          <h1>
-            {currentIndex + 1} of {noOfQuestions}
+        <header className="w-full flex items-center flex-col justify-between font-semibold space-y-4">
+          <h1 className="text-2xl font-bold drop-shadow-sm">
+            <span className="text-[#00C8AC]">{userPreference?.category} </span>
+            Quiz
           </h1>
-          <h1>Timer : 04 : 30 min</h1>
+          <div className="w-full flex items-center justify-between">
+            <h1>
+              {currentIndex + 1} of {noOfQuestions}
+            </h1>
+            <h1>Timer : 04 : 30 min</h1>
+          </div>
         </header>
 
         {/* question and option section */}
@@ -217,7 +226,14 @@ const Quiz = () => {
           </div>
 
           {/* adding the submit button */}
-          <button className="border-2 border-[#00C8AC] px-3 py-1 rounded-md font-bold text-lg bg-[#00C8AC] text-white transition-all ease-in-out duration-300 hover:shadow-[0_0_5px_#00C8AC] w-fit self-center">
+          <button
+            onClick={() =>
+              navigate("/result", {
+                state: { questionsToBeDisplayed, answersSelectedByUser },
+              })
+            }
+            className="border-2 border-[#00C8AC] px-3 py-1 rounded-md font-bold text-lg bg-[#00C8AC] text-white transition-all ease-in-out duration-300 hover:shadow-[0_0_5px_#00C8AC] w-fit self-center"
+          >
             Submit Answers
           </button>
         </section>

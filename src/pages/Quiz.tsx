@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { getAllQuestion } from "../redux/QuizSlice";
 import { AppDispatch, RootState } from "../redux/Store";
 import { ImyQuestionData } from "../config/interfaces";
+import { toast } from "react-hot-toast";
 
 const Quiz = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -123,7 +124,9 @@ const Quiz = () => {
     }
     setAnswersSelectedByUser([...answer]);
 
+    // checking for the insufficient questions in a category
     if (specificCategoryQuestions.length < noOfQuestions) navigate("/starter");
+    toast.error("Oops! Not enough question in this category");
   }, []);
 
   return (

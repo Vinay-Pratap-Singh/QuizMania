@@ -12,13 +12,14 @@ import StudentsRecord from "./pages/admin/StudentRecord";
 import Category from "./pages/admin/Category";
 import Question from "./pages/admin/Question";
 import AddQuestion from "./pages/admin/AddQuestion";
+import Error from "./pages/Error";
 
 const App = () => {
   return (
     <Layout>
       <Toaster />
       <Routes>
-        <Route path="/" element={<Homepage />}></Route>
+        <Route path="/" element={<Homepage />} />
         <Route path="/starter" element={<QuizStarterPage />} />
         <Route path="/quiz" element={<Quiz />} />
         <Route path="/result" element={<Result />} />
@@ -29,6 +30,7 @@ const App = () => {
         <Route path="/dashboard/admin/category" element={<Category />} />
         <Route path="/dashboard/admin/question" element={<Question />} />
         <Route path="/dashboard/admin/addquestion" element={<AddQuestion />} />
+        <Route path="*" element={<Error />} />
       </Routes>
     </Layout>
   );

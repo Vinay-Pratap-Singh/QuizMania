@@ -13,23 +13,38 @@ import Category from "./pages/admin/Category";
 import Question from "./pages/admin/Question";
 import AddQuestion from "./pages/admin/AddQuestion";
 import Error from "./pages/Error";
+import NotRequireAuth from "./components/auth/NotRequireAuth";
+import RequireAuth from "./components/auth/RequireAuth";
+import { ADMIN_ROLE, USER_ROLE } from "./config/config";
 
 const App = () => {
   return (
     <Layout>
       <Toaster />
       <Routes>
-        <Route path="/" element={<Homepage />} />
-        <Route path="/starter" element={<QuizStarterPage />} />
-        <Route path="/quiz" element={<Quiz />} />
-        <Route path="/result" element={<Result />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/dashboard/admin" element={<Dashboard />} />
-        <Route path="/dashboard/admin/student" element={<StudentsRecord />} />
-        <Route path="/dashboard/admin/category" element={<Category />} />
-        <Route path="/dashboard/admin/question" element={<Question />} />
-        <Route path="/dashboard/admin/addquestion" element={<AddQuestion />} />
+        <Route element={<NotRequireAuth />}>
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+        </Route>
+
+        <Route element={<RequireAuth allowedRoles={[USER_ROLE, ADMIN_ROLE]} />}>
+          <Route path="/" element={<Homepage />} />
+          <Route path="/starter" element={<QuizStarterPage />} />
+          <Route path="/quiz" element={<Quiz />} />
+          <Route path="/result" element={<Result />} />
+        </Route>
+
+        <Route element={<RequireAuth allowedRoles={[ADMIN_ROLE]} />}>
+          <Route path="/dashboard/admin" element={<Dashboard />} />
+          <Route path="/dashboard/admin/student" element={<StudentsRecord />} />
+          <Route path="/dashboard/admin/category" element={<Category />} />
+          <Route path="/dashboard/admin/question" element={<Question />} />
+          <Route
+            path="/dashboard/admin/addquestion"
+            element={<AddQuestion />}
+          />
+        </Route>
+
         <Route path="*" element={<Error />} />
       </Routes>
     </Layout>

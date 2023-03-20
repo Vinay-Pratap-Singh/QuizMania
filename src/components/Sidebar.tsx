@@ -12,24 +12,18 @@ import { BsCaretDown, BsCaretUp } from "react-icons/bs";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../redux/Store";
-import { isUserLoggedIn, logout } from "../redux/AuthSlice";
+import { logout } from "../redux/AuthSlice";
+import useLoggedIn from "../hook/useLoggedIn";
 
 const Sidebar = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   // for toggling login and logout button
-  const isLoggedIn: boolean = useSelector(
-    (state: RootState) => state.auth.isLoggedIn
-  );
+  const isLoggedIn: boolean = useLoggedIn();
   const userRole: string = "admin";
 
   // for getting drop down menu
   const [dropDownMenu, setDropDownMenu] = useState<boolean>(false);
-
-  // checking that the user is logged in or not
-  useEffect(() => {
-    dispatch(isUserLoggedIn());
-  }, []);
 
   return (
     <div className="w-60 border-[1px] h-[100vh] border-r-gray-300 fixed left-0 z-50">

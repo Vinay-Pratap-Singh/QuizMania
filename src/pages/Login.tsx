@@ -39,7 +39,9 @@ const Login = () => {
   };
 
   // function to handle login using email and password
-  const LoginUsingEmailAccount = (event: React.MouseEvent<HTMLElement>) => {
+  const LoginUsingEmailAccount = async (
+    event: React.MouseEvent<HTMLElement>
+  ) => {
     if (disabled) {
       return;
     }
@@ -56,7 +58,7 @@ const Login = () => {
       return;
     }
 
-    dispatch(loginUsingEmail(inputData));
+    await dispatch(loginUsingEmail(inputData));
     setDisabled(false);
 
     // clearing the state

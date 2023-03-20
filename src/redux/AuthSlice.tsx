@@ -9,19 +9,22 @@ import {
 } from "firebase/auth";
 import { db, firebaseAuth } from "../config/firebase";
 import toast from "react-hot-toast";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { USER_ROLE } from "../config/config";
 
 interface Istate {
   isLoggedIn: boolean;
-  role: string;
+  role: string[];
   name: string | null;
+  email: string;
 }
 
 // creating the initial state
 const initialState: Istate = {
   isLoggedIn: false,
-  role: "",
+  role: [],
   name: "",
+  email: "",
 };
 
 export interface IuserSignupData {
@@ -50,7 +53,8 @@ export const createAccountUsingEmail = createAsyncThunk(
     // adding the role and name data to firestore
     await setDoc(doc(db, "user", `${res.user.uid}`), {
       name: userData.name,
-      role: "user",
+      email: userData.email,
+      role: [USER_ROLE],
     });
     return res;
   }
@@ -63,7 +67,26 @@ export const usingGoogleAuthentication = createAsyncThunk(
     // creating the user account using the google account
     const provider = new GoogleAuthProvider();
     const res = await signInWithPopup(firebaseAuth, provider);
-    return res;
+
+    //  updating the user profile details
+    firebaseAuth.currentUser &&
+      (await updateProfile(firebaseAuth.currentUser, {
+        displayName: res.user.displayName,
+      }));
+
+    // adding the role and name data to firestore
+    await setDoc(doc(db, "user", `${res.user.uid}`), {
+      name: res.user.displayName,
+      email: res.user.email,
+      role: [USER_ROLE],
+    });
+
+    // getting the name, email and role data (user personal details)
+    const docRef = await doc(db, "user", res.user.uid);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      return docSnap.data();
+    }
   }
 );
 
@@ -83,7 +106,12 @@ export const loginUsingEmail = createAsyncThunk(
       userData.password
     );
 
-    return res;
+    // getting the name, email and role data (user personal details)
+    const docRef = await doc(db, "user", res.user.uid);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      return docSnap.data();
+    }
   }
 );
 
@@ -96,18 +124,7 @@ export const logout = createAsyncThunk("/auth/logout", async () => {
 const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {
-    isUserLoggedIn: (state) => {
-      const user = firebaseAuth.currentUser;
-      if (!user) {
-        state.isLoggedIn = false;
-        state.name = "";
-      } else {
-        state.isLoggedIn = true;
-        state.name = user.displayName;
-      }
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       // cases for creating account using email and password
@@ -125,7 +142,6 @@ const authSlice = createSlice({
         toast.error("Failed to Create Account");
         const message: string | undefined = action.error.message as string;
         toast.error(message);
-        console.log(action.error);
       })
       // cases for creating account using google authentication
       .addCase(usingGoogleAuthentication.pending, () => {
@@ -134,8 +150,10 @@ const authSlice = createSlice({
       .addCase(usingGoogleAuthentication.fulfilled, (state, action) => {
         toast.remove();
         toast.success("Logged in successfully");
-        state.name = action.payload.user.displayName;
         state.isLoggedIn = true;
+        state.name = action?.payload?.name;
+        state.role = action?.payload?.role;
+        state.email = action?.payload?.email;
       })
       .addCase(usingGoogleAuthentication.rejected, () => {
         toast.remove();
@@ -145,10 +163,13 @@ const authSlice = createSlice({
       .addCase(loginUsingEmail.pending, () => {
         toast.loading("Wait! verifying your credential...");
       })
-      .addCase(loginUsingEmail.fulfilled, (state) => {
+      .addCase(loginUsingEmail.fulfilled, (state, action) => {
         toast.remove();
         toast.success("Logged in successfully");
         state.isLoggedIn = true;
+        state.name = action?.payload?.name;
+        state.role = action?.payload?.role;
+        state.email = action?.payload?.email;
       })
       .addCase(loginUsingEmail.rejected, () => {
         toast.remove();
@@ -158,6 +179,8 @@ const authSlice = createSlice({
       .addCase(logout.fulfilled, (state) => {
         state.isLoggedIn = false;
         state.name = "";
+        state.role = [];
+        state.email = "";
         toast.success("Logout Successful");
       })
       .addCase(logout.rejected, () => {
@@ -167,7 +190,7 @@ const authSlice = createSlice({
 });
 
 // exporting my reducers
-export const { isUserLoggedIn } = authSlice.actions;
+export const {} = authSlice.actions;
 
 // exporting the slice as default
 export default authSlice.reducer;

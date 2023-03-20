@@ -123,10 +123,6 @@ const Quiz = () => {
       answer.push("");
     }
     setAnswersSelectedByUser([...answer]);
-
-    // checking for the insufficient questions in a category
-    if (specificCategoryQuestions.length < noOfQuestions) navigate("/starter");
-    toast.error("Oops! Not enough question in this category");
   }, []);
 
   return (

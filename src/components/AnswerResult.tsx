@@ -2,8 +2,6 @@ import { ImyQuestionData } from "../config/interfaces";
 
 // @ts-ignore
 const AnswerResult = ({ questionsToBeDisplayed, answersSelectedByUser }) => {
-  console.log(questionsToBeDisplayed, answersSelectedByUser);
-
   return (
     <div className="mt-10 w-3/4">
       <h1 className="font-bold text-center text-2xl mb-5">
@@ -35,15 +33,23 @@ const AnswerResult = ({ questionsToBeDisplayed, answersSelectedByUser }) => {
                   {element?.correctOption}
                 </p>
 
+                {/* user option */}
+                <p className="text-left text-sm">
+                  <span className="font-semibold">Your Option : </span>
+                  {answersSelectedByUser[index]
+                    ? answersSelectedByUser[index]
+                    : "Not Answered"}
+                </p>
+
                 {/* answer description */}
-                {element.description && (
-                  <p className="text-left text-sm">
-                    <span className="font-semibold">
-                      Description <br />
-                    </span>
-                    {element?.description}
-                  </p>
-                )}
+                <p className="text-left text-sm">
+                  <span className="font-semibold">
+                    Description <br />
+                  </span>
+                  {element.description
+                    ? element.description
+                    : "No description available"}
+                </p>
               </div>
             );
           }

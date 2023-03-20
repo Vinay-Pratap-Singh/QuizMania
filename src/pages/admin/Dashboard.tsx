@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import PieChart from "../../components/PieChart";
 import { IchartData } from "../../redux/QuizSlice";
 

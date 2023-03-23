@@ -145,6 +145,7 @@ const Signup = () => {
               name="name"
               value={inputData.name}
               onChange={handleInput}
+              autoComplete="off"
             />
           </div>
 
@@ -158,6 +159,7 @@ const Signup = () => {
               name="email"
               value={inputData.email}
               onChange={handleInput}
+              autoComplete="off"
             />
           </div>
 
@@ -171,6 +173,7 @@ const Signup = () => {
               name="password"
               value={inputData.password}
               onChange={handleInput}
+              autoComplete="off"
             />
 
             <div

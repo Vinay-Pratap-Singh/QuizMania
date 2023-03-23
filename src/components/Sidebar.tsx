@@ -13,13 +13,14 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../redux/Store";
 import { logout } from "../redux/AuthSlice";
-import useLoggedIn from "../hook/useLoggedIn";
 
 const Sidebar = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   // for toggling login and logout button
-  const isLoggedIn: boolean = useLoggedIn();
+  const isLoggedIn: boolean = useSelector(
+    (state: RootState) => state.auth.isLoggedIn
+  );
   const userRole: string = "admin";
 
   // for getting drop down menu

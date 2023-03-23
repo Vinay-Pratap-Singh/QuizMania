@@ -114,9 +114,11 @@ const Login = () => {
               className="border border-white border-b-black"
               type="email"
               name="email"
+              value={inputData.email}
               onChange={handleInput}
               placeholder="Enter your email"
               required
+              autoComplete="off"
             />
           </div>
 
@@ -126,9 +128,11 @@ const Login = () => {
               className="border border-white border-b-black"
               type={passwordStatus ? "text" : "password"}
               name="password"
+              value={inputData.password}
               onChange={handleInput}
               placeholder="Enter your password"
               required
+              autoComplete="off"
             />
             <div
               onClick={() => setPasswordStatus(!passwordStatus)}
@@ -144,6 +148,16 @@ const Login = () => {
             <Link to={"/signup"}>
               <span className="text-[#00C8AC] font-semibold">Signup</span>
             </Link>
+          </p>
+
+          {/* for using the test credentials */}
+          <p
+            onClick={() => {
+              setInputData({ email: "test@gmail.com", password: "Test@123" });
+            }}
+            className="text-[#00C8AC] font-semibold cursor-pointer"
+          >
+            Use test credentials
           </p>
 
           {/* adding the submit button */}

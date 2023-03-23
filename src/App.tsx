@@ -1,6 +1,6 @@
 import Layout from "./layout/Layout";
 import { Routes, Route } from "react-router-dom";
-import Homepage from "./pages/HomePage";
+import Homepage from "./pages/Homepage";
 import QuizStarterPage from "./pages/QuizStarterPage";
 import Quiz from "./pages/Quiz";
 import Result from "./pages/Result";

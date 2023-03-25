@@ -7,7 +7,7 @@ import {
 } from "react-icons/ai";
 import { MdOutlineCategory, MdOutlineDashboard } from "react-icons/md";
 import { GrContact, GrOverview } from "react-icons/gr";
-import { BsCaretDown, BsCaretUp } from "react-icons/bs";
+import { BsCaretDown, BsCaretUp, BsQuestion } from "react-icons/bs";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../redux/Store";
@@ -91,6 +91,13 @@ const Sidebar = () => {
                   <li className="flex items-center gap-2 cursor-pointer hover:text-[#00C8AC] hover:pl-2 transition-all ease-in-out duration-300">
                     <MdOutlineCategory className="text-xl" />
                     <p>Category</p>
+                  </li>
+                </Link>
+
+                <Link to={"/dashboard/admin/question"}>
+                  <li className="flex items-center gap-2 cursor-pointer hover:text-[#00C8AC] hover:pl-2 transition-all ease-in-out duration-300">
+                    <BsQuestion className="text-xl" />
+                    <p>Questions</p>
                   </li>
                 </Link>
               </ul>

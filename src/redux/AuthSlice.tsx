@@ -134,8 +134,6 @@ const authSlice = createSlice({
       .addCase(createAccountUsingEmail.fulfilled, (state, action) => {
         toast.remove();
         toast.success("Account created successfully");
-        state.name = action.payload.user.displayName;
-        state.isLoggedIn = true;
       })
       .addCase(createAccountUsingEmail.rejected, (state, action) => {
         toast.remove();
@@ -144,9 +142,6 @@ const authSlice = createSlice({
         toast.error(message);
       })
       // cases for creating account using google authentication
-      .addCase(usingGoogleAuthentication.pending, () => {
-        toast.loading("Wait! Fetching the data...");
-      })
       .addCase(usingGoogleAuthentication.fulfilled, (state, action) => {
         toast.remove();
         toast.success("Logged in successfully");

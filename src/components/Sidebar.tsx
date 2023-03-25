@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import logo from "../assets/logo.png";
 import {
@@ -13,6 +12,7 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../redux/Store";
 import { logout } from "../redux/AuthSlice";
+import { ADMIN_ROLE } from "../config/config";
 
 const Sidebar = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -21,8 +21,8 @@ const Sidebar = () => {
   const isLoggedIn: boolean = useSelector(
     (state: RootState) => state.auth.isLoggedIn
   );
-  const userRole: string = "admin";
-
+  const userRole = useSelector((state: RootState) => state.auth.role);
+  const userName = useSelector((state: RootState) => state.auth.name);
   // for getting drop down menu
   const [dropDownMenu, setDropDownMenu] = useState<boolean>(false);
 
@@ -32,7 +32,7 @@ const Sidebar = () => {
       <header className="flex flex-col gap-2 items-center py-3 border-[1px] border-b-gray-300 border-t-transparent border-l-transparent border-r-transparent">
         <img className="w-24" src={logo} alt="logo image" />
         {isLoggedIn ? (
-          <h3 className="font-medium text-xl">Vinay Pratap Singh</h3>
+          <h3 className="font-medium text-xl">{userName}</h3>
         ) : (
           <p></p>
         )}
@@ -40,10 +40,12 @@ const Sidebar = () => {
 
       {/* creating the body part of side bar */}
       <ul className="p-4 font-medium space-y-4">
-        <li className="flex items-center gap-2 cursor-pointer hover:text-[#00C8AC] hover:pl-2 transition-all ease-in-out duration-300">
-          <AiOutlineHome className="text-xl" />
-          <p>Home</p>
-        </li>
+        <Link to={"/"}>
+          <li className="flex items-center gap-2 cursor-pointer hover:text-[#00C8AC] hover:pl-2 transition-all ease-in-out duration-300">
+            <AiOutlineHome className="text-xl" />
+            <p>Home</p>
+          </li>
+        </Link>
 
         {isLoggedIn && (
           <li className="relative">
@@ -51,31 +53,46 @@ const Sidebar = () => {
               onClick={() => setDropDownMenu(!dropDownMenu)}
               className="flex items-center justify-between cursor-pointer hover:text-[#00C8AC] hover:pl-2 transition-all ease-in-out duration-300"
             >
-              <div className="flex items-center gap-2">
-                <MdOutlineDashboard className="text-xl" />
-                <p>Dashboard</p>
-              </div>
-              {userRole === "admin" && (
+              {userRole.includes(ADMIN_ROLE) ? (
+                <div className="flex items-center gap-2">
+                  <MdOutlineDashboard className="text-xl" />
+                  <p>Dashboard</p>
+                </div>
+              ) : (
+                <Link to={"/dashboard/user"}>
+                  <div className="flex items-center gap-2">
+                    <MdOutlineDashboard className="text-xl" />
+                    <p>Dashboard</p>
+                  </div>
+                </Link>
+              )}
+              {userRole.includes(ADMIN_ROLE) && (
                 <div>{dropDownMenu ? <BsCaretUp /> : <BsCaretDown />}</div>
               )}
             </div>
 
-            {dropDownMenu && userRole === "admin" && (
+            {dropDownMenu && userRole.includes(ADMIN_ROLE) && (
               <ul className="pl-8 pt-2 space-y-2">
-                <li className="flex items-center gap-2 cursor-pointer hover:text-[#00C8AC] hover:pl-2 transition-all ease-in-out duration-300">
-                  <GrOverview className="text-lg" />
-                  <p>Overview</p>
-                </li>
+                <Link to={"/dashboard/admin"}>
+                  <li className="flex items-center gap-2 cursor-pointer hover:text-[#00C8AC] hover:pl-2 transition-all ease-in-out duration-300">
+                    <GrOverview className="text-lg" />
+                    <p>Overview</p>
+                  </li>
+                </Link>
 
-                <li className="flex items-center gap-2 cursor-pointer hover:text-[#00C8AC] hover:pl-2 transition-all ease-in-out duration-300">
-                  <AiOutlineDatabase className="text-xl" />
-                  <p>Students</p>
-                </li>
+                <Link to={"/dashboard/admin/student"}>
+                  <li className="flex items-center gap-2 cursor-pointer hover:text-[#00C8AC] hover:pl-2 transition-all ease-in-out duration-300">
+                    <AiOutlineDatabase className="text-xl" />
+                    <p>Students</p>
+                  </li>
+                </Link>
 
-                <li className="flex items-center gap-2 cursor-pointer hover:text-[#00C8AC] hover:pl-2 transition-all ease-in-out duration-300">
-                  <MdOutlineCategory className="text-xl" />
-                  <p>Category</p>
-                </li>
+                <Link to={"/dashboard/admin/category"}>
+                  <li className="flex items-center gap-2 cursor-pointer hover:text-[#00C8AC] hover:pl-2 transition-all ease-in-out duration-300">
+                    <MdOutlineCategory className="text-xl" />
+                    <p>Category</p>
+                  </li>
+                </Link>
               </ul>
             )}
           </li>

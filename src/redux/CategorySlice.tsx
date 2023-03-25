@@ -104,7 +104,6 @@ export const updateCategory = createAsyncThunk(
       });
 
       const response = await res;
-
       return response;
     } catch (error) {
       toast.error("Operation Failed");

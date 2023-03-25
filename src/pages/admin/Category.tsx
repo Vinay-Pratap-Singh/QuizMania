@@ -5,39 +5,63 @@ import {
   addCategory,
   deleteCategory,
   getCategory,
+  updateCategory,
 } from "../../redux/CategorySlice";
+import { IcategoryStateData } from "../../redux/CategorySlice";
 import { AppDispatch, RootState } from "../../redux/Store";
 import { toast } from "react-hot-toast";
+import { AiOutlineUndo } from "react-icons/ai";
 
 const Category = () => {
   const dispatch = useDispatch<AppDispatch>();
-
   const categoryData = useSelector((state: RootState) => state.category);
-
   const [userInput, setUserInput] = useState<string>("");
-
+  const [newCategory, setNewCategory] = useState<boolean>(true);
+  const [updateCategoryData, setUpdateCategoryData] =
+    useState<IcategoryStateData>({ categoryName: "", id: "" });
   // function to dispatch create new category from toolkit thunk
   const handleCreateCategory = async (
-    event: React.FormEvent<HTMLFormElement>
+    event: React.FormEvent<HTMLFormElement>,
+    data: IcategoryStateData
   ) => {
     event.preventDefault();
-
     if (!userInput) return toast.error("Name cannot be empty");
-    await dispatch(addCategory(userInput));
+    if (newCategory) {
+      await dispatch(addCategory(userInput));
+    } else {
+      await dispatch(updateCategory({ categoryName: userInput, id: data.id }));
+    }
 
-    // empty the input field
+    // empty the input field and update category data
     setUserInput("");
+    setUpdateCategoryData({ categoryName: "", id: "" });
+    setNewCategory(true);
 
     // dispatching the getCategory to update the slice data
-    dispatch(getCategory());
+    await dispatch(getCategory());
   };
 
   // function to dispatch delete category from toolkit thunk
   const handleDeleteCategory = async (id: string) => {
+    if (!newCategory) {
+      toast.error("Complete the update process before deletion");
+      return;
+    }
     await dispatch(deleteCategory(id));
-
     // dispatching the getCategory to update the slice data
     await dispatch(getCategory());
+  };
+
+  const handleUpdateCategory = (data: IcategoryStateData) => {
+    setUserInput(data.categoryName);
+    setNewCategory(false);
+    setUpdateCategoryData({ ...data });
+  };
+
+  const handleDiscard = () => {
+    setNewCategory(true);
+    setUserInput("");
+    setUpdateCategoryData({ categoryName: "", id: "" });
   };
 
   // for getting the category data on page render
@@ -59,10 +83,12 @@ const Category = () => {
         </header>
 
         {/* card for category */}
-        <div className=" shadow-md rounded-md flex flex-col gap-4 items-center w-96 h-[75%] p-4">
+        <div className=" shadow-md rounded-md flex flex-col gap-4 items-center w-96 h-[75%] p-4 overflow-y-scroll">
           <form
-            onSubmit={handleCreateCategory}
-            className="border border-gray-500 rounded-3xl w-full flex items-center justify-between font-medium pl-4"
+            onSubmit={(event) =>
+              handleCreateCategory(event, updateCategoryData)
+            }
+            className="rounded-3xl w-full flex items-center justify-between font-medium pl-4 shadow-md"
           >
             <input
               className="py-1"
@@ -71,29 +97,42 @@ const Category = () => {
               value={userInput}
               onChange={(event) => setUserInput(event.target.value)}
             />
-            <button
-              type="submit"
-              className="rounded-tr-3xl rounded-br-3xl bg-[#00C8AC] h-full w-10 pl-3"
-            >
-              <GrAdd />
-            </button>
+            <div className="h-full">
+              {!newCategory && (
+                <button
+                  onClick={handleDiscard}
+                  className="bg-yellow-500 hover:bg-yellow-400 transition-all ease-in-out duration-300 px-3 h-full text-white"
+                >
+                  <AiOutlineUndo />
+                </button>
+              )}
+              <button
+                type="submit"
+                className="rounded-tr-3xl rounded-br-3xl bg-green-500 hover:bg-green-400 transition-all ease-in-out duration-300 text-white h-full w-10 pl-3"
+              >
+                <GrAdd />
+              </button>
+            </div>
           </form>
 
           {/* list of existing categories */}
-          <ul className="border border-gray-500 rounded-sm w-full h-full">
+          <ul className="w-full h-full space-y-3">
             {categoryData &&
               categoryData.map((element) => {
                 return (
                   <li
                     key={element?.id}
-                    className="flex items-center justify-between px-3 py-1 font-medium"
+                    className="flex items-center justify-between px-3 py-1 font-medium rounded-md shadow-md"
                   >
                     <p>{element?.categoryName}</p>
                     <div className="flex items-center gap-3">
-                      <button>
+                      <button
+                        onClick={() => handleUpdateCategory(element)}
+                        className="bg-yellow-500 hover:bg-yellow-400 transition-all ease-in-out duration-300 px-3 py-2 rounded-md text-white "
+                      >
                         <GrEdit />
                       </button>
-                      <button>
+                      <button className="bg-red-500 hover:bg-red-400 transition-all ease-in-out duration-300 px-3 py-2 rounded-md text-white">
                         <GrTrash
                           onClick={() => handleDeleteCategory(element?.id)}
                         />

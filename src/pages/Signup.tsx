@@ -40,7 +40,9 @@ const Signup = () => {
   };
 
   // function to handle create account using email
-  const createNewAccountUsingEmail = (event: React.MouseEvent<HTMLElement>) => {
+  const createNewAccountUsingEmail = async (
+    event: React.MouseEvent<HTMLElement>
+  ) => {
     if (disabled) {
       return;
     }
@@ -83,15 +85,18 @@ const Signup = () => {
       return;
     }
 
-    dispatch(createAccountUsingEmail(inputData));
+    const res = await dispatch(createAccountUsingEmail(inputData));
     setDisabled(false);
+    if (res.meta.requestStatus === "fulfilled") {
+      navigate("/login");
+    }
 
     // clearing the state
     setInputData({ name: "", email: "", password: "" });
   };
 
   // function to handle create account using the google account
-  const createNewAccountUsingGoogle = (
+  const createNewAccountUsingGoogle = async (
     event: React.MouseEvent<HTMLElement>
   ) => {
     if (disabled) {
@@ -101,7 +106,7 @@ const Signup = () => {
     setDisabled(true);
 
     event.preventDefault();
-    dispatch(usingGoogleAuthentication());
+    await dispatch(usingGoogleAuthentication());
 
     setDisabled(false);
   };

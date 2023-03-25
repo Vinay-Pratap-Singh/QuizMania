@@ -27,3 +27,10 @@ export interface ImyQuestionData {
 export interface IquizSliceState {
   questions: ImyQuestionData[];
 }
+
+// for inital state of user slice
+export interface IinitialStateUser {
+  email: string;
+  name: string;
+  role: string[];
+}

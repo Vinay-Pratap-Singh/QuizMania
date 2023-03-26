@@ -29,8 +29,20 @@ const Question = () => {
 
   // function to dispatch delete operation for question
   const dispatchDeleteOperation = async (id: string) => {
-    await dispatch(deleteQuestion(id));
-    await dispatch(getAllQuestion());
+    const userOption = window.confirm(
+      "Are you sure you want to delete this question?"
+    );
+    if (userOption) {
+      await dispatch(deleteQuestion(id));
+      await dispatch(getAllQuestion());
+      setFilteredQuestions([...orgQuestions]);
+      if (filteredQuestions.length < 5) {
+        setIndexEnd(orgQuestions.length);
+      } else {
+        setIndexEnd(5);
+      }
+      setIndexStart(0);
+    }
   };
 
   // function to handle add question button click
@@ -127,7 +139,6 @@ const Question = () => {
     if (filteredQuestions.length < 5) {
       setIndexEnd(orgQuestions.length);
     }
-    handlePagination();
   }, []);
 
   return (
@@ -136,7 +147,7 @@ const Question = () => {
         Welcome to the <span className="text-[#00C8AC]">Question Page</span>
       </h2>
 
-      <div className="shadow-lg p-2 rounded-md">
+      <div className="shadow-lg p-2 rounded-md w-full">
         {/* for search and add question */}
         <header className="border border-b-gray-600 flex items-center justify-between p-4">
           <form
@@ -166,7 +177,7 @@ const Question = () => {
         </header>
 
         {/* adding the table to display question list */}
-        <table className="text-base overflow-x-auto">
+        <table className="overflow-x-auto w-full object-fill">
           <thead className="bg-gray-200">
             <tr className="align-text-top">
               <th className="p-1 border border-r-gray-600 border-b-gray-600">

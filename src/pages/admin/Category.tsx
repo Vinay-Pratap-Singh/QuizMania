@@ -47,9 +47,13 @@ const Category = () => {
       toast.error("Complete the update process before deletion");
       return;
     }
-    await dispatch(deleteCategory(id));
-    // dispatching the getCategory to update the slice data
-    await dispatch(getCategory());
+    if (
+      window.confirm("Are you sure you want to delete the category?") === true
+    ) {
+      await dispatch(deleteCategory(id));
+      // dispatching the getCategory to update the slice data
+      await dispatch(getCategory());
+    }
   };
 
   const handleUpdateCategory = (data: IcategoryStateData) => {

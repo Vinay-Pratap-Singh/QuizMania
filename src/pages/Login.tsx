@@ -87,7 +87,7 @@ const Login = () => {
   }, [isLoggedIn]);
 
   return (
-    <div className="h-[100vh] w-full flex items-center justify-center">
+    <div className="h-[100vh] w-full flex items-center justify-center ml-60">
       <div className="shadow-md rounded-md flex flex-col gap-4 items-center w-80 p-4">
         {/* adding the google auth button */}
         <button

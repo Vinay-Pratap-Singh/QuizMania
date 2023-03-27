@@ -39,7 +39,7 @@ const Sidebar = () => {
       </header>
 
       {/* creating the body part of side bar */}
-      <ul className="p-4 font-medium space-y-4">
+      <ul className="p-4 font-medium space-y-3 flex flex-col ">
         <Link to={"/"}>
           <li className="flex items-center gap-2 cursor-pointer hover:text-[#00C8AC] hover:pl-2 transition-all ease-in-out duration-300">
             <AiOutlineHome className="text-xl" />
@@ -72,7 +72,7 @@ const Sidebar = () => {
             </div>
 
             {dropDownMenu && userRole.includes(ADMIN_ROLE) && (
-              <ul className="pl-8 pt-2 space-y-2">
+              <ul className="pl-8 pt-2 space-y-3 flex flex-col">
                 <Link to={"/dashboard/admin"}>
                   <li className="flex items-center gap-2 cursor-pointer hover:text-[#00C8AC] hover:pl-2 transition-all ease-in-out duration-300">
                     <GrOverview className="text-lg" />
@@ -105,15 +105,19 @@ const Sidebar = () => {
           </li>
         )}
 
-        <li className="flex items-center gap-2 cursor-pointer hover:text-[#00C8AC] hover:pl-2 transition-all ease-in-out duration-300">
-          <GrContact className="text-lg" />
-          <p>Contact Us</p>
-        </li>
+        <Link to={"/contact"}>
+          <li className="flex items-center gap-2 cursor-pointer hover:text-[#00C8AC] hover:pl-2 transition-all ease-in-out duration-300">
+            <GrContact className="text-lg" />
+            <p>Contact Us</p>
+          </li>
+        </Link>
 
-        <li className="flex items-center gap-2 cursor-pointer hover:text-[#00C8AC] hover:pl-2 transition-all ease-in-out duration-300">
-          <AiOutlineUser className="text-xl" />
-          <p>About Us</p>
-        </li>
+        <Link to={"/about"}>
+          <li className="flex items-center gap-2 cursor-pointer hover:text-[#00C8AC] hover:pl-2 transition-all ease-in-out duration-300">
+            <AiOutlineUser className="text-xl" />
+            <p>About Us</p>
+          </li>
+        </Link>
       </ul>
 
       {/* adding the login, signup and logout button */}

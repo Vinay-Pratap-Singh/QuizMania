@@ -32,9 +32,12 @@ const StudentsRecord = () => {
           <table className="w-full text-left">
             <thead>
               <tr>
-                <th>S NO.</th>
-                <th>NAME</th>
-                <th>EMAIL</th>
+                <th>S No.</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Quiz Attempted</th>
+                <th>Passed</th>
+                <th>Failed</th>
               </tr>
             </thead>
 

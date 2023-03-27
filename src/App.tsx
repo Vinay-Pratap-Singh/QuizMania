@@ -17,20 +17,23 @@ import NotRequireAuth from "./components/auth/NotRequireAuth";
 import RequireAuth from "./components/auth/RequireAuth";
 import { ADMIN_ROLE, USER_ROLE } from "./config/config";
 import Denied from "./pages/Denied";
+import Contact from "./pages/Contact";
 
 const App = () => {
   return (
     <Layout>
       <Toaster />
       <Routes>
+        <Route path="/" element={<Homepage />} />
+        <Route path="/denied" element={<Denied />} />
+        <Route path="/contact" element={<Contact />} />
+
         <Route element={<NotRequireAuth />}>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/denied" element={<Denied />} />
         </Route>
 
         <Route element={<RequireAuth allowedRoles={[USER_ROLE, ADMIN_ROLE]} />}>
-          <Route path="/" element={<Homepage />} />
           <Route path="/starter" element={<QuizStarterPage />} />
           <Route path="/quiz" element={<Quiz />} />
           <Route path="/result" element={<Result />} />

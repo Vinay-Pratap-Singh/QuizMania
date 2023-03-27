@@ -25,6 +25,9 @@ export const getUserData = createAsyncThunk("user/getdata", async () => {
         name: doc.data().name,
         email: doc.data().email,
         role: doc.data().role,
+        quizAttempted: doc.data().quizAttempted,
+        passed: doc.data().passed,
+        failed: doc.data().failed,
       };
       userData.push(user);
     });

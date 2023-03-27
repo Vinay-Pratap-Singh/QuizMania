@@ -17,6 +17,9 @@ interface Istate {
   role: string[];
   name: string | null;
   email: string;
+  quizAttempted: number;
+  passed: number;
+  failed: number;
 }
 
 // creating the initial state
@@ -25,6 +28,9 @@ const initialState: Istate = {
   role: [],
   name: "",
   email: "",
+  quizAttempted: 0,
+  passed: 0,
+  failed: 0,
 };
 
 export interface IuserSignupData {
@@ -55,6 +61,9 @@ export const createAccountUsingEmail = createAsyncThunk(
       name: userData.name,
       email: userData.email,
       role: [USER_ROLE],
+      quizAttempted: 0,
+      passed: 0,
+      failed: 0,
     });
     return res;
   }
@@ -79,6 +88,9 @@ export const usingGoogleAuthentication = createAsyncThunk(
       name: res.user.displayName,
       email: res.user.email,
       role: [USER_ROLE],
+      quizAttempted: 0,
+      passed: 0,
+      failed: 0,
     });
 
     // getting the name, email and role data (user personal details)
@@ -149,6 +161,9 @@ const authSlice = createSlice({
         state.name = action?.payload?.name;
         state.role = action?.payload?.role;
         state.email = action?.payload?.email;
+        state.quizAttempted = action?.payload?.quizAttempted;
+        state.passed = action?.payload?.passed;
+        state.failed = action?.payload?.failed;
       })
       .addCase(usingGoogleAuthentication.rejected, () => {
         toast.remove();
@@ -165,6 +180,9 @@ const authSlice = createSlice({
         state.name = action?.payload?.name;
         state.role = action?.payload?.role;
         state.email = action?.payload?.email;
+        state.quizAttempted = action?.payload?.quizAttempted;
+        state.passed = action?.payload?.passed;
+        state.failed = action?.payload?.failed;
       })
       .addCase(loginUsingEmail.rejected, () => {
         toast.remove();

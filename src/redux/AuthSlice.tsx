@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
   createUserWithEmailAndPassword,
+  getAdditionalUserInfo,
   GoogleAuthProvider,
   signInWithEmailAndPassword,
   signInWithPopup,
@@ -78,29 +79,27 @@ export const usingGoogleAuthentication = createAsyncThunk(
     // creating the user account using the google account
     const provider = new GoogleAuthProvider();
     const res = await signInWithPopup(firebaseAuth, provider);
+    const { isNewUser } = getAdditionalUserInfo(res)!;
 
-    //  updating the user profile details
-    firebaseAuth.currentUser &&
-      (await updateProfile(firebaseAuth.currentUser, {
-        displayName: res.user.displayName,
-      }));
+    if (isNewUser) {
+      //  updating the user profile details
+      firebaseAuth.currentUser &&
+        (await updateProfile(firebaseAuth.currentUser, {
+          displayName: res.user.displayName,
+        }));
 
-    // adding the role and name data to firestore
-    await setDoc(doc(db, "user", `${res.user.uid}`), {
-      name: res.user.displayName,
-      email: res.user.email,
-      role: [USER_ROLE],
-      quizAttempted: 0,
-      passed: 0,
-      failed: 0,
-    });
-
-    // getting the name, email and role data (user personal details)
-    const docRef = await doc(db, "user", res.user.uid);
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      return docSnap.data();
+      // adding the role and name data to firestore
+      await setDoc(doc(db, "user", `${res.user.uid}`), {
+        name: res.user.displayName,
+        email: res.user.email,
+        role: [USER_ROLE],
+        quizAttempted: 0,
+        passed: 0,
+        failed: 0,
+      });
     }
+
+    return res;
   }
 );
 
@@ -170,12 +169,6 @@ const authSlice = createSlice({
         toast.remove();
         toast.success("Logged in successfully");
         state.isLoggedIn = true;
-        state.name = action?.payload?.name;
-        state.role = action?.payload?.role;
-        state.email = action?.payload?.email;
-        state.quizAttempted = action?.payload?.quizAttempted;
-        state.passed = action?.payload?.passed;
-        state.failed = action?.payload?.failed;
       })
       .addCase(usingGoogleAuthentication.rejected, () => {
         toast.remove();

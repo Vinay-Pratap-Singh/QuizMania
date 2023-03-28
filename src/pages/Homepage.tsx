@@ -1,7 +1,22 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import mainImage from "../assets/mainImage.png";
+import { useDispatch } from "react-redux";
+import { getUserData } from "../redux/AuthSlice";
+import { AppDispatch } from "../redux/Store";
+import useAuth from "../hooks/useAuth";
 
 const Homepage = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { isLoggedIn, uid } = useAuth();
+  useEffect(() => {
+    if (isLoggedIn && uid) {
+      (async () => {
+        await dispatch(getUserData(uid));
+      })();
+    }
+  }, [isLoggedIn]);
+
   return (
     <div className="h-[100vh] flex items-center justify-center gap-16 w-full ml-60">
       {/* creating the container for image */}

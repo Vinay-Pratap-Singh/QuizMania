@@ -33,4 +33,7 @@ export interface IinitialStateUser {
   email: string;
   name: string;
   role: string[];
+  quizAttempted: number;
+  passed: number;
+  failed: number;
 }

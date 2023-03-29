@@ -13,3 +13,7 @@ export const FIREBASE_MESSAGING_SENDER_ID: string = "<messaging sender id>";
 export const FIREBASE_APP_ID: string = "<app id>";
 
 export const FIREBASE_MEASUREMENT_ID: string = "<measurement id";
+
+export const ADMIN_ROLE: string = "<admin_role_id>";
+
+export const USER_ROLE: string = "<user_role_id";

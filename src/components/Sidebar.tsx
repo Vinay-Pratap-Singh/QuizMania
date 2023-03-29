@@ -27,7 +27,7 @@ const Sidebar = () => {
   const [dropDownMenu, setDropDownMenu] = useState<boolean>(false);
 
   return (
-    <div className="w-60 border-[1px] h-[100vh] border-r-gray-300 fixed left-0 z-50">
+    <div className="w-60 border-[1px] h-[100vh] border-r-gray-300 fixed left-0 z-50 shadow-md">
       {/* creating the header part of menu */}
       <header className="flex flex-col gap-2 items-center py-3 border-[1px] border-b-gray-300 border-t-transparent border-l-transparent border-r-transparent">
         <img className="w-24" src={logo} alt="logo image" />

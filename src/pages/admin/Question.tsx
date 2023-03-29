@@ -286,6 +286,7 @@ const Question = () => {
         </table>
       </div>
 
+      {/* for displaying the pagination options */}
       <footer className="flex items-center justify-between shadow-md font-semibold mt-5 rounded-md p-3">
         <p>
           Showing {indexStart + 1} to {indexEnd} of {filteredQuestions.length}{" "}

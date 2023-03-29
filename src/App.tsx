@@ -18,6 +18,7 @@ import RequireAuth from "./components/auth/RequireAuth";
 import { ADMIN_ROLE, USER_ROLE } from "./config/config";
 import Denied from "./pages/Denied";
 import Contact from "./pages/Contact";
+import About from "./pages/About";
 
 const App = () => {
   return (
@@ -27,6 +28,7 @@ const App = () => {
         <Route path="/" element={<Homepage />} />
         <Route path="/denied" element={<Denied />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/about" element={<About />} />
 
         <Route element={<NotRequireAuth />}>
           <Route path="/login" element={<Login />} />

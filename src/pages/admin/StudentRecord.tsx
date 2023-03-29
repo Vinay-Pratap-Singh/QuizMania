@@ -36,6 +36,7 @@ const StudentsRecord = () => {
     setUsersToBeDisplayed([...newData]);
   };
 
+  // for next page pagination
   const handlePaginationNextBtn = () => {
     if (indexEnd === filteredUsers.length) {
       return;
@@ -48,6 +49,7 @@ const StudentsRecord = () => {
     }
   };
 
+  // for previous page pagination
   const handlePaginationPreviousBtn = () => {
     if (indexStart === 0) {
       return;

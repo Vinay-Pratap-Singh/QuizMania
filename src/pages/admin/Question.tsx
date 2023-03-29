@@ -97,6 +97,7 @@ const Question = () => {
     setQuestionsToBeDisplayed([...newData]);
   };
 
+  // for next page pagination
   const handlePaginationNextBtn = () => {
     if (indexEnd === filteredQuestions.length) {
       return;
@@ -109,6 +110,7 @@ const Question = () => {
     }
   };
 
+  // for previous page pagination
   const handlePaginationPreviousBtn = () => {
     if (indexStart === 0) {
       return;

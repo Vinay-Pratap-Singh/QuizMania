@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import PieChart from "../../components/PieChart";
-import { getAllQuestion, IchartData } from "../../redux/QuizSlice";
+import { getQuestions, IchartData } from "../../redux/QuizSlice";
 import { AppDispatch, RootState } from "../../redux/Store";
 import { useEffect, useState } from "react";
 import { getUserData } from "../../redux/UserSlice";
@@ -38,7 +38,7 @@ const Dashboard = () => {
     (async () => {
       await dispatch(getUserData());
       await dispatch(getCategory());
-      await dispatch(getAllQuestion());
+      await dispatch(getQuestions());
     })();
 
     categoriesData.map((element) => {

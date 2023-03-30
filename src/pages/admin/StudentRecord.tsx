@@ -10,10 +10,10 @@ const StudentsRecord = () => {
   const [searchText, setSearchText] = useState("");
 
   // for handling pagination
-  const [indexStart, setIndexStart] = useState<number>(0);
-  const [indexEnd, setIndexEnd] = useState<number>(5);
   const [usersToBeDisplayed, setUsersToBeDisplayed] =
     useState<IinitialStateUser[]>();
+  const [indexStart, setIndexStart] = useState<number>(0);
+  const [indexEnd, setIndexEnd] = useState<number>(5);
 
   // function to handle the search functionality
   const handleSearch = () => {
@@ -129,6 +129,9 @@ const StudentsRecord = () => {
             <tbody>
               {usersToBeDisplayed &&
                 usersToBeDisplayed.map((element, index) => {
+                  if (!element) {
+                    return;
+                  }
                   return (
                     <tr
                       key={index}

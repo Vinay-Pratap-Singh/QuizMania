@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import { getAllQuestion } from "../redux/QuizSlice";
+import { getQuestions } from "../redux/QuizSlice";
 import { AppDispatch, RootState } from "../redux/Store";
 import { ImyQuestionData } from "../config/interfaces";
 import { toast } from "react-hot-toast";
@@ -25,7 +25,7 @@ const Quiz = () => {
   const noOfQuestions: number = Number(userPreference?.length) | 0;
 
   // to maintain the index count
-  let [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
 
   // for storing the questions to be displayed
   const questionsToBeDisplayed: ImyQuestionData[] = [];
@@ -114,7 +114,7 @@ const Quiz = () => {
   // for loading the questions from database
   useEffect(() => {
     (async () => {
-      await dispatch(getAllQuestion());
+      await dispatch(getQuestions());
     })();
 
     // assigning empty value as default for the answers
@@ -124,6 +124,7 @@ const Quiz = () => {
     }
     setAnswersSelectedByUser([...answer]);
   }, []);
+  console.log(questionsToBeDisplayed);
 
   return (
     <div className="h-[100vh] w-full ml-60 flex items-center justify-center">

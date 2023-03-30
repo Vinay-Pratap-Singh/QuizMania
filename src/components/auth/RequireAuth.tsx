@@ -1,5 +1,6 @@
 import { useSelector } from "react-redux";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
 import { RootState } from "../../redux/Store";
 
 interface Iprops {
@@ -8,7 +9,7 @@ interface Iprops {
 
 const RequireAuth = ({ allowedRoles }: Iprops) => {
   const location = useLocation();
-  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+  const isLoggedIn = useAuth();
   const userRole = useSelector((state: RootState) => state.auth.role);
   return isLoggedIn && userRole.find((role) => allowedRoles.includes(role)) ? (
     <Outlet />

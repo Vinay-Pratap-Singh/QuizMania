@@ -56,12 +56,14 @@ const Category = () => {
     }
   };
 
+  // function to handle the category update
   const handleUpdateCategory = (data: IcategoryStateData) => {
     setUserInput(data.categoryName);
     setNewCategory(false);
     setUpdateCategoryData({ ...data });
   };
 
+  // function to remove updation process
   const handleDiscard = () => {
     setNewCategory(true);
     setUserInput("");

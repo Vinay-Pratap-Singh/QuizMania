@@ -6,6 +6,12 @@ import {
   doc,
   getDocs,
   updateDoc,
+  getFirestore,
+  query,
+  where,
+  orderBy,
+  limit,
+  startAfter,
 } from "firebase/firestore";
 import { toast } from "react-hot-toast";
 import { db } from "../config/firebase";
@@ -14,6 +20,7 @@ import {
   InewQuestionData,
   IquizSliceState,
 } from "../config/interfaces";
+
 export interface IData {
   id: number;
   question: string;
@@ -80,49 +87,8 @@ const initialState: IquizSliceState = {
 };
 
 // function to get all questions
-export const getAllQuestion = createAsyncThunk("question/display", async () => {
+export const getQuestions = createAsyncThunk("question/display", async () => {
   try {
-    let questions: ImyQuestionData[] = [];
-    const query = getDocs(collection(db, "questions"));
-
-    toast.promise(query, {
-      loading: "Fetching the data",
-      success: "Data fetched successfully",
-      error: "Failed to fetch data",
-    });
-
-    const querySnapshot = await query;
-
-    querySnapshot.forEach((doc) => {
-      // destructuring the data
-      const {
-        question,
-        option1,
-        option2,
-        option3,
-        option4,
-        correctOption,
-        categoryName,
-        description,
-      } = doc.data();
-
-      // adding the id to the data
-      const myQuestion: ImyQuestionData = {
-        id: doc.id,
-        question,
-        option1,
-        option2,
-        option3,
-        option4,
-        correctOption,
-        categoryName,
-        description,
-      };
-
-      questions.push(myQuestion);
-    });
-
-    return questions;
   } catch (error) {
     toast.error("Try again!!");
   }
@@ -214,7 +180,7 @@ const quizSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(getAllQuestion.fulfilled, (state, action) => {
+    builder.addCase(getQuestions.fulfilled, (state, action) => {
       // setting the data in state while mentioning that the payload will be there always
       state.questions = action.payload!;
     });

@@ -101,6 +101,42 @@ export const getQuestions = createAsyncThunk(
   }
 );
 
+interface IgetNextPageQuestionData {
+  searchLimit: number;
+  lastDoc: QueryDocumentSnapshot<DocumentData> | undefined;
+}
+// function for getting the next page questions
+export const getNextPageQuestion = createAsyncThunk(
+  "question/nextpage",
+  async (data: IgetNextPageQuestionData) => {
+    const { searchLimit, lastDoc } = data;
+    if (!lastDoc) {
+      return;
+    }
+    try {
+      let questions: ImyQuestionData[] = [];
+      let nextLastDoc: QueryDocumentSnapshot<DocumentData> | undefined =
+        undefined;
+      const res = await getDocs(
+        query(
+          collection(db, "questions"),
+          limit(searchLimit),
+          startAfter(lastDoc)
+        )
+      );
+      res.docs.map((doc) => {
+        const data = doc.data() as ImyQuestionData;
+        data.id = doc.id;
+        questions.push(data);
+        nextLastDoc = doc;
+      });
+      return { questions, nextLastDoc };
+    } catch (error) {
+      toast.error("Oops! Failed to get questions...");
+    }
+  }
+);
+
 // function to add new question to the database
 export const addNewQuestion = createAsyncThunk(
   "/question/add",
@@ -187,12 +223,23 @@ const quizSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(getQuestions.fulfilled, (state, action) => {
-      state.lastDoc = action.payload?.lastDoc;
-      if (action.payload?.questions) {
-        state.questions = action.payload?.questions;
-      }
-    });
+    builder
+      .addCase(getQuestions.fulfilled, (state, action) => {
+        state.lastDoc = action.payload?.lastDoc;
+        if (action.payload?.questions) {
+          state.questions = action.payload?.questions;
+        }
+      })
+      .addCase(getNextPageQuestion.fulfilled, (state, action) => {
+        if (action.payload?.questions.length === 0) {
+          return;
+        }
+        state.lastDoc = action.payload?.nextLastDoc;
+        if (action.payload?.questions) {
+          state.questions = action.payload?.questions;
+        }
+        console.log(action.payload?.questions);
+      });
   },
 });
 

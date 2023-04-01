@@ -1,11 +1,15 @@
-import { DocumentSnapshot } from "firebase/firestore";
+import { DocumentSnapshot, limit } from "firebase/firestore";
 import { useState, useEffect } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { ImyQuestionData } from "../../config/interfaces";
 import { getCategory } from "../../redux/CategorySlice";
-import { deleteQuestion, getQuestions } from "../../redux/QuizSlice";
+import {
+  deleteQuestion,
+  getNextPageQuestion,
+  getQuestions,
+} from "../../redux/QuizSlice";
 import { AppDispatch, RootState } from "../../redux/Store";
 
 const Question = () => {
@@ -14,7 +18,10 @@ const Question = () => {
 
   // for storing the orignal questions list
   const questions = useSelector((state: RootState) => state.quiz.questions);
-  const searchLength = 2;
+  const lastDoc = useSelector((state: RootState) => state.quiz.lastDoc);
+  const searchLimit = 2;
+  const [currentPage, setCurrentPage] = useState(1);
+  const startIndex = (currentPage - 1) * searchLimit;
 
   // getting all the categories list
   const categoryList = useSelector((state: RootState) => state.category);
@@ -47,10 +54,23 @@ const Question = () => {
     navigate("/dashboard/admin/addquestion", { state: { ...data } });
   };
 
+  // function to handle the pagination next button click
+  const handlePaginationNextButtonClick = async () => {
+    if (questions.length < searchLimit) {
+      return;
+    }
+    const res = await dispatch(getNextPageQuestion({ searchLimit, lastDoc }));
+    {
+      // @ts-ignore
+      if (res.payload?.questions.length === 0) {
+        return;
+      }
+    }
+    setCurrentPage(currentPage + 1);
+  };
+
   useEffect(() => {
-    (async () => {
-      await dispatch(getQuestions(searchLength));
-    })();
+    dispatch(getQuestions(searchLimit));
   }, []);
 
   return (
@@ -147,7 +167,7 @@ const Question = () => {
                     className="align-text-top border border-gray-600 font-medium"
                   >
                     <td className="p-1 text-center border border-r-gray-600 border-b-gray-600">
-                      {index + 1}
+                      {startIndex + index + 1}
                     </td>
                     <td className="p-1 border border-r-gray-600 border-b-gray-600">
                       {element?.question}
@@ -211,7 +231,7 @@ const Question = () => {
             Previous
           </button>
           <button
-            // onClick={handlePaginationNextBtn}
+            onClick={handlePaginationNextButtonClick}
             className="border-[1.5px] border-[#00C8AC] rounded-sm px-4 py-1 transition-all ease-in-out duration-300 hover:shadow-[0_0_5px_#00C8AC]"
           >
             Next

@@ -1,5 +1,5 @@
 import { DocumentSnapshot } from "firebase/firestore";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -13,17 +13,12 @@ const Question = () => {
   const navigate = useNavigate();
 
   // for storing the orignal questions list
-  const [questions, setQuestions] = useState(
-    useSelector((state: RootState) => state.quiz.questions)
-  );
+  const questions = useSelector((state: RootState) => state.quiz.questions);
+  const searchLength = 2;
 
   // getting all the categories list
   const categoryList = useSelector((state: RootState) => state.category);
   const [searchByName, setSearchByName] = useState<string>("");
-
-  // for implementing pagination
-  const PAGE_SIZE = 10;
-  let lastDoc: DocumentSnapshot<ImyQuestionData> | undefined = undefined;
 
   // function to dispatch delete operation for question
   const dispatchDeleteOperation = async (id: string) => {
@@ -51,6 +46,12 @@ const Question = () => {
 
     navigate("/dashboard/admin/addquestion", { state: { ...data } });
   };
+
+  useEffect(() => {
+    (async () => {
+      await dispatch(getQuestions(searchLength));
+    })();
+  }, []);
 
   return (
     <div className="min-h-[100vh] w-full p-5 ml-60">
@@ -184,7 +185,7 @@ const Question = () => {
                     </td>
                     <td
                       className="w-14 text-center py-1 font-medium text-red-600 cursor-pointer"
-                      onClick={() => dispatchDeleteOperation(element?.id)}
+                      onClick={() => dispatchDeleteOperation(element?.id!)}
                     >
                       Delete
                     </td>

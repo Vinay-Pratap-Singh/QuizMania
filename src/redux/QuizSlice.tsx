@@ -12,6 +12,8 @@ import {
   orderBy,
   limit,
   startAfter,
+  QueryDocumentSnapshot,
+  DocumentData,
 } from "firebase/firestore";
 import { toast } from "react-hot-toast";
 import { db } from "../config/firebase";
@@ -57,18 +59,6 @@ export interface Istate {
   userAnswer: IuserAnswer[];
 }
 
-// const initialState: Istate = {
-//   data: [],
-//   option: {
-//     evaluation: "normal",
-//     level: "Easy",
-//     length: "5",
-//     category: "uncategorized",
-//     isButtonClicked: false,
-//   },
-//   userAnswer: [],
-// };
-
 // interface for chart data
 interface IchartDatasets {
   label: string;
@@ -84,15 +74,32 @@ export interface IchartData {
 
 const initialState: IquizSliceState = {
   questions: [],
+  lastDoc: undefined,
+  length: 0,
 };
 
 // function to get all questions
-export const getQuestions = createAsyncThunk("question/display", async () => {
-  try {
-  } catch (error) {
-    toast.error("Try again!!");
+export const getQuestions = createAsyncThunk(
+  "question/display",
+  async (searchLimit: number) => {
+    try {
+      let questions: ImyQuestionData[] = [];
+      let lastDoc: QueryDocumentSnapshot<DocumentData> | undefined = undefined;
+      const res = await getDocs(
+        query(collection(db, "questions"), limit(searchLimit))
+      );
+      res.docs.map((doc) => {
+        const data = doc.data() as ImyQuestionData;
+        data.id = doc.id;
+        questions.push(data);
+        lastDoc = doc;
+      });
+      return { questions, lastDoc };
+    } catch (error) {
+      toast.error("Oops! Failed to get questions...");
+    }
   }
-});
+);
 
 // function to add new question to the database
 export const addNewQuestion = createAsyncThunk(
@@ -145,7 +152,7 @@ export const updateQuestion = createAsyncThunk(
   "questions/update",
   async (data: ImyQuestionData) => {
     try {
-      const docRef = doc(db, "questions", data.id);
+      const docRef = doc(db, "questions", data?.id!);
       const newData: InewQuestionData = {
         question: data.question,
         option1: data.option1,
@@ -181,8 +188,10 @@ const quizSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(getQuestions.fulfilled, (state, action) => {
-      // setting the data in state while mentioning that the payload will be there always
-      state.questions = action.payload!;
+      state.lastDoc = action.payload?.lastDoc;
+      if (action.payload?.questions) {
+        state.questions = action.payload?.questions;
+      }
     });
   },
 });

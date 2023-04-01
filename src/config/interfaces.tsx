@@ -1,3 +1,5 @@
+import { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
+
 // for adding the question
 export interface InewQuestionData {
   question: string;
@@ -12,7 +14,7 @@ export interface InewQuestionData {
 
 // for storing the question
 export interface ImyQuestionData {
-  id: string;
+  id?: string;
   question: string;
   option1: string;
   option2: string;
@@ -26,6 +28,8 @@ export interface ImyQuestionData {
 // for storing quizSlice data
 export interface IquizSliceState {
   questions: ImyQuestionData[];
+  lastDoc: QueryDocumentSnapshot<DocumentData> | undefined;
+  length: number;
 }
 
 // for inital state of user slice

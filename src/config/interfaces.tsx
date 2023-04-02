@@ -28,6 +28,7 @@ export interface ImyQuestionData {
 // for storing quizSlice data
 export interface IquizSliceState {
   questions: ImyQuestionData[];
+  firstDoc: QueryDocumentSnapshot<DocumentData> | undefined;
   lastDoc: QueryDocumentSnapshot<DocumentData> | undefined;
   length: number;
 }

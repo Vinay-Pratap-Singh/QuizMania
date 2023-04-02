@@ -8,6 +8,7 @@ import { getCategory } from "../../redux/CategorySlice";
 import {
   deleteQuestion,
   getNextPageQuestion,
+  getPreviousPageQuestion,
   getQuestions,
 } from "../../redux/QuizSlice";
 import { AppDispatch, RootState } from "../../redux/Store";
@@ -19,7 +20,8 @@ const Question = () => {
   // for storing the orignal questions list
   const questions = useSelector((state: RootState) => state.quiz.questions);
   const lastDoc = useSelector((state: RootState) => state.quiz.lastDoc);
-  const searchLimit = 2;
+  const firstDoc = useSelector((state: RootState) => state.quiz.firstDoc);
+  const searchLimit = 5;
   const [currentPage, setCurrentPage] = useState(1);
   const startIndex = (currentPage - 1) * searchLimit;
 
@@ -67,6 +69,20 @@ const Question = () => {
       }
     }
     setCurrentPage(currentPage + 1);
+  };
+
+  // function to handle the pagination previous button click
+  const handlePaginationPreviousButtonClick = async () => {
+    const res = await dispatch(
+      getPreviousPageQuestion({ searchLimit, firstDoc })
+    );
+    {
+      // @ts-ignore
+      if (res.payload?.questions.length === 0) {
+        return;
+      }
+    }
+    setCurrentPage(currentPage - 1);
   };
 
   useEffect(() => {
@@ -225,7 +241,7 @@ const Question = () => {
         {/* buttons for next and previous */}
         <div className="space-x-4">
           <button
-            // onClick={handlePaginationPreviousBtn}
+            onClick={handlePaginationPreviousButtonClick}
             className="border-[1.5px] border-[#00C8AC] rounded-sm px-4 py-1 transition-all ease-in-out duration-300 hover:shadow-[0_0_5px_#00C8AC]"
           >
             Previous

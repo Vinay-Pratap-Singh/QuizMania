@@ -14,6 +14,8 @@ import {
   startAfter,
   QueryDocumentSnapshot,
   DocumentData,
+  endBefore,
+  QuerySnapshot,
 } from "firebase/firestore";
 import { toast } from "react-hot-toast";
 import { db } from "../config/firebase";
@@ -75,6 +77,7 @@ export interface IchartData {
 const initialState: IquizSliceState = {
   questions: [],
   lastDoc: undefined,
+  firstDoc: undefined,
   length: 0,
 };
 
@@ -101,14 +104,15 @@ export const getQuestions = createAsyncThunk(
   }
 );
 
-interface IgetNextPageQuestionData {
+interface IgetNextAndPreviousPageQuestionData {
   searchLimit: number;
-  lastDoc: QueryDocumentSnapshot<DocumentData> | undefined;
+  lastDoc?: QueryDocumentSnapshot<DocumentData> | undefined;
+  firstDoc?: QueryDocumentSnapshot<DocumentData> | undefined;
 }
 // function for getting the next page questions
 export const getNextPageQuestion = createAsyncThunk(
   "question/nextpage",
-  async (data: IgetNextPageQuestionData) => {
+  async (data: IgetNextAndPreviousPageQuestionData) => {
     const { searchLimit, lastDoc } = data;
     if (!lastDoc) {
       return;
@@ -117,6 +121,8 @@ export const getNextPageQuestion = createAsyncThunk(
       let questions: ImyQuestionData[] = [];
       let nextLastDoc: QueryDocumentSnapshot<DocumentData> | undefined =
         undefined;
+      let nextFirstDoc: QueryDocumentSnapshot<DocumentData> | undefined =
+        undefined;
       const res = await getDocs(
         query(
           collection(db, "questions"),
@@ -124,13 +130,53 @@ export const getNextPageQuestion = createAsyncThunk(
           startAfter(lastDoc)
         )
       );
-      res.docs.map((doc) => {
+      res.docs.map((doc, index) => {
         const data = doc.data() as ImyQuestionData;
         data.id = doc.id;
         questions.push(data);
         nextLastDoc = doc;
+        if (index === 0) {
+          nextFirstDoc = doc;
+        }
       });
-      return { questions, nextLastDoc };
+      return { questions, nextLastDoc, nextFirstDoc };
+    } catch (error) {
+      toast.error("Oops! Failed to get questions...");
+    }
+  }
+);
+
+// function for getting the next page questions
+export const getPreviousPageQuestion = createAsyncThunk(
+  "question/previouspage",
+  async (data: IgetNextAndPreviousPageQuestionData) => {
+    const { searchLimit, firstDoc } = data;
+    if (!firstDoc) {
+      return;
+    }
+    try {
+      let questions: ImyQuestionData[] = [];
+      let nextLastDoc: QueryDocumentSnapshot<DocumentData> | undefined =
+        undefined;
+      let nextFirstDoc: QueryDocumentSnapshot<DocumentData> | undefined =
+        undefined;
+      const res = await getDocs(
+        query(
+          collection(db, "questions"),
+          limit(searchLimit),
+          endBefore(firstDoc)
+        )
+      );
+      res.docs.map((doc, index) => {
+        const data = doc.data() as ImyQuestionData;
+        data.id = doc.id;
+        questions.push(data);
+        nextLastDoc = doc;
+        if (index === 0) {
+          nextFirstDoc = doc;
+        }
+      });
+      return { questions, nextLastDoc, nextFirstDoc };
     } catch (error) {
       toast.error("Oops! Failed to get questions...");
     }
@@ -218,6 +264,38 @@ export const updateQuestion = createAsyncThunk(
   }
 );
 
+interface IrandomDataParameters {
+  categoryName: string;
+  length: number;
+}
+// function to get random questions
+export const getRandomQuestions = createAsyncThunk(
+  "get/randomQuestions",
+  async (data: IrandomDataParameters) => {
+    try {
+      const res = await getDocs(
+        query(
+          collection(db, "questions"),
+          where("categoryName", "==", data.categoryName)
+        )
+      );
+
+      const allQuestions: ImyQuestionData[] = [];
+      res.docs.map((doc) => {
+        const data = doc.data() as ImyQuestionData;
+        data.id = doc.id;
+        allQuestions.push(data);
+      });
+      const randomQuestions = allQuestions
+        .sort(() => 0.5 - Math.random())
+        .slice(0, data.length);
+      return randomQuestions;
+    } catch (error) {
+      toast.error("Failed to load questions");
+    }
+  }
+);
+
 const quizSlice = createSlice({
   name: "quiz",
   initialState,
@@ -235,10 +313,23 @@ const quizSlice = createSlice({
           return;
         }
         state.lastDoc = action.payload?.nextLastDoc;
+        state.firstDoc = action.payload?.nextFirstDoc;
         if (action.payload?.questions) {
           state.questions = action.payload?.questions;
         }
-        console.log(action.payload?.questions);
+      })
+      .addCase(getPreviousPageQuestion.fulfilled, (state, action) => {
+        if (action.payload?.questions.length === 0) {
+          return;
+        }
+        state.lastDoc = action.payload?.nextLastDoc;
+        state.firstDoc = action.payload?.nextFirstDoc;
+        if (action.payload?.questions) {
+          state.questions = action.payload?.questions;
+        }
+      })
+      .addCase(getRandomQuestions.fulfilled, (state, action) => {
+        state.questions = action.payload!;
       });
   },
 });

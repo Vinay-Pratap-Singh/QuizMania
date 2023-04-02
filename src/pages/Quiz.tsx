@@ -26,7 +26,6 @@ const Quiz = () => {
 
   // function to handle option change
   const handleOptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(event.target.value);
     setSelectedOption(event.currentTarget.value);
     const data = [...userAnswers];
     data[currentIndex] = event.currentTarget.value;

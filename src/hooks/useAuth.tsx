@@ -3,11 +3,15 @@ import { firebaseAuth } from "../config/firebase";
 const useAuth = () => {
   const [authData, setAuthData] = useState({ isLoggedIn: false, uid: "" });
   useEffect(() => {
-    firebaseAuth.onAuthStateChanged((user) => {
+    const unsubscribe = firebaseAuth.onAuthStateChanged(async (user) => {
       if (user) {
-        setAuthData({ isLoggedIn: true, uid: user?.uid });
+        const uid = await user.uid;
+        setAuthData({ isLoggedIn: true, uid });
+      } else {
+        setAuthData({ isLoggedIn: false, uid: "" });
       }
     });
+    return unsubscribe;
   }, []);
   return authData;
 };

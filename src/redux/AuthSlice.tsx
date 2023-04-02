@@ -10,7 +10,7 @@ import {
 } from "firebase/auth";
 import { db, firebaseAuth } from "../config/firebase";
 import toast from "react-hot-toast";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { USER_ROLE } from "../config/config";
 
 interface Istate {
@@ -128,6 +128,7 @@ export const logout = createAsyncThunk("/auth/logout", async () => {
   return res;
 });
 
+// function to get user data
 export const getUserData = createAsyncThunk(
   "getUserData",
   async (id: string) => {
@@ -140,6 +141,30 @@ export const getUserData = createAsyncThunk(
       }
     } catch (error) {
       toast.error("Failed to get user data");
+    }
+  }
+);
+
+interface IupdateUserDataParameter {
+  quizAttempted: number;
+  passed: number;
+  failed: number;
+  uid: string;
+}
+// function to update user details
+export const updateUserDetails = createAsyncThunk(
+  "user/update",
+  async (data: IupdateUserDataParameter) => {
+    try {
+      const ref = doc(db, "user", data?.uid);
+      const res = await updateDoc(ref, {
+        failed: data?.failed,
+        passed: data?.passed,
+        quizAttempted: data?.quizAttempted,
+      });
+      return res;
+    } catch (error) {
+      toast.error("Failed to update the result of user");
     }
   }
 );

@@ -1,19 +1,29 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import AnswerResult from "../components/AnswerResult";
 import PieChart from "../components/PieChart";
 import { IchartData } from "../redux/QuizSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../redux/Store";
+import { useEffect } from "react";
+import { getUserData, updateUserDetails } from "../redux/AuthSlice";
+import useAuth from "../hooks/useAuth";
 
 const Result = () => {
-  const { questionsToBeDisplayed, answersSelectedByUser } = useLocation().state;
+  const { questions, userAnswers } = useLocation().state;
+  const dispatch = useDispatch<AppDispatch>();
+  const { failed, quizAttempted, passed } = useSelector(
+    (state: RootState) => state.auth
+  );
+  const { isLoggedIn, uid } = useAuth();
 
   let correctAnswer = 0,
     inCorrectAnswer = 0,
     notAttempted = 0;
   // matching the user answers
-  for (let i = 0; i < questionsToBeDisplayed.length; i++) {
-    if (questionsToBeDisplayed[i].correctOption === answersSelectedByUser[i]) {
+  for (let i = 0; i < questions.length; i++) {
+    if (questions[i].correctOption === userAnswers[i]) {
       correctAnswer++;
-    } else if (answersSelectedByUser[i] === "") {
+    } else if (userAnswers[i] === "") {
       notAttempted++;
     } else {
       inCorrectAnswer++;
@@ -29,15 +39,39 @@ const Result = () => {
       {
         label: "Quiz Result",
         data: chartData,
-        backgroundColor: [
-          "rgb(255, 99, 132)",
-          "rgb(54, 162, 235)",
-          "rgb(255, 205, 86)",
-        ],
+        backgroundColor: ["#38ff63", "#ff3838", "#fff538"],
         hoverOffset: 4,
       },
     ],
   };
+
+  useEffect(() => {
+    if (isLoggedIn && uid !== "") {
+      let data = {
+        failed,
+        quizAttempted,
+        passed,
+        uid,
+      };
+      if (questions.length === 5 && correctAnswer > 2) {
+        data.quizAttempted = quizAttempted + 1;
+        data.passed = passed + 1;
+      } else if (questions.length === 5 && correctAnswer <= 2) {
+        data.quizAttempted = quizAttempted + 1;
+        data.failed = failed + 1;
+      } else if (questions.length === 10 && correctAnswer >= 5) {
+        data.quizAttempted = quizAttempted + 1;
+        data.passed = passed + 1;
+      } else if (questions.length === 10 && correctAnswer < 5) {
+        data.quizAttempted = quizAttempted + 1;
+        data.failed = failed + 1;
+      }
+      (async () => {
+        await dispatch(updateUserDetails({ ...data }));
+        await dispatch(getUserData(uid));
+      })();
+    }
+  }, [isLoggedIn, uid, dispatch]);
 
   return (
     <div className="flex flex-col items-center justify-center text-center min-h-[100vh] w-full ml-60 my-10">
@@ -58,9 +92,7 @@ const Result = () => {
           {/* total question card */}
           <div className="shadow-md rounded-md py-2 px-6 w-48">
             <h3 className="font-semibold">Total Questions</h3>
-            <p className="font-bold text-2xl">
-              {questionsToBeDisplayed.length}
-            </p>
+            <p className="font-bold text-2xl">{questions.length}</p>
           </div>
 
           {/* correct answers card */}
@@ -88,8 +120,8 @@ const Result = () => {
 
       {/* displaying the quiz Q&A summary */}
       <AnswerResult
-        questionsToBeDisplayed={questionsToBeDisplayed}
-        answersSelectedByUser={answersSelectedByUser}
+        questionsToBeDisplayed={questions}
+        answersSelectedByUser={userAnswers}
       />
     </div>
   );

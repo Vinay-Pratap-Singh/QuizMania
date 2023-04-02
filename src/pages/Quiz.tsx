@@ -18,6 +18,11 @@ const Quiz = () => {
     undefined
   );
   const [userAnswers, setUserAnswers] = useState<string[]>([]);
+  // setting the time limit for quiz
+  const [timeLeft, setTimeLeft] = useState(Number(length) === 5 ? 300 : 600);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const minutes = Math.floor(timeLeft / 60);
+  const seconds = timeLeft % 60;
 
   // function to handle option change
   const handleOptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -59,6 +64,25 @@ const Quiz = () => {
     }
   };
 
+  // for handling the timer
+  useEffect(() => {
+    timerRef.current = setInterval(() => {
+      setTimeLeft((prevTimeLeft) => prevTimeLeft - 1);
+    }, 1000);
+    return () => clearInterval(timerRef.current as NodeJS.Timeout);
+  }, []);
+
+  useEffect(() => {
+    if (timeLeft === 0) {
+      clearInterval(timerRef.current as NodeJS.Timeout);
+      toast.success("Answers submitted successfully");
+      navigate("/result", {
+        state: { questions, userAnswers },
+      });
+    }
+  }, [timeLeft]);
+
+  // for getting the questions and users dummy answer filling
   useEffect(() => {
     if (!length || !category) {
       navigate(-1);
@@ -92,7 +116,10 @@ const Quiz = () => {
             <h1>
               {currentIndex + 1} of {length}
             </h1>
-            <h1>Timer : 04 : 30 min</h1>
+            <h1>
+              Timer : {minutes < 10 ? "0" + minutes : minutes} :{" "}
+              {seconds < 10 ? "0" + seconds : seconds} min
+            </h1>
           </div>
         </header>
 

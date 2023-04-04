@@ -1,5 +1,5 @@
 import { DocumentSnapshot, limit } from "firebase/firestore";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +7,7 @@ import { ImyQuestionData } from "../../config/interfaces";
 import { getCategory } from "../../redux/CategorySlice";
 import { deleteQuestion, getQuestions } from "../../redux/QuizSlice";
 import { AppDispatch, RootState } from "../../redux/Store";
+import { toast } from "react-hot-toast";
 
 const Question = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -16,10 +17,15 @@ const Question = () => {
   const questions = useSelector((state: RootState) => state.quiz.questions);
   const [questionToBeDisplayed, setQuestionToBeDisplayed] = useState<
     ImyQuestionData[]
-  >([]);
+  >([...questions]);
+  const [filteredQues, setFilteredQues] = useState<ImyQuestionData[]>([]);
   const quesLimit = 2;
   const [currentPage, setCurrentPage] = useState(1);
-  const startIndex = (currentPage - 1) * quesLimit;
+  let startIndex = (currentPage - 1) * quesLimit;
+  let endIndex =
+    startIndex + quesLimit > filteredQues.length
+      ? filteredQues.length
+      : startIndex + quesLimit;
 
   // getting all the categories list
   const categoryList = useSelector((state: RootState) => state.category);
@@ -53,12 +59,11 @@ const Question = () => {
   };
 
   // function to update the questions to be displayed
-  const setQuestion = (startIndex: number) => {
-    const endIndex = startIndex + quesLimit;
+  const setQuestion = () => {
     setQuestionToBeDisplayed([]);
     const data: ImyQuestionData[] = [];
     for (let i = startIndex; i < endIndex; i++) {
-      data.push(questions[i]);
+      data.push(filteredQues[i]);
     }
     setQuestionToBeDisplayed([...data]);
   };
@@ -66,11 +71,11 @@ const Question = () => {
   // function to handle the pagination next button click
   const handlePaginationNextButtonClick = () => {
     // checking for the last page
-    if (currentPage * quesLimit >= questions.length) {
+    if (currentPage * quesLimit >= filteredQues.length) {
       return;
     }
     setCurrentPage(currentPage + 1);
-    setQuestion(startIndex);
+    setQuestion();
   };
 
   // function to handle the pagination previous button click
@@ -80,15 +85,45 @@ const Question = () => {
       return;
     }
     setCurrentPage(currentPage - 1);
-    setQuestion(startIndex);
+    setQuestion();
   };
 
+  // function to handle search question functionality
+  const searchQuestion = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!searchByName) {
+      setCurrentPage(1);
+      setFilteredQues([...questions]);
+      setQuestion();
+      return;
+    }
+    const data: ImyQuestionData[] = questions.filter((element) => {
+      return element?.question.includes(searchByName);
+    });
+    setFilteredQues([...data]);
+    setCurrentPage(1);
+    setQuestion();
+    toast.success("Empty search will return all questions");
+  };
+
+  // for updating the start and end index to fetch recent data
+  useEffect(() => {
+    startIndex = (currentPage - 1) * quesLimit;
+    endIndex =
+      startIndex + quesLimit > filteredQues.length
+        ? filteredQues.length
+        : startIndex + quesLimit;
+    setQuestion();
+  }, [currentPage, filteredQues]);
+
+  // for getting question and category data on first render
   useEffect(() => {
     (async () => {
       await dispatch(getQuestions());
       await dispatch(getCategory());
     })();
-    setQuestion(startIndex);
+    setFilteredQues([...questions]);
+    setQuestion();
   }, []);
 
   return (
@@ -100,7 +135,10 @@ const Question = () => {
       <div className="shadow-lg p-2 rounded-md w-full">
         {/* for search and add question */}
         <header className="border border-b-gray-600 flex items-center justify-between p-4">
-          <form className="flex items-center gap-5 shadow-md">
+          <form
+            onSubmit={searchQuestion}
+            className="flex items-center gap-5 shadow-md"
+          >
             <input
               className="py-1 px-2 font-semibold"
               type="text"
@@ -237,8 +275,8 @@ const Question = () => {
       {/* for displaying the pagination options */}
       <footer className="flex items-center justify-between shadow-md font-semibold mt-5 rounded-md p-3">
         <p>
-          Showing {startIndex + 1} to {startIndex + quesLimit} of{" "}
-          {questions.length} results
+          Showing {startIndex + 1} to {endIndex} of {filteredQues.length}{" "}
+          results
         </p>
 
         {/* buttons for next and previous */}

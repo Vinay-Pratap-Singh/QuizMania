@@ -5,12 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { ImyQuestionData } from "../../config/interfaces";
 import { getCategory } from "../../redux/CategorySlice";
-import {
-  deleteQuestion,
-  getNextPageQuestion,
-  getPreviousPageQuestion,
-  getQuestions,
-} from "../../redux/QuizSlice";
+import { deleteQuestion, getQuestions } from "../../redux/QuizSlice";
 import { AppDispatch, RootState } from "../../redux/Store";
 
 const Question = () => {
@@ -19,11 +14,12 @@ const Question = () => {
 
   // for storing the orignal questions list
   const questions = useSelector((state: RootState) => state.quiz.questions);
-  const lastDoc = useSelector((state: RootState) => state.quiz.lastDoc);
-  const firstDoc = useSelector((state: RootState) => state.quiz.firstDoc);
-  const searchLimit = 5;
+  const [questionToBeDisplayed, setQuestionToBeDisplayed] = useState<
+    ImyQuestionData[]
+  >([]);
+  const quesLimit = 2;
   const [currentPage, setCurrentPage] = useState(1);
-  const startIndex = (currentPage - 1) * searchLimit;
+  const startIndex = (currentPage - 1) * quesLimit;
 
   // getting all the categories list
   const categoryList = useSelector((state: RootState) => state.category);
@@ -56,37 +52,43 @@ const Question = () => {
     navigate("/dashboard/admin/addquestion", { state: { ...data } });
   };
 
+  // function to update the questions to be displayed
+  const setQuestion = (startIndex: number) => {
+    const endIndex = startIndex + quesLimit;
+    setQuestionToBeDisplayed([]);
+    const data: ImyQuestionData[] = [];
+    for (let i = startIndex; i < endIndex; i++) {
+      data.push(questions[i]);
+    }
+    setQuestionToBeDisplayed([...data]);
+  };
+
   // function to handle the pagination next button click
-  const handlePaginationNextButtonClick = async () => {
-    if (questions.length < searchLimit) {
+  const handlePaginationNextButtonClick = () => {
+    // checking for the last page
+    if (currentPage * quesLimit >= questions.length) {
       return;
     }
-    const res = await dispatch(getNextPageQuestion({ searchLimit, lastDoc }));
-    {
-      // @ts-ignore
-      if (res.payload?.questions.length === 0) {
-        return;
-      }
-    }
     setCurrentPage(currentPage + 1);
+    setQuestion(startIndex);
   };
 
   // function to handle the pagination previous button click
-  const handlePaginationPreviousButtonClick = async () => {
-    const res = await dispatch(
-      getPreviousPageQuestion({ searchLimit, firstDoc })
-    );
-    {
-      // @ts-ignore
-      if (res.payload?.questions.length === 0) {
-        return;
-      }
+  const handlePaginationPreviousButtonClick = () => {
+    // checking for the first page
+    if (currentPage === 1) {
+      return;
     }
     setCurrentPage(currentPage - 1);
+    setQuestion(startIndex);
   };
 
   useEffect(() => {
-    dispatch(getQuestions(searchLimit));
+    (async () => {
+      await dispatch(getQuestions());
+      await dispatch(getCategory());
+    })();
+    setQuestion(startIndex);
   }, []);
 
   return (
@@ -172,8 +174,8 @@ const Question = () => {
           </thead>
 
           <tbody>
-            {questions &&
-              questions.map((element, index) => {
+            {questionToBeDisplayed &&
+              questionToBeDisplayed.map((element, index) => {
                 if (!element) {
                   return;
                 }
@@ -235,7 +237,8 @@ const Question = () => {
       {/* for displaying the pagination options */}
       <footer className="flex items-center justify-between shadow-md font-semibold mt-5 rounded-md p-3">
         <p>
-          Showing {0} to {5} of {100} results
+          Showing {startIndex + 1} to {startIndex + quesLimit} of{" "}
+          {questions.length} results
         </p>
 
         {/* buttons for next and previous */}

@@ -76,120 +76,34 @@ export interface IchartData {
 
 const initialState: IquizSliceState = {
   questions: [],
-  lastDoc: undefined,
-  firstDoc: undefined,
-  length: 0,
 };
 
 // function to get all questions
-export const getQuestions = createAsyncThunk(
-  "question/display",
-  async (searchLimit: number) => {
-    try {
-      let questions: ImyQuestionData[] = [];
-      let lastDoc: QueryDocumentSnapshot<DocumentData> | undefined = undefined;
-      const res = await getDocs(
-        query(collection(db, "questions"), limit(searchLimit))
-      );
-      res.docs.map((doc) => {
-        const data = doc.data() as ImyQuestionData;
-        data.id = doc.id;
-        questions.push(data);
-        lastDoc = doc;
-      });
-      return { questions, lastDoc };
-    } catch (error) {
-      toast.error("Oops! Failed to get questions...");
-    }
-  }
-);
+export const getQuestions = createAsyncThunk("question/display", async () => {
+  try {
+    let questions: ImyQuestionData[] = [];
 
-interface IgetNextAndPreviousPageQuestionData {
-  searchLimit: number;
-  lastDoc?: QueryDocumentSnapshot<DocumentData> | undefined;
-  firstDoc?: QueryDocumentSnapshot<DocumentData> | undefined;
-}
-// function for getting the next page questions
-export const getNextPageQuestion = createAsyncThunk(
-  "question/nextpage",
-  async (data: IgetNextAndPreviousPageQuestionData) => {
-    const { searchLimit, lastDoc } = data;
-    if (!lastDoc) {
-      return;
-    }
-    try {
-      let questions: ImyQuestionData[] = [];
-      let nextLastDoc: QueryDocumentSnapshot<DocumentData> | undefined =
-        undefined;
-      let nextFirstDoc: QueryDocumentSnapshot<DocumentData> | undefined =
-        undefined;
-      const res = await getDocs(
-        query(
-          collection(db, "questions"),
-          limit(searchLimit),
-          startAfter(lastDoc)
-        )
-      );
-      res.docs.map((doc, index) => {
-        const data = doc.data() as ImyQuestionData;
-        data.id = doc.id;
-        questions.push(data);
-        nextLastDoc = doc;
-        if (index === 0) {
-          nextFirstDoc = doc;
-        }
-      });
-      return { questions, nextLastDoc, nextFirstDoc };
-    } catch (error) {
-      toast.error("Oops! Failed to get questions...");
-    }
+    const res = await getDocs(query(collection(db, "questions")));
+    res.docs.map((doc) => {
+      const data = doc.data() as ImyQuestionData;
+      data.id = doc.id;
+      questions.push(data);
+    });
+    return { questions };
+  } catch (error) {
+    toast.error("Oops! Failed to get questions...");
   }
-);
-
-// function for getting the next page questions
-export const getPreviousPageQuestion = createAsyncThunk(
-  "question/previouspage",
-  async (data: IgetNextAndPreviousPageQuestionData) => {
-    const { searchLimit, firstDoc } = data;
-    if (!firstDoc) {
-      return;
-    }
-    try {
-      let questions: ImyQuestionData[] = [];
-      let nextLastDoc: QueryDocumentSnapshot<DocumentData> | undefined =
-        undefined;
-      let nextFirstDoc: QueryDocumentSnapshot<DocumentData> | undefined =
-        undefined;
-      const res = await getDocs(
-        query(
-          collection(db, "questions"),
-          limit(searchLimit),
-          endBefore(firstDoc)
-        )
-      );
-      res.docs.map((doc, index) => {
-        const data = doc.data() as ImyQuestionData;
-        data.id = doc.id;
-        questions.push(data);
-        nextLastDoc = doc;
-        if (index === 0) {
-          nextFirstDoc = doc;
-        }
-      });
-      return { questions, nextLastDoc, nextFirstDoc };
-    } catch (error) {
-      toast.error("Oops! Failed to get questions...");
-    }
-  }
-);
+});
 
 // function to add new question to the database
 export const addNewQuestion = createAsyncThunk(
   "/question/add",
   async (data: InewQuestionData) => {
     try {
+      const createdAt = new Date();
+      const questionData = { ...data, createdAt };
       const res = addDoc(collection(db, "questions"), {
-        ...data,
+        ...questionData,
       });
 
       toast.promise(res, {
@@ -301,36 +215,11 @@ const quizSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder
-      .addCase(getQuestions.fulfilled, (state, action) => {
-        state.lastDoc = action.payload?.lastDoc;
-        if (action.payload?.questions) {
-          state.questions = action.payload?.questions;
-        }
-      })
-      .addCase(getNextPageQuestion.fulfilled, (state, action) => {
-        if (action.payload?.questions.length === 0) {
-          return;
-        }
-        state.lastDoc = action.payload?.nextLastDoc;
-        state.firstDoc = action.payload?.nextFirstDoc;
-        if (action.payload?.questions) {
-          state.questions = action.payload?.questions;
-        }
-      })
-      .addCase(getPreviousPageQuestion.fulfilled, (state, action) => {
-        if (action.payload?.questions.length === 0) {
-          return;
-        }
-        state.lastDoc = action.payload?.nextLastDoc;
-        state.firstDoc = action.payload?.nextFirstDoc;
-        if (action.payload?.questions) {
-          state.questions = action.payload?.questions;
-        }
-      })
-      .addCase(getRandomQuestions.fulfilled, (state, action) => {
-        state.questions = action.payload!;
-      });
+    builder.addCase(getQuestions.fulfilled, (state, action) => {
+      if (action.payload?.questions) {
+        state.questions = action.payload?.questions;
+      }
+    });
   },
 });
 

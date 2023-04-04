@@ -1,4 +1,3 @@
-import { DocumentSnapshot, limit } from "firebase/firestore";
 import React, { useState, useEffect } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
@@ -88,13 +87,12 @@ const Question = () => {
     setQuestion();
   };
 
-  // function to handle search question functionality
-  const searchQuestion = (event: React.FormEvent<HTMLFormElement>) => {
+  // function to handle search question by name functionality
+  const searchQuestionByName = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!searchByName) {
-      setCurrentPage(1);
       setFilteredQues([...questions]);
-      setQuestion();
+      setCurrentPage(1);
       return;
     }
     const data: ImyQuestionData[] = questions.filter((element) => {
@@ -102,8 +100,25 @@ const Question = () => {
     });
     setFilteredQues([...data]);
     setCurrentPage(1);
-    setQuestion();
     toast.success("Empty search will return all questions");
+  };
+
+  // function to handle search question by category name functionality
+  const searchQuestionByCategoryName = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const category = event.target.value;
+    // if category is all
+    if (category === "all") {
+      setFilteredQues([...questions]);
+      setCurrentPage(1);
+      return;
+    }
+    const data: ImyQuestionData[] = questions.filter((element) => {
+      return element?.categoryName === category;
+    });
+    setFilteredQues([...data]);
+    setCurrentPage(1);
   };
 
   // for updating the start and end index to fetch recent data
@@ -136,7 +151,7 @@ const Question = () => {
         {/* for search and add question */}
         <header className="border border-b-gray-600 flex items-center justify-between p-4">
           <form
-            onSubmit={searchQuestion}
+            onSubmit={searchQuestionByName}
             className="flex items-center gap-5 shadow-md"
           >
             <input
@@ -191,6 +206,7 @@ const Question = () => {
                   name="category"
                   id="category"
                   className="bg-transparent"
+                  onChange={searchQuestionByCategoryName}
                 >
                   <option value="all">All</option>
                   {categoryList.map((element) => {
@@ -275,8 +291,8 @@ const Question = () => {
       {/* for displaying the pagination options */}
       <footer className="flex items-center justify-between shadow-md font-semibold mt-5 rounded-md p-3">
         <p>
-          Showing {startIndex + 1} to {endIndex} of {filteredQues.length}{" "}
-          results
+          Showing {filteredQues.length === 0 ? 0 : startIndex + 1} to {endIndex}{" "}
+          of {filteredQues.length} results
         </p>
 
         {/* buttons for next and previous */}

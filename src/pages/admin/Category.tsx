@@ -11,10 +11,13 @@ import { IcategoryStateData } from "../../redux/CategorySlice";
 import { AppDispatch, RootState } from "../../redux/Store";
 import { toast } from "react-hot-toast";
 import { AiOutlineUndo } from "react-icons/ai";
+import Loader from "../../components/Loader/Loader";
 
 const Category = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const categoryData = useSelector((state: RootState) => state.category);
+  const { categoryData, isLoading } = useSelector(
+    (state: RootState) => state.category
+  );
   const [userInput, setUserInput] = useState<string>("");
   const [newCategory, setNewCategory] = useState<boolean>(true);
   const [updateCategoryData, setUpdateCategoryData] =
@@ -75,7 +78,9 @@ const Category = () => {
     dispatch(getCategory());
   }, []);
 
-  return (
+  return isLoading ? (
+    <Loader />
+  ) : (
     <div className="h-[100vh] w-full flex items-center justify-center ml-60">
       <div className="flex flex-col gap-10 items-center h-[80%] w-full">
         <header className="text-center w-full space-y-2">

@@ -15,23 +15,22 @@ export interface IcategoryStateData {
   id: string;
 }
 
-const initialState: IcategoryStateData[] = [];
+interface IinitialState {
+  categoryData: IcategoryStateData[];
+  isLoading: boolean;
+}
+
+const initialState: IinitialState = {
+  categoryData: [],
+  isLoading: false,
+};
 
 // for getting the category data
 export const getCategory = createAsyncThunk("category/get", async () => {
   try {
     let categories: IcategoryStateData[] = [];
-    const query = getDocs(collection(db, "category"));
-
-    toast.promise(query, {
-      loading: "Fetching the categories",
-      success: "Categories fetched successfully",
-      error: "Failed to fetch categories",
-    });
-
-    const querySnapshot = await query;
-
-    querySnapshot.forEach((doc) => {
+    const query = await getDocs(collection(db, "category"));
+    query.forEach((doc) => {
       categories.push({
         categoryName: doc.data().categoryName,
         id: doc.id,
@@ -40,7 +39,7 @@ export const getCategory = createAsyncThunk("category/get", async () => {
 
     return categories;
   } catch (error) {
-    toast.error("Try again!!");
+    toast.error("Operation Failed!!!");
   }
 });
 
@@ -49,21 +48,12 @@ export const addCategory = createAsyncThunk(
   "category/add",
   async (newCategory: string) => {
     try {
-      const res = addDoc(collection(db, "category"), {
+      const res = await addDoc(collection(db, "category"), {
         categoryName: newCategory,
       });
-
-      toast.promise(res, {
-        loading: "Adding the category...",
-        success: "Category added successfully",
-        error: "Failed to add category",
-      });
-
-      const response = await res;
-
-      return response;
+      return res;
     } catch (error) {
-      toast.error("Operation Failed");
+      toast.error("Operation Failed!!!");
     }
   }
 );
@@ -74,17 +64,9 @@ export const deleteCategory = createAsyncThunk(
   async (id: string) => {
     try {
       const res = deleteDoc(doc(db, "category", id));
-      toast.promise(res, {
-        loading: "Deleting the category...",
-        success: "Category deleted successfully",
-        error: "Failed to delete category",
-      });
-
-      const response = await res;
-
-      return response;
+      return res;
     } catch (error) {
-      toast.error("Operation Failed");
+      toast.error("Operation Failed!!!");
     }
   }
 );
@@ -95,18 +77,10 @@ export const updateCategory = createAsyncThunk(
   async (data: IcategoryStateData) => {
     try {
       const ref = doc(db, "category", data.id);
-      const res = updateDoc(ref, { categoryName: data.categoryName });
-
-      toast.promise(res, {
-        loading: "Updating the category...",
-        success: "Category updated successfully",
-        error: "Failed to update category",
-      });
-
-      const response = await res;
-      return response;
+      const res = await updateDoc(ref, { categoryName: data.categoryName });
+      return res;
     } catch (error) {
-      toast.error("Operation Failed");
+      toast.error("Operation Failed!!!");
     }
   }
 );
@@ -117,9 +91,60 @@ const categorySlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     // for setting the data in state
-    builder.addCase(getCategory.fulfilled, (state, action) => {
-      return action?.payload!;
-    });
+    builder
+      .addCase(getCategory.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getCategory.fulfilled, (state, action) => {
+        state.categoryData = action.payload!;
+        state.isLoading = false;
+      })
+      .addCase(getCategory.rejected, (state) => {
+        state.isLoading = false;
+        toast.error("Failed to load category data");
+      });
+
+    // for adding the category
+    builder
+      .addCase(addCategory.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(addCategory.fulfilled, (state) => {
+        state.isLoading = false;
+        toast.success("Category added successfully");
+      })
+      .addCase(addCategory.rejected, (state, action) => {
+        state.isLoading = false;
+        toast.error("Failed to add new category");
+      });
+
+    // for deleting the category
+    builder
+      .addCase(deleteCategory.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(deleteCategory.fulfilled, (state) => {
+        state.isLoading = false;
+        toast.success("Category deleted successfully");
+      })
+      .addCase(deleteCategory.rejected, (state) => {
+        state.isLoading = false;
+        toast.error("Failed to delete category");
+      });
+
+    // for updating the category
+    builder
+      .addCase(updateCategory.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updateCategory.fulfilled, (state) => {
+        state.isLoading = false;
+        toast.success("Category updated successfully");
+      })
+      .addCase(updateCategory.rejected, (state) => {
+        state.isLoading = false;
+        toast.error("Failed to update the category");
+      });
   },
 });
 

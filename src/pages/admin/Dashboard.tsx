@@ -9,7 +9,9 @@ import { getCategory } from "../../redux/CategorySlice";
 const Dashboard = () => {
   const dispatch = useDispatch<AppDispatch>();
   const usersData = useSelector((state: RootState) => state.user);
-  const categoriesData = useSelector((state: RootState) => state.category);
+  const categoriesData = useSelector(
+    (state: RootState) => state.category.categoryData
+  );
   const questionsData = useSelector((state: RootState) => state.quiz.questions);
 
   interface IchartDataSet {

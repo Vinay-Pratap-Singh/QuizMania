@@ -6,16 +6,8 @@ import {
   doc,
   getDocs,
   updateDoc,
-  getFirestore,
   query,
   where,
-  orderBy,
-  limit,
-  startAfter,
-  QueryDocumentSnapshot,
-  DocumentData,
-  endBefore,
-  QuerySnapshot,
 } from "firebase/firestore";
 import { toast } from "react-hot-toast";
 import { db } from "../config/firebase";
@@ -100,10 +92,8 @@ export const addNewQuestion = createAsyncThunk(
   "/question/add",
   async (data: InewQuestionData) => {
     try {
-      const createdAt = new Date();
-      const questionData = { ...data, createdAt };
       const res = addDoc(collection(db, "questions"), {
-        ...questionData,
+        ...data,
       });
 
       toast.promise(res, {

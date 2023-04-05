@@ -3,7 +3,7 @@ import PieChart from "../../components/PieChart";
 import { getQuestions, IchartData } from "../../redux/QuizSlice";
 import { AppDispatch, RootState } from "../../redux/Store";
 import { useEffect, useState } from "react";
-import { getUserData } from "../../redux/UserSlice";
+import { getUsersData } from "../../redux/UserSlice";
 import { getCategory } from "../../redux/CategorySlice";
 
 const Dashboard = () => {
@@ -36,7 +36,7 @@ const Dashboard = () => {
   // getting the updated values from database
   useEffect(() => {
     (async () => {
-      await dispatch(getUserData());
+      await dispatch(getUsersData());
       await dispatch(getCategory());
       await dispatch(getQuestions());
     })();

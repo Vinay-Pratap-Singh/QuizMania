@@ -18,7 +18,7 @@ const Question = () => {
     ImyQuestionData[]
   >([...questions]);
   const [filteredQues, setFilteredQues] = useState<ImyQuestionData[]>([]);
-  const quesLimit = 2;
+  const quesLimit = 5;
   const [currentPage, setCurrentPage] = useState(1);
   let startIndex = (currentPage - 1) * quesLimit;
   let endIndex =

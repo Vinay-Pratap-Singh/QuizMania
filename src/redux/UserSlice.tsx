@@ -7,7 +7,7 @@ import { IinitialStateUser } from "../config/interfaces";
 const initialState: IinitialStateUser[] = [];
 
 // function to get the user data
-export const getUserData = createAsyncThunk("user/getdata", async () => {
+export const getUsersData = createAsyncThunk("user/getdata", async () => {
   try {
     let userData: IinitialStateUser[] = [];
     const query = getDocs(collection(db, "user"));
@@ -43,7 +43,7 @@ const userSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(getUserData.fulfilled, (state, action) => {
+    builder.addCase(getUsersData.fulfilled, (state, action) => {
       return action?.payload!;
     });
   },

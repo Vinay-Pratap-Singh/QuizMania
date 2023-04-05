@@ -96,19 +96,29 @@ const Dashboard = () => {
           {/* total student card */}
           <div className="shadow-md rounded-md py-2 px-6 w-48 cursor-pointer">
             <h3 className="font-semibold">Registered User</h3>
-            <p className="font-bold text-2xl">{usersData.length}</p>
+            <p className="font-bold text-2xl">
+              {usersData.length > 9 ? usersData.length : "0" + usersData.length}
+            </p>
           </div>
 
           {/* total category card */}
           <div className="shadow-md rounded-md py-2 px-6 w-48 cursor-pointer">
             <h3 className="font-semibold">Total Categories</h3>
-            <p className="font-bold text-2xl">{categoriesData.length}</p>
+            <p className="font-bold text-2xl">
+              {categoriesData.length > 9
+                ? categoriesData.length
+                : "0" + categoriesData.length}
+            </p>
           </div>
 
           {/* total question card */}
           <div className="shadow-md rounded-md py-2 px-6 w-48 cursor-pointer">
             <h3 className="font-semibold">Total Questions</h3>
-            <p className="font-bold text-2xl">{questionsData.length}</p>
+            <p className="font-bold text-2xl">
+              {questionsData.length > 9
+                ? questionsData.length
+                : "0" + questionsData.length}
+            </p>
           </div>
         </section>
 

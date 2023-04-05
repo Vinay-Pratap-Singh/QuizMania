@@ -110,7 +110,7 @@ const StudentsRecord = () => {
             <input
               className="w-full"
               type="text"
-              placeholder="Search student by email id"
+              placeholder="Search student by name"
               value={searchByName}
               onChange={(event) => setSearchByName(event.target.value)}
             />

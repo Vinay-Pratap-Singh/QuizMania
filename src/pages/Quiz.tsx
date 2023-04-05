@@ -86,12 +86,14 @@ const Quiz = () => {
     if (!length || !category) {
       navigate(-1);
     }
-    dispatch(
-      getRandomQuestions({
-        categoryName: category,
-        length: Number(length),
-      })
-    );
+    (async () => {
+      await dispatch(
+        getRandomQuestions({
+          categoryName: category,
+          length: Number(length),
+        })
+      );
+    })();
 
     // setting the dummy answers
     const data = [];
@@ -138,7 +140,7 @@ const Quiz = () => {
                 value="option1"
                 name="option"
                 className="cursor-pointer"
-                checked={selectedOption === "option1"}
+                checked={userAnswers[currentIndex] === "option1"}
                 onChange={handleOptionChange}
               />
               <label htmlFor="option1" className="align-middle cursor-pointer">
@@ -153,7 +155,7 @@ const Quiz = () => {
                 value="option2"
                 name="option"
                 className="cursor-pointer"
-                checked={selectedOption === "option2"}
+                checked={userAnswers[currentIndex] === "option2"}
                 onChange={handleOptionChange}
               />
               <label htmlFor="option2" className="align-middle cursor-pointer">
@@ -168,7 +170,7 @@ const Quiz = () => {
                 value="option3"
                 name="option"
                 className="cursor-pointer"
-                checked={selectedOption === "option3"}
+                checked={userAnswers[currentIndex] === "option3"}
                 onChange={handleOptionChange}
               />
               <label htmlFor="option3" className="align-middle cursor-pointer">
@@ -183,7 +185,7 @@ const Quiz = () => {
                 value="option4"
                 name="option"
                 className="cursor-pointer"
-                checked={selectedOption === "option4"}
+                checked={userAnswers[currentIndex] === "option1"}
                 onChange={handleOptionChange}
               />
               <label htmlFor="option4" className="align-middle cursor-pointer">

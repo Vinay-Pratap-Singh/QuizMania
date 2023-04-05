@@ -92,25 +92,33 @@ const Result = () => {
           {/* total question card */}
           <div className="shadow-md rounded-md py-2 px-6 w-48">
             <h3 className="font-semibold">Total Questions</h3>
-            <p className="font-bold text-2xl">{questions.length}</p>
+            <p className="font-bold text-2xl">
+              {questions.length > 9 ? questions.length : "0" + questions.length}
+            </p>
           </div>
 
           {/* correct answers card */}
           <div className="shadow-md rounded-md py-2 px-6 w-48">
             <h3 className="font-semibold">Correct Answers</h3>
-            <p className="font-bold text-2xl">{correctAnswer}</p>
+            <p className="font-bold text-2xl">
+              {correctAnswer > 9 ? correctAnswer : "0" + correctAnswer}
+            </p>
           </div>
 
           {/* incorrect answers card */}
           <div className="shadow-md rounded-md py-2 px-6 w-48">
             <h3 className="font-semibold">Incorrect Answers</h3>
-            <p className="font-bold text-2xl">{inCorrectAnswer}</p>
+            <p className="font-bold text-2xl">
+              {inCorrectAnswer > 9 ? inCorrectAnswer : "0" + inCorrectAnswer}
+            </p>
           </div>
 
           {/* not attempted card */}
           <div className="shadow-md rounded-md py-2 px-6">
             <h3 className="font-semibold">Not Attempted</h3>
-            <p className="font-bold text-2xl">{notAttempted}</p>
+            <p className="font-bold text-2xl">
+              {notAttempted > 9 ? notAttempted : "0" + notAttempted}
+            </p>
           </div>
         </section>
 

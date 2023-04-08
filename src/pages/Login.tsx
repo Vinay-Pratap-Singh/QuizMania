@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../redux/Store";
 import { Link, useNavigate } from "react-router-dom";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
+import Loader from "../components/Loader/Loader";
 
 const Login = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -27,7 +28,9 @@ const Login = () => {
   const [passwordStatus, setPasswordStatus] = useState<boolean>(false);
 
   // getting logged in status
-  const { isLoggedIn } = useSelector((state: RootState) => state.auth);
+  const { isLoggedIn, isLoading } = useSelector(
+    (state: RootState) => state.auth
+  );
 
   // function to handle input change
   const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -86,7 +89,9 @@ const Login = () => {
     }
   }, [isLoggedIn]);
 
-  return (
+  return isLoading ? (
+    <Loader />
+  ) : (
     <div className="h-[100vh] w-full flex items-center justify-center ml-60">
       <div className="shadow-md rounded-md flex flex-col gap-4 items-center w-80 p-4">
         {/* adding the google auth button */}

@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import {
   AiOutlineDatabase,
@@ -16,6 +16,7 @@ import { ADMIN_ROLE } from "../config/config";
 
 const Sidebar = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
 
   // for toggling login and logout button
   const isLoggedIn: boolean = useSelector(
@@ -25,6 +26,12 @@ const Sidebar = () => {
   const userName = useSelector((state: RootState) => state.auth.name);
   // for getting drop down menu
   const [dropDownMenu, setDropDownMenu] = useState<boolean>(false);
+
+  // function to handle the logout
+  const handleLogout = async () => {
+    await dispatch(logout());
+    navigate("/login");
+  };
 
   return (
     <div className="w-60 border-[1px] h-[100vh] border-r-gray-300 fixed left-0 z-50 shadow-md">
@@ -124,7 +131,7 @@ const Sidebar = () => {
       <div className="absolute bottom-0 font-semibold w-full p-4">
         {isLoggedIn ? (
           <button
-            onClick={() => dispatch(logout())}
+            onClick={handleLogout}
             className="w-full border-2 py-1 border-[#00C8AC] rounded-sm bg-[#00C8AC] text-white transition-all ease-in-out duration-300 hover:shadow-[0_0_5px_#00C8AC]"
           >
             Logout

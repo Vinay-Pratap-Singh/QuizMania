@@ -10,6 +10,7 @@ import { AppDispatch, RootState } from "../redux/Store";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
+import Loader from "../components/Loader/Loader";
 
 const Signup = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -28,7 +29,9 @@ const Signup = () => {
   const [passwordStatus, setPasswordStatus] = useState<boolean>(false);
 
   // getting logged in status
-  const { isLoggedIn } = useSelector((state: RootState) => state.auth);
+  const { isLoggedIn, isLoading } = useSelector(
+    (state: RootState) => state.auth
+  );
 
   // function to handle input change
   const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -88,7 +91,7 @@ const Signup = () => {
     const res = await dispatch(createAccountUsingEmail(inputData));
     setDisabled(false);
     if (res.meta.requestStatus === "fulfilled") {
-      navigate("/login");
+      navigate("/");
     }
 
     // clearing the state
@@ -118,7 +121,9 @@ const Signup = () => {
     }
   }, [isLoggedIn]);
 
-  return (
+  return isLoading ? (
+    <Loader />
+  ) : (
     <div className="h-[100vh] w-full flex items-center justify-center ml-60">
       <div className="shadow-md rounded-md flex flex-col gap-4 p-4 items-center w-80 ">
         {/* adding the google auth button */}

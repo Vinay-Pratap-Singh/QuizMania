@@ -1,14 +1,16 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import mainImage from "../assets/mainImage.png";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getUserData } from "../redux/AuthSlice";
-import { AppDispatch } from "../redux/Store";
+import { AppDispatch, RootState } from "../redux/Store";
 import useAuth from "../hooks/useAuth";
+import Loader from "../components/Loader/Loader";
 
 const Homepage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { isLoggedIn, uid } = useAuth();
+  const { isLoading } = useSelector((state: RootState) => state.auth);
   useEffect(() => {
     if (isLoggedIn && uid) {
       (async () => {
@@ -17,7 +19,9 @@ const Homepage = () => {
     }
   }, [isLoggedIn]);
 
-  return (
+  return isLoading ? (
+    <Loader />
+  ) : (
     <div className="h-[100vh] flex items-center justify-center gap-16 w-full ml-60">
       {/* creating the container for image */}
       <div>

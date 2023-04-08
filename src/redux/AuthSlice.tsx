@@ -22,6 +22,7 @@ interface Istate {
   quizAttempted: number;
   passed: number;
   failed: number;
+  isLoading: boolean;
 }
 
 // creating the initial state
@@ -34,6 +35,7 @@ const initialState: Istate = {
   quizAttempted: 0,
   passed: 0,
   failed: 0,
+  isLoading: false,
 };
 
 export interface IuserSignupData {
@@ -176,42 +178,43 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     builder
       // cases for creating account using email and password
-      .addCase(createAccountUsingEmail.pending, () => {
-        toast.loading("Wait! Creating your account...");
+      .addCase(createAccountUsingEmail.pending, (state) => {
+        state.isLoading = true;
       })
-      .addCase(createAccountUsingEmail.fulfilled, (state, action) => {
-        toast.remove();
+      .addCase(createAccountUsingEmail.fulfilled, (state) => {
         toast.success("Account created successfully");
+        state.isLoading = false;
       })
       .addCase(createAccountUsingEmail.rejected, (state, action) => {
-        toast.remove();
-        toast.error("Failed to Create Account");
         const message: string | undefined = action.error.message as string;
         toast.error(message);
+        state.isLoading = false;
       })
       // cases for creating account using google authentication
-      .addCase(usingGoogleAuthentication.fulfilled, (state, action) => {
+      .addCase(usingGoogleAuthentication.fulfilled, (state) => {
         toast.remove();
         toast.success("Logged in successfully");
         state.isLoggedIn = true;
       })
       .addCase(usingGoogleAuthentication.rejected, () => {
         toast.remove();
-        toast.error("Failed to logged in using google account");
+        toast.error("Failed to login using google account");
       })
       // cases for user login using email and password
-      .addCase(loginUsingEmail.pending, () => {
-        toast.loading("Wait! verifying your credential...");
+      .addCase(loginUsingEmail.pending, (state) => {
+        state.isLoading = true;
       })
       .addCase(loginUsingEmail.fulfilled, (state, action) => {
         toast.remove();
         toast.success("Logged in successfully");
         state.isLoggedIn = true;
         state.uid = action?.payload?.uid;
+        state.isLoading = false;
       })
-      .addCase(loginUsingEmail.rejected, () => {
+      .addCase(loginUsingEmail.rejected, (state) => {
         toast.remove();
-        toast.error("Invalid Credential");
+        toast.error("Invalid credentials");
+        state.isLoading = false;
       })
       // cases for user logout
       .addCase(logout.fulfilled, (state) => {
@@ -224,6 +227,9 @@ const authSlice = createSlice({
       .addCase(logout.rejected, () => {
         toast.error("Failed to logout");
       })
+      .addCase(getUserData.pending, (state) => {
+        state.isLoading = true;
+      })
       .addCase(getUserData.fulfilled, (state, action) => {
         state.isLoggedIn = true;
         state.name = action?.payload?.name;
@@ -232,6 +238,10 @@ const authSlice = createSlice({
         state.quizAttempted = action?.payload?.quizAttempted;
         state.passed = action?.payload?.passed;
         state.failed = action?.payload?.failed;
+        state.isLoading = false;
+      })
+      .addCase(getUserData.rejected, (state) => {
+        state.isLoading = false;
       });
   },
 });

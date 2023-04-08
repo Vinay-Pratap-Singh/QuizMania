@@ -103,7 +103,9 @@ const Question = () => {
       return;
     }
     const data: ImyQuestionData[] = questions.filter((element) => {
-      return element?.question.includes(searchByName);
+      const questionName = element?.question.toLowerCase();
+      const inputQuestion = searchByName.toLowerCase();
+      return questionName.includes(inputQuestion);
     });
     setFilteredQues([...data]);
     setCurrentPage(1);

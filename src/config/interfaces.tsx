@@ -31,12 +31,16 @@ export interface IquizSliceState {
   isLoading: boolean;
 }
 
-// for inital state of user slice
-export interface IinitialStateUser {
+export interface IinitialStateUserData {
   email: string;
   name: string;
   role: string[];
   quizAttempted: number;
   passed: number;
   failed: number;
+}
+// for initial state of user slice
+export interface IinitialStateUser {
+  data: IinitialStateUserData[];
+  isLoading: boolean;
 }

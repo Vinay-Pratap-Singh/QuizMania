@@ -1,20 +1,26 @@
 import { useEffect, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
-import { IinitialStateUser } from "../../config/interfaces";
+import {
+  IinitialStateUser,
+  IinitialStateUserData,
+} from "../../config/interfaces";
 import { AppDispatch, RootState } from "../../redux/Store";
 import { toast } from "react-hot-toast";
 import { getUsersData } from "../../redux/UserSlice";
+import Loader from "../../components/Loader/Loader";
 
 const StudentsRecord = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const orgUsers = useSelector((state: RootState) => state.user);
+  const { data: orgUsers, isLoading: userLoading } = useSelector(
+    (state: RootState) => state.user
+  );
   const [filteredUsers, setFilteredUsers] = useState([...orgUsers]);
   const [searchByName, setSearchByName] = useState<string>("");
 
   // for handling pagination
   const [usersToBeDisplayed, setUsersToBeDisplayed] =
-    useState<IinitialStateUser[]>();
+    useState<IinitialStateUserData[]>();
   const userLimit = 5;
   const [currentPage, setCurrentPage] = useState(1);
   let startIndex = (currentPage - 1) * userLimit;
@@ -54,7 +60,7 @@ const StudentsRecord = () => {
   };
 
   // function to handle search question by name functionality
-  const searchQuestionByName = (event: React.FormEvent<HTMLFormElement>) => {
+  const searchUserByName = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!searchByName) {
       setFilteredUsers([...orgUsers]);
@@ -62,7 +68,9 @@ const StudentsRecord = () => {
       return;
     }
     const data = orgUsers.filter((element) => {
-      return element?.name.includes(searchByName);
+      const userName = element?.name.toLowerCase();
+      const inputName = searchByName.toLowerCase();
+      return userName.includes(inputName);
     });
     setFilteredUsers([...data]);
     setCurrentPage(1);
@@ -88,7 +96,13 @@ const StudentsRecord = () => {
     setUser();
   }, []);
 
-  return (
+  useEffect(() => {
+    setFilteredUsers([...orgUsers]);
+  }, [orgUsers]);
+
+  return userLoading ? (
+    <Loader />
+  ) : (
     <div className="flex flex-col items-center justify-center text-center w-full min-h-[100vh] ml-60">
       <div className="w-[70%] space-y-10">
         <header className="space-y-2 text-center">
@@ -104,7 +118,7 @@ const StudentsRecord = () => {
         <div className="shadow-lg p-2 rounded-md w-full flex flex-col gap-5">
           {/* to search the student using its name */}
           <form
-            onSubmit={searchQuestionByName}
+            onSubmit={searchUserByName}
             className="border border-gray-500 rounded-3xl px-4 py-1 font-medium flex items-center justify-between"
           >
             <input

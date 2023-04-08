@@ -2,25 +2,19 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { collection, getDocs } from "firebase/firestore";
 import { toast } from "react-hot-toast";
 import { db } from "../config/firebase";
-import { IinitialStateUser } from "../config/interfaces";
+import { IinitialStateUser, IinitialStateUserData } from "../config/interfaces";
 
-const initialState: IinitialStateUser[] = [];
+const initialState: IinitialStateUser = {
+  data: [],
+  isLoading: false,
+};
 
 // function to get the user data
 export const getUsersData = createAsyncThunk("user/getdata", async () => {
   try {
-    let userData: IinitialStateUser[] = [];
-    const query = getDocs(collection(db, "user"));
-
-    toast.promise(query, {
-      loading: "Fetching the users detail",
-      success: "Users detail fetched successfully",
-      error: "Failed to fetch users detail",
-    });
-
-    const querySnapshot = await query;
-
-    querySnapshot.forEach((doc) => {
+    let userData: IinitialStateUserData[] = [];
+    const query = await getDocs(collection(db, "user"));
+    query.forEach((doc) => {
       const user = {
         name: doc.data().name,
         email: doc.data().email,
@@ -34,7 +28,7 @@ export const getUsersData = createAsyncThunk("user/getdata", async () => {
 
     return userData;
   } catch (error) {
-    toast.error("Oops!Operation Failed");
+    toast.error("Oops! Operation Failed");
   }
 });
 
@@ -43,9 +37,18 @@ const userSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(getUsersData.fulfilled, (state, action) => {
-      return action?.payload!;
-    });
+    builder
+      .addCase(getUsersData.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getUsersData.fulfilled, (state, action) => {
+        state.data = action.payload!;
+        state.isLoading = false;
+      })
+      .addCase(getUsersData.rejected, (state) => {
+        state.isLoading = false;
+        toast.error("Failed to load user data");
+      });
   },
 });
 

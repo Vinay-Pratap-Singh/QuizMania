@@ -28,6 +28,7 @@ export interface ImyQuestionData {
 // for storing quizSlice data
 export interface IquizSliceState {
   questions: ImyQuestionData[];
+  isLoading: boolean;
 }
 
 // for inital state of user slice

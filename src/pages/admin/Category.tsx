@@ -15,7 +15,7 @@ import Loader from "../../components/Loader/Loader";
 
 const Category = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { categoryData, isLoading } = useSelector(
+  const { categoryData, isLoading: categoryLoading } = useSelector(
     (state: RootState) => state.category
   );
   const [userInput, setUserInput] = useState<string>("");
@@ -78,7 +78,7 @@ const Category = () => {
     dispatch(getCategory());
   }, []);
 
-  return isLoading ? (
+  return categoryLoading ? (
     <Loader />
   ) : (
     <div className="h-[100vh] w-full flex items-center justify-center ml-60">

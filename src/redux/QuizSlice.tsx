@@ -68,6 +68,7 @@ export interface IchartData {
 
 const initialState: IquizSliceState = {
   questions: [],
+  isLoading: false,
 };
 
 // function to get all questions

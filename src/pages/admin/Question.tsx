@@ -7,17 +7,21 @@ import { getCategory } from "../../redux/CategorySlice";
 import { deleteQuestion, getQuestions } from "../../redux/QuizSlice";
 import { AppDispatch, RootState } from "../../redux/Store";
 import { toast } from "react-hot-toast";
+import Loader from "../../components/Loader/Loader";
 
 const Question = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
   // for storing the orignal questions list
-  const questions = useSelector((state: RootState) => state.quiz.questions);
+  const { questions, isLoading: questionLoading } = useSelector(
+    (state: RootState) => state.quiz
+  );
   const [questionToBeDisplayed, setQuestionToBeDisplayed] = useState<
     ImyQuestionData[]
   >([...questions]);
-  const [filteredQues, setFilteredQues] = useState<ImyQuestionData[]>([]);
+  const [filteredQues, setFilteredQues] =
+    useState<ImyQuestionData[]>(questions);
   const quesLimit = 5;
   const [currentPage, setCurrentPage] = useState(1);
   let startIndex = (currentPage - 1) * quesLimit;
@@ -27,7 +31,8 @@ const Question = () => {
       : startIndex + quesLimit;
 
   // getting all the categories list
-  const categoryList = useSelector((state: RootState) => state.category);
+  const { categoryData: categoryList, isLoading: categoryLoading } =
+    useSelector((state: RootState) => state.category);
   const [searchByName, setSearchByName] = useState<string>("");
 
   // function to dispatch delete operation for question
@@ -129,7 +134,7 @@ const Question = () => {
         ? filteredQues.length
         : startIndex + quesLimit;
     setQuestion();
-  }, [currentPage, filteredQues]);
+  }, [currentPage, filteredQues, questions]);
 
   // for getting question and category data on first render
   useEffect(() => {
@@ -141,7 +146,15 @@ const Question = () => {
     setQuestion();
   }, []);
 
-  return (
+  // for handling questions change
+  useEffect(() => {
+    setQuestionToBeDisplayed([...questions]);
+    setFilteredQues([...questions]);
+  }, [questions]);
+
+  return categoryLoading || questionLoading ? (
+    <Loader />
+  ) : (
     <div className="min-h-[100vh] w-full p-5 ml-60">
       <h2 className="text-4xl font-bold text-center mb-10">
         Welcome to the <span className="text-[#00C8AC]">Question Page</span>
@@ -209,13 +222,14 @@ const Question = () => {
                   onChange={searchQuestionByCategoryName}
                 >
                   <option value="all">All</option>
-                  {categoryList.map((element) => {
-                    return (
-                      <option key={element.id} value={element?.categoryName}>
-                        {element?.categoryName}
-                      </option>
-                    );
-                  })}
+                  {categoryList &&
+                    categoryList.map((element) => {
+                      return (
+                        <option key={element.id} value={element?.categoryName}>
+                          {element?.categoryName}
+                        </option>
+                      );
+                    })}
                 </select>
               </th>
               <th className="p-1 border border-r-gray-600 border-b-gray-600">

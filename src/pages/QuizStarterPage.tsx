@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { getCategory } from "../redux/CategorySlice";
 import { AppDispatch, RootState } from "../redux/Store";
+import Loader from "../components/Loader/Loader";
 
 const QuizStarterPage = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -16,8 +17,8 @@ const QuizStarterPage = () => {
   });
 
   // getting all the categories list
-  const categoryList = useSelector(
-    (state: RootState) => state.category.categoryData
+  const { categoryData: categoryList, isLoading } = useSelector(
+    (state: RootState) => state.category
   );
 
   // function to handle form submit
@@ -46,7 +47,9 @@ const QuizStarterPage = () => {
     })();
   }, []);
 
-  return (
+  return isLoading ? (
+    <Loader />
+  ) : (
     <div className="min-h-screen w-full flex items-center justify-center ml-60">
       {/* creating the starter card */}
       <form
@@ -70,7 +73,7 @@ const QuizStarterPage = () => {
                 Quiz Length :{" "}
               </label>
               <select
-                className="text-sm"
+                className="text-sm hover:cursor-pointer"
                 name="length"
                 id="length"
                 required
@@ -91,7 +94,7 @@ const QuizStarterPage = () => {
                 Category :{" "}
               </label>
               <select
-                className="text-sm"
+                className="text-sm hover:cursor-pointer"
                 name="category"
                 id="category"
                 required

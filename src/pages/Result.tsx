@@ -5,8 +5,9 @@ import { IchartData } from "../redux/QuizSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../redux/Store";
 import { useEffect } from "react";
-import { getUserData, updateUserDetails } from "../redux/AuthSlice";
+import { updateUserDetails } from "../redux/AuthSlice";
 import useAuth from "../hooks/useAuth";
+import Loader from "../components/Loader/Loader";
 
 const Result = () => {
   const { questions, userAnswers } = useLocation().state;
@@ -15,6 +16,7 @@ const Result = () => {
     (state: RootState) => state.auth
   );
   const { isLoggedIn, uid } = useAuth();
+  const { isLoading } = useSelector((state: RootState) => state.auth);
 
   let correctAnswer = 0,
     inCorrectAnswer = 0,
@@ -68,12 +70,13 @@ const Result = () => {
       }
       (async () => {
         await dispatch(updateUserDetails({ ...data }));
-        await dispatch(getUserData(uid));
       })();
     }
   }, [isLoggedIn, uid, dispatch]);
 
-  return (
+  return isLoading ? (
+    <Loader />
+  ) : (
     <div className="flex flex-col items-center justify-center text-center min-h-screen w-full ml-60 my-10">
       <main className="flex flex-col items-center justify-center text-center gap-5">
         <header className="space-y-5">

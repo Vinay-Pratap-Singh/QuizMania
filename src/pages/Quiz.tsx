@@ -5,6 +5,7 @@ import { getQuestions, getRandomQuestions } from "../redux/QuizSlice";
 import { AppDispatch, RootState } from "../redux/Store";
 import { ImyQuestionData } from "../config/interfaces";
 import { toast } from "react-hot-toast";
+import Loader from "../components/Loader/Loader";
 
 const Quiz = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -12,7 +13,9 @@ const Quiz = () => {
 
   // getting the data from location
   const { category, length } = useLocation().state;
-  const questions = useSelector((state: RootState) => state.quiz.questions);
+  const { questions, isLoading } = useSelector(
+    (state: RootState) => state.quiz
+  );
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | undefined>(
     undefined
@@ -103,8 +106,18 @@ const Quiz = () => {
     setUserAnswers([...data]);
   }, []);
 
-  return (
-    <div className="h-screen w-full ml-60 flex items-center justify-center">
+  // redirect if not enough questions to be displayed
+  useEffect(() => {
+    if (questions.length < length) {
+      toast.error("Sorry! Not enough questions in this category");
+      navigate(-1);
+    }
+  }, [questions]);
+
+  return isLoading ? (
+    <Loader />
+  ) : (
+    <div className="h-screen w-full ml-60 flex items-center justify-center select-none">
       {/* creating the quiz template */}
       <div className="w-3/4 flex flex-col py-5 px-10 space-y-5 rounded-lg shadow-md">
         {/* header part of card */}
@@ -113,13 +126,22 @@ const Quiz = () => {
             <span className="text-[#00C8AC]">{category} </span>
             Quiz
           </h1>
-          <div className="w-full flex items-center justify-between">
+          <div className="w-full flex items-center justify-between font-bold">
             <h1>
               {currentIndex + 1} of {length}
             </h1>
             <h1>
-              Timer : {minutes < 10 ? "0" + minutes : minutes} :{" "}
-              {seconds < 10 ? "0" + seconds : seconds} min
+              Timer :{" "}
+              <span
+                className={`${
+                  minutes === 0 && seconds <= 30
+                    ? "text-red-500"
+                    : "text-[#00C8AC]"
+                }`}
+              >
+                {minutes < 10 ? "0" + minutes : minutes} :{" "}
+                {seconds < 10 ? "0" + seconds : seconds} min
+              </span>
             </h1>
           </div>
         </header>
@@ -185,7 +207,7 @@ const Quiz = () => {
                 value="option4"
                 name="option"
                 className="cursor-pointer"
-                checked={userAnswers[currentIndex] === "option1"}
+                checked={userAnswers[currentIndex] === "option4"}
                 onChange={handleOptionChange}
               />
               <label htmlFor="option4" className="align-middle cursor-pointer">

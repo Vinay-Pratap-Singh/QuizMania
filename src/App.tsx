@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import { Toaster } from "react-hot-toast";
 import Dashboard from "./pages/admin/Dashboard";
+import Profile from "./pages/user/Profile";
 import StudentsRecord from "./pages/admin/StudentRecord";
 import Category from "./pages/admin/Category";
 import Question from "./pages/admin/Question";
@@ -39,6 +40,7 @@ const App = () => {
           <Route path="/starter" element={<QuizStarterPage />} />
           <Route path="/quiz" element={<Quiz />} />
           <Route path="/result" element={<Result />} />
+          <Route path="/dashboard/user" element={<Profile />} />
         </Route>
 
         <Route element={<RequireAuth allowedRoles={[ADMIN_ROLE]} />}>

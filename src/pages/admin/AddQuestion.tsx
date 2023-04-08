@@ -109,7 +109,7 @@ const AddQuestion = () => {
   return questionLoading ? (
     <Loader />
   ) : (
-    <div className="h-[100vh] w-full flex items-center justify-center ml-60">
+    <div className="h-screen w-full flex items-center justify-center ml-60">
       {/* container for question card */}
       <div className=" shadow-md rounded-md flex flex-col gap-4 items-center w-full mx-[5%] h-[90%] p-4">
         <h2 className="text-2xl font-bold relative">

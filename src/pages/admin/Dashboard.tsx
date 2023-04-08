@@ -5,22 +5,26 @@ import { AppDispatch, RootState } from "../../redux/Store";
 import { useEffect, useState } from "react";
 import { getUsersData } from "../../redux/UserSlice";
 import { getCategory } from "../../redux/CategorySlice";
+import Loader from "../../components/Loader/Loader";
 
 const Dashboard = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const usersData = useSelector((state: RootState) => state.user);
-  const categoriesData = useSelector(
-    (state: RootState) => state.category.categoryData
+  const { data: usersData, isLoading: userLoading } = useSelector(
+    (state: RootState) => state.user
   );
-  const questionsData = useSelector((state: RootState) => state.quiz.questions);
+  const { categoryData: categoriesData, isLoading: categoryLoading } =
+    useSelector((state: RootState) => state.category);
+  const { questions: questionsData, isLoading: questionLoading } = useSelector(
+    (state: RootState) => state.quiz
+  );
 
   interface IchartDataSet {
     labelName: string;
     questions: number;
   }
-  const chartDataSet: IchartDataSet[] = [];
-  const chartLabels: string[] = [];
-  const questionsNumber: number[] = [];
+  let chartDataSet: IchartDataSet[] = [];
+  let chartLabels: string[] = [];
+  let questionsNumber: number[] = [];
 
   // chart data
   const [chartData, setChartData] = useState<IchartData>({
@@ -42,6 +46,12 @@ const Dashboard = () => {
       await dispatch(getCategory());
       await dispatch(getQuestions());
     })();
+  }, []);
+
+  useEffect(() => {
+    chartDataSet = [];
+    chartLabels = [];
+    questionsNumber = [];
 
     categoriesData.map((element) => {
       chartDataSet.push({ labelName: element.categoryName, questions: 0 });
@@ -77,10 +87,12 @@ const Dashboard = () => {
         },
       ],
     });
-  }, []);
+  }, [categoriesData, questionsData, usersData]);
 
-  return (
-    <div className="flex flex-col items-center justify-center text-center w-full min-h-[100vh] ml-60">
+  return userLoading || categoryLoading || questionLoading ? (
+    <Loader />
+  ) : (
+    <div className="flex flex-col items-center justify-center text-center w-full min-h-screen ml-60">
       <main className="flex flex-col items-center justify-center text-center gap-5">
         <header className="space-y-5">
           <h1 className="text-4xl font-bold">
@@ -99,7 +111,9 @@ const Dashboard = () => {
           <div className="shadow-md rounded-md py-2 px-6 w-48 cursor-pointer">
             <h3 className="font-semibold">Registered User</h3>
             <p className="font-bold text-2xl">
-              {usersData.length > 9 ? usersData.length : "0" + usersData.length}
+              {usersData && usersData.length > 9
+                ? usersData.length
+                : "0" + usersData.length}
             </p>
           </div>
 

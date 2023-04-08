@@ -81,7 +81,7 @@ const Category = () => {
   return categoryLoading ? (
     <Loader />
   ) : (
-    <div className="h-[100vh] w-full flex items-center justify-center ml-60">
+    <div className="h-screen w-full flex items-center justify-center ml-60">
       <div className="flex flex-col gap-10 items-center h-[80%] w-full">
         <header className="text-center w-full space-y-2">
           <h2 className="text-4xl font-bold relative">

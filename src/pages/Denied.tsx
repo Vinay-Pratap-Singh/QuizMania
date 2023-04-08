@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 const Denied = () => {
   const navigate = useNavigate();
   return (
-    <div className="ml-60 flex items-center justify-center h-[100vh] w-full">
+    <div className="ml-60 flex items-center justify-center h-screen w-full">
       {/* creating the denied card */}
       <div className="flex flex-col items-center gap-1">
         <h1 className="text-6xl font-bold">403</h1>

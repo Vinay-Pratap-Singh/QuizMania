@@ -22,7 +22,7 @@ const Homepage = () => {
   return isLoading ? (
     <Loader />
   ) : (
-    <div className="h-[100vh] flex items-center justify-center gap-16 w-full ml-60">
+    <div className="h-screen flex items-center justify-center gap-16 w-full ml-60">
       {/* creating the container for image */}
       <div>
         <img className="w-80 drop-shadow-lg" src={mainImage} alt="mainImage" />

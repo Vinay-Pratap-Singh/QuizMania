@@ -74,7 +74,7 @@ const Result = () => {
   }, [isLoggedIn, uid, dispatch]);
 
   return (
-    <div className="flex flex-col items-center justify-center text-center min-h-[100vh] w-full ml-60 my-10">
+    <div className="flex flex-col items-center justify-center text-center min-h-screen w-full ml-60 my-10">
       <main className="flex flex-col items-center justify-center text-center gap-5">
         <header className="space-y-5">
           <h1 className="text-4xl font-bold">

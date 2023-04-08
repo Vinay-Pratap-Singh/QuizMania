@@ -1,6 +1,6 @@
 const Contact = () => {
   return (
-    <div className="h-[100vh] w-full flex items-center justify-center ml-60">
+    <div className="h-screen w-full flex items-center justify-center ml-60">
       <form
         name="contact"
         method="post"

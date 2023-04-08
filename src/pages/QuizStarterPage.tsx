@@ -16,7 +16,9 @@ const QuizStarterPage = () => {
   });
 
   // getting all the categories list
-  const categoryList = useSelector((state: RootState) => state.category);
+  const categoryList = useSelector(
+    (state: RootState) => state.category.categoryData
+  );
 
   // function to handle form submit
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -45,7 +47,7 @@ const QuizStarterPage = () => {
   }, []);
 
   return (
-    <div className="min-h-[100vh] w-full flex items-center justify-center ml-60">
+    <div className="min-h-screen w-full flex items-center justify-center ml-60">
       {/* creating the starter card */}
       <form
         onSubmit={handleFormSubmit}

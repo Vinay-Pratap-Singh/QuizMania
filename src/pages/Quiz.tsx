@@ -104,7 +104,7 @@ const Quiz = () => {
   }, []);
 
   return (
-    <div className="h-[100vh] w-full ml-60 flex items-center justify-center">
+    <div className="h-screen w-full ml-60 flex items-center justify-center">
       {/* creating the quiz template */}
       <div className="w-3/4 flex flex-col py-5 px-10 space-y-5 rounded-lg shadow-md">
         {/* header part of card */}

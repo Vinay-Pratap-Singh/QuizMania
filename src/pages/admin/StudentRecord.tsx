@@ -103,7 +103,7 @@ const StudentsRecord = () => {
   return userLoading ? (
     <Loader />
   ) : (
-    <div className="flex flex-col items-center justify-center text-center w-full min-h-[100vh] ml-60">
+    <div className="flex flex-col items-center justify-center text-center w-full min-h-screen ml-60">
       <div className="w-[70%] space-y-10">
         <header className="space-y-2 text-center">
           <h2 className="text-4xl font-bold">

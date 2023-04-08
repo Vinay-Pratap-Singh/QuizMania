@@ -1,7 +1,7 @@
 import creatorImg from "../assets/personalImg.jpeg";
 const About = () => {
   return (
-    <div className="flex flex-col items-center justify-center text-center w-full min-h-[100vh] ml-60">
+    <div className="flex flex-col items-center justify-center text-center w-full min-h-screen ml-60">
       <div className="w-[80%]">
         <h1 className="text-3xl font-bold text-center mb-5">
           About the <span className="text-[#00C8AC]">Quizmania</span>

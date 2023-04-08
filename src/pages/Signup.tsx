@@ -124,7 +124,7 @@ const Signup = () => {
   return isLoading ? (
     <Loader />
   ) : (
-    <div className="h-[100vh] w-full flex items-center justify-center ml-60">
+    <div className="h-screen w-full flex items-center justify-center ml-60">
       <div className="shadow-md rounded-md flex flex-col gap-4 p-4 items-center w-80 ">
         {/* adding the google auth button */}
         <button

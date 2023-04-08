@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 const Error = () => {
   const navigate = useNavigate();
   return (
-    <div className="ml-60 flex items-center justify-center h-[100vh] w-full">
+    <div className="ml-60 flex items-center justify-center h-screen w-full">
       {/* creating the error card */}
       <div className="flex flex-col items-center gap-1">
         <h1 className="text-6xl font-bold">404</h1>

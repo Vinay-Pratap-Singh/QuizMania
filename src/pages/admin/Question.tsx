@@ -159,7 +159,7 @@ const Question = () => {
   return categoryLoading || questionLoading ? (
     <Loader />
   ) : (
-    <div className="min-h-[100vh] w-full p-5 ml-60">
+    <div className="min-h-screen w-full p-5 ml-60">
       <h2 className="text-4xl font-bold text-center mb-10">
         Welcome to the <span className="text-[#00C8AC]">Question Page</span>
       </h2>

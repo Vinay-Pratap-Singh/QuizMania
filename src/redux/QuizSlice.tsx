@@ -128,9 +128,9 @@ export const updateQuestion = createAsyncThunk(
         option2: data.option2,
         option3: data.option3,
         option4: data.option4,
-        correctOption: data.correctOption!,
+        correctOption: data.correctOption,
         categoryName: data.categoryName,
-        description: data.description!,
+        description: data.description,
       };
       const res = await updateDoc(docRef, {
         ...newData,

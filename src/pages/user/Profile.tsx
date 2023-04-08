@@ -30,7 +30,7 @@ const Profile = () => {
           <p>{email}</p>
 
           <h3>Role : </h3>
-          <p>{role.join(" and ")}</p>
+          <p>{role.length === 1 ? "User" : "Admin"}</p>
 
           <h3>Total Attempt : </h3>
           <p>{quizAttempted}</p>

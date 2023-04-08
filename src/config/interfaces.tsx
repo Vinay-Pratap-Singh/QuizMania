@@ -20,9 +20,9 @@ export interface ImyQuestionData {
   option2: string;
   option3: string;
   option4: string;
-  correctOption?: string;
+  correctOption: string;
   categoryName: string;
-  description?: string;
+  description: string;
 }
 
 // for storing quizSlice data

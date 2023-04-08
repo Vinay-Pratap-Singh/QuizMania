@@ -93,21 +93,12 @@ export const addNewQuestion = createAsyncThunk(
   "/question/add",
   async (data: InewQuestionData) => {
     try {
-      const res = addDoc(collection(db, "questions"), {
+      const res = await addDoc(collection(db, "questions"), {
         ...data,
       });
-
-      toast.promise(res, {
-        loading: "Adding the question...",
-        success: "Question added successfully",
-        error: "Failed to add question",
-      });
-
-      const response = await res;
-
-      return response;
+      return res;
     } catch (error) {
-      toast.error("Operation Failed");
+      toast.error("Oops! operation failed");
     }
   }
 );
@@ -117,19 +108,10 @@ export const deleteQuestion = createAsyncThunk(
   "question/delete",
   async (id: string) => {
     try {
-      const res = deleteDoc(doc(db, "questions", id));
-
-      toast.promise(res, {
-        loading: "Deleting the question...",
-        success: "Question deleted successfully",
-        error: "Failed to delete question",
-      });
-
-      const response = await res;
-
-      return response;
+      const res = await deleteDoc(doc(db, "questions", id));
+      return res;
     } catch (error) {
-      toast.error("Operation Failed");
+      toast.error("Oops! operation failed");
     }
   }
 );
@@ -150,21 +132,12 @@ export const updateQuestion = createAsyncThunk(
         categoryName: data.categoryName,
         description: data.description,
       };
-      const res = updateDoc(docRef, {
+      const res = await updateDoc(docRef, {
         ...newData,
       });
-
-      toast.promise(res, {
-        loading: "Updating the question...",
-        success: "Question updated successfully",
-        error: "Failed to update question",
-      });
-
-      const response = await res;
-
-      return response;
+      return res;
     } catch (error) {
-      toast.error("Operation Failed");
+      toast.error("Oops! operation failed");
     }
   }
 );
@@ -196,7 +169,7 @@ export const getRandomQuestions = createAsyncThunk(
         .slice(0, data.length);
       return randomQuestions;
     } catch (error) {
-      toast.error("Failed to load questions");
+      toast.error("Oops! operation failed");
     }
   }
 );
@@ -206,11 +179,75 @@ const quizSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(getQuestions.fulfilled, (state, action) => {
-      if (action.payload?.questions) {
-        state.questions = action.payload?.questions;
-      }
-    });
+    // for getQuestions
+    builder
+      .addCase(getQuestions.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getQuestions.fulfilled, (state, action) => {
+        if (action.payload?.questions) {
+          state.questions = action.payload?.questions;
+          state.isLoading = false;
+        }
+      })
+      .addCase(getQuestions.rejected, (state) => {
+        state.isLoading = false;
+      });
+
+    // for addNewQuestion
+    builder
+      .addCase(addNewQuestion.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(addNewQuestion.fulfilled, (state) => {
+        state.isLoading = false;
+        toast.success("Question added successfully");
+      })
+      .addCase(addNewQuestion.rejected, (state) => {
+        state.isLoading = false;
+        toast.error("Failed to add question");
+      });
+
+    // for delete question
+    builder
+      .addCase(deleteQuestion.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(deleteQuestion.fulfilled, (state) => {
+        state.isLoading = false;
+        toast.success("Question deleted successfully");
+      })
+      .addCase(deleteQuestion.rejected, (state) => {
+        state.isLoading = false;
+        toast.error("Failed to delete question");
+      });
+
+    // for update question
+    builder
+      .addCase(updateQuestion.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updateQuestion.fulfilled, (state) => {
+        state.isLoading = false;
+        toast.success("Question updated successfully");
+      })
+      .addCase(updateQuestion.rejected, (state) => {
+        state.isLoading = false;
+        toast.error("Failed to update the question");
+      });
+
+    // for get random question
+    builder
+      .addCase(getRandomQuestions.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getRandomQuestions.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.questions = action.payload!;
+      })
+      .addCase(getRandomQuestions.rejected, (state) => {
+        state.isLoading = false;
+      });
   },
 });
 

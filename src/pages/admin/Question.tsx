@@ -43,6 +43,8 @@ const Question = () => {
     if (userOption) {
       await dispatch(deleteQuestion(id));
     }
+    // getting the updated questions
+    await dispatch(getQuestions());
   };
 
   // function to handle add question button click

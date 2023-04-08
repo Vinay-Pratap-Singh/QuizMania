@@ -5,7 +5,7 @@ const Loader = () => {
       <div className="ring"></div>
       <div className="ring"></div>
       <div className="ring"></div>
-      <p className="text-xs font-bold">Loading...</p>
+      <p className="text-xs font-bold">Processing...</p>
     </div>
   );
 };

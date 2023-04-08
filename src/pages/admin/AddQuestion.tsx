@@ -6,6 +6,7 @@ import { AppDispatch, RootState } from "../../redux/Store";
 import { addNewQuestion, updateQuestion } from "../../redux/QuizSlice";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getCategory } from "../../redux/CategorySlice";
+import Loader from "../../components/Loader/Loader";
 
 const AddQuestion = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -15,7 +16,12 @@ const AddQuestion = () => {
   const { state } = useLocation();
 
   // getting all the categories list
-  const categoryList = useSelector((state: RootState) => state.category);
+  const categoryList = useSelector(
+    (state: RootState) => state.category.categoryData
+  );
+  const { isLoading: questionLoading } = useSelector(
+    (state: RootState) => state.quiz
+  );
 
   // for storing user input
   const [inputData, setInputData] = useState<InewQuestionData>({
@@ -76,7 +82,6 @@ const AddQuestion = () => {
 
       // updating the existing question
       await dispatch(updateQuestion(newData));
-
       // sending the user to questions page again
       navigate("/dashboard/admin/question");
     }
@@ -101,7 +106,9 @@ const AddQuestion = () => {
     })();
   }, []);
 
-  return (
+  return questionLoading ? (
+    <Loader />
+  ) : (
     <div className="h-[100vh] w-full flex items-center justify-center ml-60">
       {/* container for question card */}
       <div className=" shadow-md rounded-md flex flex-col gap-4 items-center w-full mx-[5%] h-[90%] p-4">
@@ -226,9 +233,12 @@ const AddQuestion = () => {
                 name="correctOption"
                 id="correctOption"
                 required
+                value={inputData.correctOption}
                 onChange={handleInputBox}
               >
-                <option value="">Choose Me</option>
+                <option value="" defaultChecked>
+                  Choose Me
+                </option>
                 <option value="option1">Option1</option>
                 <option value="option2">Option2</option>
                 <option value="option3">Option3</option>
@@ -245,6 +255,7 @@ const AddQuestion = () => {
                 name="categoryName"
                 id="categoryName"
                 required
+                value={inputData.categoryName}
                 onChange={handleInputBox}
               >
                 <option value="">Choose Me</option>

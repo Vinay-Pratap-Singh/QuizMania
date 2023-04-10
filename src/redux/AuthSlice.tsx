@@ -11,7 +11,6 @@ import {
 import { db, firebaseAuth } from "../config/firebase";
 import toast from "react-hot-toast";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
-import { USER_ROLE } from "../config/config";
 
 interface Istate {
   isLoggedIn: boolean;
@@ -65,7 +64,7 @@ export const createAccountUsingEmail = createAsyncThunk(
     await setDoc(doc(db, "user", `${res.user.uid}`), {
       name: userData.name,
       email: userData.email,
-      role: [USER_ROLE],
+      role: [process.env.REACT_APP_USER_ROLE!],
       quizAttempted: 0,
       passed: 0,
       failed: 0,
@@ -94,7 +93,7 @@ export const usingGoogleAuthentication = createAsyncThunk(
       await setDoc(doc(db, "user", `${res.user.uid}`), {
         name: res.user.displayName,
         email: res.user.email,
-        role: [USER_ROLE],
+        role: [process.env.REACT_APP_USER_ROLE!],
         quizAttempted: 0,
         passed: 0,
         failed: 0,

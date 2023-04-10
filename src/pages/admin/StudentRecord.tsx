@@ -185,7 +185,7 @@ const StudentsRecord = () => {
                         {element?.email}
                       </td>
                       <td className="p-1 text-center border border-r-gray-600 border-b-gray-600">
-                        {element?.role.join(" and ")}
+                        {element?.role.length === 1 ? "User" : "Admin"}
                       </td>
                       <td className="p-1 text-center border border-r-gray-600 border-b-gray-600">
                         {element?.quizAttempted}

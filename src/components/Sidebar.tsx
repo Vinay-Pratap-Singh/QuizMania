@@ -13,7 +13,6 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../redux/Store";
 import { logout } from "../redux/AuthSlice";
-import { ADMIN_ROLE } from "../config/config";
 
 const Sidebar = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -55,7 +54,7 @@ const Sidebar = () => {
               onClick={() => setDropDownMenu(!dropDownMenu)}
               className="flex items-center justify-between cursor-pointer hover:text-[#00C8AC] hover:pl-2 transition-all ease-in-out duration-300"
             >
-              {userRole.includes(ADMIN_ROLE) ? (
+              {userRole.includes(process.env.REACT_APP_ADMIN_ROLE!) ? (
                 <div className="flex items-center gap-2">
                   <MdOutlineDashboard className="text-xl" />
                   <p>Dashboard</p>
@@ -68,12 +67,12 @@ const Sidebar = () => {
                   </div>
                 </Link>
               )}
-              {userRole.includes(ADMIN_ROLE) && (
+              {userRole.includes(process.env.REACT_APP_ADMIN_ROLE!) && (
                 <div>{dropDownMenu ? <BsCaretUp /> : <BsCaretDown />}</div>
               )}
             </div>
 
-            {dropDownMenu && userRole.includes(ADMIN_ROLE) && (
+            {dropDownMenu && userRole.includes(process.env.REACT_APP_ADMIN_ROLE!) && (
               <ul className="pl-8 pt-2 space-y-3 flex flex-col">
                 <Link to={"/dashboard/user"}>
                   <li className="flex items-center gap-2 cursor-pointer hover:text-[#00C8AC] hover:pl-2 transition-all ease-in-out duration-300">

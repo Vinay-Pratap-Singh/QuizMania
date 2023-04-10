@@ -16,7 +16,6 @@ import AddQuestion from "./pages/admin/AddQuestion";
 import Error from "./pages/Error";
 import NotRequireAuth from "./components/auth/NotRequireAuth";
 import RequireAuth from "./components/auth/RequireAuth";
-import { ADMIN_ROLE, USER_ROLE } from "./config/config";
 import Denied from "./pages/Denied";
 import Contact from "./pages/Contact";
 import About from "./pages/About";
@@ -36,14 +35,27 @@ const App = () => {
           <Route path="/signup" element={<Signup />} />
         </Route>
 
-        <Route element={<RequireAuth allowedRoles={[USER_ROLE, ADMIN_ROLE]} />}>
+        <Route
+          element={
+            <RequireAuth
+              allowedRoles={[
+                process.env.REACT_APP_USER_ROLE!,
+                process.env.REACT_APP_ADMIN_ROLE!,
+              ]}
+            />
+          }
+        >
           <Route path="/starter" element={<QuizStarterPage />} />
           <Route path="/quiz" element={<Quiz />} />
           <Route path="/result" element={<Result />} />
           <Route path="/dashboard/user" element={<Profile />} />
         </Route>
 
-        <Route element={<RequireAuth allowedRoles={[ADMIN_ROLE]} />}>
+        <Route
+          element={
+            <RequireAuth allowedRoles={[process.env.REACT_APP_ADMIN_ROLE!]} />
+          }
+        >
           <Route path="/dashboard/admin" element={<Dashboard />} />
           <Route path="/dashboard/admin/student" element={<StudentsRecord />} />
           <Route path="/dashboard/admin/category" element={<Category />} />

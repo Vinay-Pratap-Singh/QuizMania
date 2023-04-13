@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import { getQuestions, getRandomQuestions } from "../redux/QuizSlice";
+import { getRandomQuestions } from "../redux/QuizSlice";
 import { AppDispatch, RootState } from "../redux/Store";
-import { ImyQuestionData } from "../config/interfaces";
 import { toast } from "react-hot-toast";
 import Loader from "../components/Loader/Loader";
+import Modal from "../components/Modal";
 
 const Quiz = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -17,9 +17,6 @@ const Quiz = () => {
     (state: RootState) => state.quiz
   );
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [selectedOption, setSelectedOption] = useState<string | undefined>(
-    undefined
-  );
   const [userAnswers, setUserAnswers] = useState<string[]>([]);
   // setting the time limit for quiz
   const [timeLeft, setTimeLeft] = useState(Number(length) === 5 ? 300 : 600);
@@ -29,7 +26,6 @@ const Quiz = () => {
 
   // function to handle option change
   const handleOptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedOption(event.currentTarget.value);
     const data = [...userAnswers];
     data[currentIndex] = event.currentTarget.value;
     setUserAnswers([...data]);
@@ -42,8 +38,6 @@ const Quiz = () => {
     } else {
       setCurrentIndex(currentIndex + 1);
     }
-    // clearing the selected options
-    setSelectedOption(undefined);
   };
 
   // function to handle previous button
@@ -52,17 +46,6 @@ const Quiz = () => {
       setCurrentIndex(length - 1);
     } else {
       setCurrentIndex(currentIndex - 1);
-    }
-    // clearing the selected options
-    setSelectedOption(undefined);
-  };
-
-  // function to handle the quiz submit
-  const handleQuizSubmit = () => {
-    if (window.confirm("Are you sure you want to submit your answers?")) {
-      navigate("/result", {
-        state: { questions, userAnswers },
-      });
     }
   };
 
@@ -114,6 +97,25 @@ const Quiz = () => {
     }
   }, [questions]);
 
+  // for full screen handling
+  useEffect(() => {
+    const element = document.documentElement;
+    element.requestFullscreen();
+    const handleFullScreenChange = () => {
+      if (!document.fullscreenElement) {
+        toast.error("Quiz submitted because of suspicious activity");
+        navigate("/result", {
+          state: { questions, userAnswers },
+        });
+      }
+    };
+    document.addEventListener("fullscreenchange", handleFullScreenChange);
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullScreenChange);
+    };
+  }, []);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
   return isLoading ? (
     <Loader />
   ) : (
@@ -234,13 +236,21 @@ const Quiz = () => {
 
           {/* adding the submit button */}
           <button
-            onClick={handleQuizSubmit}
+            onClick={() => setIsModalOpen(true)}
             className="border-2 border-[#00C8AC] px-3 py-1 rounded-md font-bold text-lg bg-[#00C8AC] text-white transition-all ease-in-out duration-300 hover:shadow-[0_0_5px_#00C8AC] w-fit self-center"
           >
             Submit Answers
           </button>
         </section>
       </div>
+      {isModalOpen && (
+        <Modal
+          isModalOpen={isModalOpen}
+          setIsModalOpen={setIsModalOpen}
+          questions={questions}
+          userAnswers={userAnswers}
+        />
+      )}
     </div>
   );
 };

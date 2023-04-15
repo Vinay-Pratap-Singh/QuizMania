@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import {
   AiOutlineDatabase,
@@ -18,6 +18,10 @@ const Sidebar = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
+  // for checking that the user is on quiz page
+  const location = useLocation();
+  const currentURL = location.pathname;
+
   // for toggling login and logout button
   const { isLoggedIn } = useSelector((state: RootState) => state.auth);
   const userRole = useSelector((state: RootState) => state.auth.role);
@@ -30,6 +34,10 @@ const Sidebar = () => {
     await dispatch(logout());
     navigate("/login");
   };
+
+  if (currentURL === "/quiz") {
+    return <p></p>;
+  }
 
   return (
     <div className="w-60 border-[1px] h-screen border-r-gray-300 fixed left-0 z-50 shadow-md">
@@ -72,44 +80,45 @@ const Sidebar = () => {
               )}
             </div>
 
-            {dropDownMenu && userRole.includes(process.env.REACT_APP_ADMIN_ROLE!) && (
-              <ul className="pl-8 pt-2 space-y-3 flex flex-col">
-                <Link to={"/dashboard/user"}>
-                  <li className="flex items-center gap-2 cursor-pointer hover:text-[#00C8AC] hover:pl-2 transition-all ease-in-out duration-300">
-                    <AiOutlineUser className="text-lg" />
-                    <p>Profile</p>
-                  </li>
-                </Link>
+            {dropDownMenu &&
+              userRole.includes(process.env.REACT_APP_ADMIN_ROLE!) && (
+                <ul className="pl-8 pt-2 space-y-3 flex flex-col">
+                  <Link to={"/dashboard/user"}>
+                    <li className="flex items-center gap-2 cursor-pointer hover:text-[#00C8AC] hover:pl-2 transition-all ease-in-out duration-300">
+                      <AiOutlineUser className="text-lg" />
+                      <p>Profile</p>
+                    </li>
+                  </Link>
 
-                <Link to={"/dashboard/admin"}>
-                  <li className="flex items-center gap-2 cursor-pointer hover:text-[#00C8AC] hover:pl-2 transition-all ease-in-out duration-300">
-                    <GrOverview className="text-lg" />
-                    <p>Overview</p>
-                  </li>
-                </Link>
+                  <Link to={"/dashboard/admin"}>
+                    <li className="flex items-center gap-2 cursor-pointer hover:text-[#00C8AC] hover:pl-2 transition-all ease-in-out duration-300">
+                      <GrOverview className="text-lg" />
+                      <p>Overview</p>
+                    </li>
+                  </Link>
 
-                <Link to={"/dashboard/admin/student"}>
-                  <li className="flex items-center gap-2 cursor-pointer hover:text-[#00C8AC] hover:pl-2 transition-all ease-in-out duration-300">
-                    <AiOutlineDatabase className="text-xl" />
-                    <p>Students</p>
-                  </li>
-                </Link>
+                  <Link to={"/dashboard/admin/student"}>
+                    <li className="flex items-center gap-2 cursor-pointer hover:text-[#00C8AC] hover:pl-2 transition-all ease-in-out duration-300">
+                      <AiOutlineDatabase className="text-xl" />
+                      <p>Students</p>
+                    </li>
+                  </Link>
 
-                <Link to={"/dashboard/admin/category"}>
-                  <li className="flex items-center gap-2 cursor-pointer hover:text-[#00C8AC] hover:pl-2 transition-all ease-in-out duration-300">
-                    <MdOutlineCategory className="text-xl" />
-                    <p>Category</p>
-                  </li>
-                </Link>
+                  <Link to={"/dashboard/admin/category"}>
+                    <li className="flex items-center gap-2 cursor-pointer hover:text-[#00C8AC] hover:pl-2 transition-all ease-in-out duration-300">
+                      <MdOutlineCategory className="text-xl" />
+                      <p>Category</p>
+                    </li>
+                  </Link>
 
-                <Link to={"/dashboard/admin/question"}>
-                  <li className="flex items-center gap-2 cursor-pointer hover:text-[#00C8AC] hover:pl-2 transition-all ease-in-out duration-300">
-                    <BsQuestion className="text-xl" />
-                    <p>Questions</p>
-                  </li>
-                </Link>
-              </ul>
-            )}
+                  <Link to={"/dashboard/admin/question"}>
+                    <li className="flex items-center gap-2 cursor-pointer hover:text-[#00C8AC] hover:pl-2 transition-all ease-in-out duration-300">
+                      <BsQuestion className="text-xl" />
+                      <p>Questions</p>
+                    </li>
+                  </Link>
+                </ul>
+              )}
           </li>
         )}
 

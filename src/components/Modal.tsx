@@ -18,6 +18,7 @@ const Modal: React.FC<Iprops> = ({
   const navigate = useNavigate();
   const handlSubmit = () => {
     setIsModalOpen(false);
+    document.exitFullscreen();
     navigate("/result", {
       state: { questions, userAnswers },
     });

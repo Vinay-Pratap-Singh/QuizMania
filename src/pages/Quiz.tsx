@@ -64,6 +64,7 @@ const Quiz = () => {
       navigate("/result", {
         state: { questions, userAnswers },
       });
+      document.exitFullscreen();
     }
   }, [timeLeft]);
 
@@ -92,6 +93,7 @@ const Quiz = () => {
   // redirect if not enough questions to be displayed
   useEffect(() => {
     if (questions.length < length) {
+      document.exitFullscreen();
       toast.error("Sorry! Not enough questions in this category");
       navigate(-1);
     }
@@ -101,17 +103,27 @@ const Quiz = () => {
   useEffect(() => {
     const element = document.documentElement;
     element.requestFullscreen();
+
     const handleFullScreenChange = () => {
       if (!document.fullscreenElement) {
         toast.error("Quiz submitted because of suspicious activity");
+        document.exitFullscreen();
         navigate("/result", {
           state: { questions, userAnswers },
         });
       }
+
+      window.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+      });
     };
     document.addEventListener("fullscreenchange", handleFullScreenChange);
+
     return () => {
       document.removeEventListener("fullscreenchange", handleFullScreenChange);
+      window.removeEventListener("contextmenu", (e) => {
+        e.preventDefault();
+      });
     };
   }, []);
 
@@ -119,9 +131,9 @@ const Quiz = () => {
   return isLoading ? (
     <Loader />
   ) : (
-    <div className="h-screen w-full ml-60 flex items-center justify-center select-none">
+    <div className="h-screen w-full flex items-center justify-center select-none">
       {/* creating the quiz template */}
-      <div className="w-3/4 flex flex-col py-5 px-10 space-y-5 rounded-lg shadow-md">
+      <div className="w-2/4 flex flex-col py-5 px-10 space-y-5 rounded-lg shadow-md">
         {/* header part of card */}
         <header className="w-full flex items-center flex-col justify-between font-semibold space-y-4">
           <h1 className="text-2xl font-bold drop-shadow-sm">

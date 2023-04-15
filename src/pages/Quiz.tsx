@@ -6,6 +6,7 @@ import { AppDispatch, RootState } from "../redux/Store";
 import { toast } from "react-hot-toast";
 import Loader from "../components/Loader/Loader";
 import Modal from "../components/Modal";
+import { ImyQuestionData } from "../config/interfaces";
 
 const Quiz = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -74,12 +75,20 @@ const Quiz = () => {
       navigate(-1);
     }
     (async () => {
-      await dispatch(
+      const res = await dispatch(
         getRandomQuestions({
           categoryName: category,
           length: Number(length),
         })
       );
+
+      console.log(res.payload);
+      const response = res.payload as ImyQuestionData[];
+      if (response.length < length) {
+        document.exitFullscreen();
+        toast.error("Sorry! Not enough questions in this category");
+        navigate(-1);
+      }
     })();
 
     // setting the dummy answers
@@ -91,13 +100,17 @@ const Quiz = () => {
   }, []);
 
   // redirect if not enough questions to be displayed
-  useEffect(() => {
-    if (questions.length < length) {
-      document.exitFullscreen();
-      toast.error("Sorry! Not enough questions in this category");
-      navigate(-1);
-    }
-  }, [questions]);
+  // useEffect(() => {
+  //   if (questions.length > 0 && questions.length < length) {
+  //     document.exitFullscreen();
+  //     toast.error("Sorry! Not enough questions in this category");
+  //     navigate(-1);
+  //   } else if (questions.length === 0) {
+  //     document.exitFullscreen();
+  //     toast.error("Sorry! This category has no questions");
+  //     navigate(-1);
+  //   }
+  // }, [questions, length, navigate]);
 
   // for full screen handling
   useEffect(() => {

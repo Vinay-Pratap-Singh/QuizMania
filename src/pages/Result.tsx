@@ -73,7 +73,6 @@ const Result = () => {
       })();
     }
   }, [isLoggedIn, uid, dispatch]);
-  console.log(questions, userAnswers);
 
   return isLoading ? (
     <Loader />

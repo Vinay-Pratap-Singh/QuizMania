@@ -12,8 +12,10 @@ import {
 import { toast } from "react-hot-toast";
 import { db } from "../config/firebase";
 import {
+  IanswerSchema,
   ImyQuestionData,
   InewQuestionData,
+  IquestionSchema,
   IquizSliceState,
 } from "../config/interfaces";
 
@@ -68,17 +70,18 @@ export interface IchartData {
 
 const initialState: IquizSliceState = {
   questions: [],
+  answers: [],
   isLoading: false,
 };
 
 // function to get all questions
-export const getQuestions = createAsyncThunk("question/display", async () => {
+export const getQuestions = createAsyncThunk("get/questions", async () => {
   try {
-    let questions: ImyQuestionData[] = [];
+    let questions: IquestionSchema[] = [];
 
     const res = await getDocs(query(collection(db, "questions")));
     res.docs.map((doc) => {
-      const data = doc.data() as ImyQuestionData;
+      const data = doc.data() as IquestionSchema;
       data.id = doc.id;
       questions.push(data);
     });
@@ -88,15 +91,51 @@ export const getQuestions = createAsyncThunk("question/display", async () => {
   }
 });
 
+// function to get all answers
+export const getAnswers = createAsyncThunk("get/answers", async () => {
+  try {
+    let answers: IanswerSchema[] = [];
+
+    const res = await getDocs(query(collection(db, "answers")));
+    res.docs.map((doc) => {
+      const data = doc.data() as IanswerSchema;
+      data.id = doc.id;
+      answers.push(data);
+    });
+    return { answers };
+  } catch (error) {
+    toast.error("Oops! Failed to get answers...");
+  }
+});
+
 // function to add new question to the database
 export const addNewQuestion = createAsyncThunk(
   "/question/add",
   async (data: InewQuestionData) => {
     try {
-      const res = await addDoc(collection(db, "questions"), {
-        ...data,
+      // for adding the question
+      const qData: IquestionSchema = {
+        question: data.question,
+        option1: data.option1,
+        option2: data.option2,
+        option3: data.option3,
+        option4: data.option4,
+        categoryName: data.categoryName,
+      };
+      const quesRes = await addDoc(collection(db, "questions"), {
+        ...qData,
       });
-      return res;
+
+      // for adding the answer
+      const ansData: IanswerSchema = {
+        correctOption: data.correctOption,
+        description: data.description,
+        qid: quesRes.id,
+      };
+      const ansRes = await addDoc(collection(db, "answers"), {
+        ...ansData,
+      });
+      return { quesRes, ansRes };
     } catch (error) {
       toast.error("Oops! operation failed");
     }
@@ -191,6 +230,21 @@ const quizSlice = createSlice({
         }
       })
       .addCase(getQuestions.rejected, (state) => {
+        state.isLoading = false;
+      });
+
+    // for getAnswers
+    builder
+      .addCase(getAnswers.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getAnswers.fulfilled, (state, action) => {
+        if (action.payload?.answers) {
+          state.answers = action.payload?.answers;
+          state.isLoading = false;
+        }
+      })
+      .addCase(getAnswers.rejected, (state) => {
         state.isLoading = false;
       });
 

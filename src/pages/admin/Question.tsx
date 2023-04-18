@@ -2,9 +2,13 @@ import React, { useState, useEffect } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { ImyQuestionData } from "../../config/interfaces";
+import { ImyQuestionData, IquestionSchema } from "../../config/interfaces";
 import { getCategory } from "../../redux/CategorySlice";
-import { deleteQuestion, getQuestions } from "../../redux/QuizSlice";
+import {
+  deleteQuestion,
+  getAnswers,
+  getQuestions,
+} from "../../redux/QuizSlice";
 import { AppDispatch, RootState } from "../../redux/Store";
 import { toast } from "react-hot-toast";
 import Loader from "../../components/Loader/Loader";
@@ -14,14 +18,16 @@ const Question = () => {
   const navigate = useNavigate();
 
   // for storing the orignal questions list
-  const { questions, isLoading: questionLoading } = useSelector(
-    (state: RootState) => state.quiz
-  );
+  const [orgQuesList, setOrgQuesList] = useState<ImyQuestionData[]>([]);
+  const {
+    questions,
+    isLoading: questionLoading,
+    answers,
+  } = useSelector((state: RootState) => state.quiz);
   const [questionToBeDisplayed, setQuestionToBeDisplayed] = useState<
     ImyQuestionData[]
-  >([...questions]);
-  const [filteredQues, setFilteredQues] =
-    useState<ImyQuestionData[]>(questions);
+  >([]);
+  const [filteredQues, setFilteredQues] = useState<ImyQuestionData[]>([]);
   const quesLimit = 5;
   const [currentPage, setCurrentPage] = useState(1);
   let startIndex = (currentPage - 1) * quesLimit;
@@ -98,11 +104,12 @@ const Question = () => {
   const searchQuestionByName = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!searchByName) {
-      setFilteredQues([...questions]);
+      const quesData = mergeQuesAndAns();
+      setFilteredQues([...quesData]);
       setCurrentPage(1);
       return;
     }
-    const data: ImyQuestionData[] = questions.filter((element) => {
+    const data: ImyQuestionData[] = orgQuesList.filter((element) => {
       const questionName = element?.question.toLowerCase();
       const inputQuestion = searchByName.toLowerCase();
       return questionName.includes(inputQuestion);
@@ -119,15 +126,44 @@ const Question = () => {
     const category = event.target.value;
     // if category is all
     if (category === "all") {
-      setFilteredQues([...questions]);
+      setFilteredQues([...orgQuesList]);
       setCurrentPage(1);
       return;
     }
-    const data: ImyQuestionData[] = questions.filter((element) => {
+    const data: ImyQuestionData[] = orgQuesList.filter((element) => {
       return element?.categoryName === category;
     });
     setFilteredQues([...data]);
     setCurrentPage(1);
+  };
+
+  // function to merge questions and answers
+  const mergeQuesAndAns = () => {
+    const quesData: ImyQuestionData[] = [];
+    questions.map((element, index) => {
+      let desc = "";
+      let correctOpt = "";
+      for (let i = 0; i < answers.length; i++) {
+        if (answers[i].qid === element.id) {
+          desc = answers[i].description;
+          correctOpt = answers[i].correctOption;
+        }
+      }
+      const data: ImyQuestionData = {
+        id: element?.id,
+        question: element?.question,
+        option1: element?.option1,
+        option2: element?.option2,
+        option3: element?.option3,
+        option4: element?.option4,
+        correctOption: correctOpt,
+        categoryName: element?.categoryName,
+        description: desc,
+      };
+      quesData.push(data);
+    });
+    setOrgQuesList([...quesData]);
+    return quesData;
   };
 
   // for updating the start and end index to fetch recent data
@@ -140,21 +176,26 @@ const Question = () => {
     setQuestion();
   }, [currentPage, filteredQues, questions]);
 
-  // for getting question and category data on first render
+  // for getting questions, answers and category data on first render
   useEffect(() => {
     (async () => {
       await dispatch(getQuestions());
       await dispatch(getCategory());
+      await dispatch(getAnswers());
     })();
-    setFilteredQues([...questions]);
+    const quesData = mergeQuesAndAns();
+    setFilteredQues([...quesData]);
     setQuestion();
   }, []);
 
   // for handling questions change
   useEffect(() => {
-    setQuestionToBeDisplayed([...questions]);
-    setFilteredQues([...questions]);
+    const quesData = mergeQuesAndAns();
+    setQuestionToBeDisplayed([...quesData]);
+    setFilteredQues([...quesData]);
   }, [questions]);
+
+  // console.log(answers);
 
   return categoryLoading || questionLoading ? (
     <Loader />

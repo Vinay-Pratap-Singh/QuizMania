@@ -1,12 +1,12 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment } from "react";
-import { ImyQuestionData } from "../config/interfaces";
+import { ImyQuestionData, IquestionSchema } from "../config/interfaces";
 import { useNavigate } from "react-router-dom";
 
 interface Iprops {
   isModalOpen: boolean;
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  questions: ImyQuestionData[];
+  questions: IquestionSchema[];
   userAnswers: string[];
 }
 const Modal: React.FC<Iprops> = ({

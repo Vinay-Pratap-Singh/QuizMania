@@ -11,7 +11,7 @@ const RequireAuth = ({ allowedRoles }: Iprops) => {
   const location = useLocation();
   const isLoggedIn = useAuth();
   const userRole = useSelector((state: RootState) => state.auth.role);
-  return isLoggedIn && userRole.find((role) => allowedRoles.includes(role)) ? (
+  return isLoggedIn && userRole?.find((role) => allowedRoles.includes(role)) ? (
     <Outlet />
   ) : isLoggedIn ? (
     <Navigate to={"/denied"} state={{ from: location }} replace />

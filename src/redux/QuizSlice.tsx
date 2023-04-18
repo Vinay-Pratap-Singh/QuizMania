@@ -146,10 +146,11 @@ export const addNewQuestion = createAsyncThunk(
 // function to delete a question from database
 export const deleteQuestion = createAsyncThunk(
   "question/delete",
-  async (id: string) => {
+  async (data: { quesID: string; ansID: string }) => {
     try {
-      const res = await deleteDoc(doc(db, "questions", id));
-      return res;
+      const quesRes = await deleteDoc(doc(db, "questions", data.quesID));
+      const ansRes = await deleteDoc(doc(db, "answers", data.ansID));
+      return { quesRes, ansRes };
     } catch (error) {
       toast.error("Oops! operation failed");
     }

@@ -46,12 +46,15 @@ const Question = () => {
   const [searchByName, setSearchByName] = useState<string>("");
 
   // function to dispatch delete operation for question
-  const dispatchDeleteOperation = async (id: string) => {
+  const dispatchDeleteOperation = async (data: {
+    quesID: string;
+    ansID: string;
+  }) => {
     const userOption = window.confirm(
       "Are you sure you want to delete this question?"
     );
     if (userOption) {
-      await dispatch(deleteQuestion(id));
+      await dispatch(deleteQuestion(data));
     }
     // getting the updated questions
     await dispatch(getQuestions());
@@ -342,7 +345,12 @@ const Question = () => {
                     </td>
                     <td
                       className="w-14 text-center py-1 font-medium text-red-600 cursor-pointer"
-                      onClick={() => dispatchDeleteOperation(element?.id!)}
+                      onClick={() =>
+                        dispatchDeleteOperation({
+                          quesID: element.id,
+                          ansID: element.ansID,
+                        })
+                      }
                     >
                       Delete
                     </td>

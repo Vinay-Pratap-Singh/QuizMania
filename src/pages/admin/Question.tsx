@@ -2,7 +2,11 @@ import React, { useState, useEffect } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { ImyQuestionData, IquestionSchema } from "../../config/interfaces";
+import {
+  ImyQuestionData,
+  IquestionSchema,
+  IupdateFunctionData,
+} from "../../config/interfaces";
 import { getCategory } from "../../redux/CategorySlice";
 import {
   deleteQuestion,
@@ -18,16 +22,16 @@ const Question = () => {
   const navigate = useNavigate();
 
   // for storing the orignal questions list
-  const [orgQuesList, setOrgQuesList] = useState<ImyQuestionData[]>([]);
+  const [orgQuesList, setOrgQuesList] = useState<IupdateFunctionData[]>([]);
   const {
     questions,
     isLoading: questionLoading,
     answers,
   } = useSelector((state: RootState) => state.quiz);
   const [questionToBeDisplayed, setQuestionToBeDisplayed] = useState<
-    ImyQuestionData[]
+    IupdateFunctionData[]
   >([]);
-  const [filteredQues, setFilteredQues] = useState<ImyQuestionData[]>([]);
+  const [filteredQues, setFilteredQues] = useState<IupdateFunctionData[]>([]);
   const quesLimit = 5;
   const [currentPage, setCurrentPage] = useState(1);
   let startIndex = (currentPage - 1) * quesLimit;
@@ -73,7 +77,7 @@ const Question = () => {
   // function to update the questions to be displayed
   const setQuestion = () => {
     setQuestionToBeDisplayed([]);
-    const data: ImyQuestionData[] = [];
+    const data: IupdateFunctionData[] = [];
     for (let i = startIndex; i < endIndex; i++) {
       data.push(filteredQues[i]);
     }
@@ -109,7 +113,7 @@ const Question = () => {
       setCurrentPage(1);
       return;
     }
-    const data: ImyQuestionData[] = orgQuesList.filter((element) => {
+    const data: IupdateFunctionData[] = orgQuesList.filter((element) => {
       const questionName = element?.question.toLowerCase();
       const inputQuestion = searchByName.toLowerCase();
       return questionName.includes(inputQuestion);
@@ -130,7 +134,7 @@ const Question = () => {
       setCurrentPage(1);
       return;
     }
-    const data: ImyQuestionData[] = orgQuesList.filter((element) => {
+    const data: IupdateFunctionData[] = orgQuesList.filter((element) => {
       return element?.categoryName === category;
     });
     setFilteredQues([...data]);
@@ -139,18 +143,22 @@ const Question = () => {
 
   // function to merge questions and answers
   const mergeQuesAndAns = () => {
-    const quesData: ImyQuestionData[] = [];
-    questions.map((element, index) => {
+    const quesData: IupdateFunctionData[] = [];
+    questions.map((element) => {
       let desc = "";
       let correctOpt = "";
+      let ansID = "";
       for (let i = 0; i < answers.length; i++) {
         if (answers[i].qid === element.id) {
           desc = answers[i].description;
           correctOpt = answers[i].correctOption;
+          ansID = answers[i].id!;
+          break;
         }
       }
-      const data: ImyQuestionData = {
-        id: element?.id,
+      const data: IupdateFunctionData = {
+        id: element?.id!,
+        ansID: ansID,
         question: element?.question,
         option1: element?.option1,
         option2: element?.option2,
@@ -193,9 +201,7 @@ const Question = () => {
     const quesData = mergeQuesAndAns();
     setQuestionToBeDisplayed([...quesData]);
     setFilteredQues([...quesData]);
-  }, [questions]);
-
-  // console.log(answers);
+  }, [questions, answers]);
 
   return categoryLoading || questionLoading ? (
     <Loader />

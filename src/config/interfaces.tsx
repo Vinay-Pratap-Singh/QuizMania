@@ -42,6 +42,20 @@ export interface IanswerSchema {
   correctOption: string;
 }
 
+// for question and answer update
+export interface IupdateFunctionData {
+  id: string;
+  ansID: string;
+  question: string;
+  option1: string;
+  option2: string;
+  option3: string;
+  option4: string;
+  correctOption: string;
+  categoryName: string;
+  description: string;
+}
+
 // for storing quizSlice data
 export interface IquizSliceState {
   questions: IquestionSchema[];

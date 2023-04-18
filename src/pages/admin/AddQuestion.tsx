@@ -77,6 +77,7 @@ const AddQuestion = () => {
     } else {
       const newData = {
         id: state.id,
+        ansID: state.ansID,
         ...inputData,
       };
 

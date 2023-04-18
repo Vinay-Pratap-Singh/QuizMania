@@ -17,6 +17,7 @@ import {
   InewQuestionData,
   IquestionSchema,
   IquizSliceState,
+  IupdateFunctionData,
 } from "../config/interfaces";
 
 export interface IData {
@@ -158,23 +159,29 @@ export const deleteQuestion = createAsyncThunk(
 // function to update the question in the database
 export const updateQuestion = createAsyncThunk(
   "questions/update",
-  async (data: ImyQuestionData) => {
+  async (data: IupdateFunctionData) => {
     try {
-      const docRef = doc(db, "questions", data?.id!);
-      const newData: InewQuestionData = {
+      const quesDocRef = doc(db, "questions", data?.id);
+      const ansDocRef = doc(db, "answers", data?.ansID);
+      const quesData: IquestionSchema = {
         question: data.question,
         option1: data.option1,
         option2: data.option2,
         option3: data.option3,
         option4: data.option4,
-        correctOption: data.correctOption,
         categoryName: data.categoryName,
+      };
+      const ansData: IanswerSchema = {
+        correctOption: data.correctOption,
+        qid: data.id,
         description: data.description,
       };
-      const res = await updateDoc(docRef, {
-        ...newData,
+      const quesRes = await updateDoc(quesDocRef, {
+        ...quesData,
       });
-      return res;
+      const ansRes = await updateDoc(ansDocRef, { ...ansData });
+
+      return { quesRes, ansRes };
     } catch (error) {
       toast.error("Oops! operation failed");
     }

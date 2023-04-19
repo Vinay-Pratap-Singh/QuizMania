@@ -189,14 +189,10 @@ export const updateQuestion = createAsyncThunk(
   }
 );
 
-interface IrandomDataParameters {
-  categoryName: string;
-  length: number;
-}
 // function to get random questions
 export const getRandomQuestions = createAsyncThunk(
   "get/randomQuestions",
-  async (data: IrandomDataParameters) => {
+  async (data: { categoryName: string; length: number }) => {
     try {
       const res = await getDocs(
         query(
@@ -205,9 +201,9 @@ export const getRandomQuestions = createAsyncThunk(
         )
       );
 
-      const allQuestions: ImyQuestionData[] = [];
+      const allQuestions: IquestionSchema[] = [];
       res.docs.map((doc) => {
-        const data = doc.data() as ImyQuestionData;
+        const data = doc.data() as IquestionSchema;
         data.id = doc.id;
         allQuestions.push(data);
       });
@@ -216,6 +212,32 @@ export const getRandomQuestions = createAsyncThunk(
         .slice(0, data.length);
       return randomQuestions;
     } catch (error) {
+      toast.error("Oops! operation failed");
+    }
+  }
+);
+
+// function to get the answers of the random questions
+export const getRandomQuesAnswers = createAsyncThunk(
+  "/get/randomAnswers",
+  async (data: IquestionSchema[]) => {
+    try {
+      let ans: IanswerSchema[] = [];
+      await Promise.all(
+        data.map(async (element) => {
+          const res = await getDocs(
+            query(collection(db, "answers"), where("qid", "==", element.id))
+          );
+          res.docs.map((doc) => {
+            const data = doc.data() as IanswerSchema;
+            ans = [...ans, data];
+          });
+        })
+      );
+      console.log(ans);
+      return ans;
+    } catch (error) {
+      console.log(error);
       toast.error("Oops! operation failed");
     }
   }
@@ -308,6 +330,19 @@ const quizSlice = createSlice({
         state.questions = action.payload!;
       })
       .addCase(getRandomQuestions.rejected, (state) => {
+        state.isLoading = false;
+      });
+
+    // for getting the random questions answers
+    builder
+      .addCase(getRandomQuesAnswers.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getRandomQuesAnswers.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.answers = action.payload!;
+      })
+      .addCase(getRandomQuesAnswers.rejected, (state) => {
         state.isLoading = false;
       });
   },

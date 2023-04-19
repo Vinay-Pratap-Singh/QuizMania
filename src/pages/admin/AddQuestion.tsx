@@ -70,6 +70,18 @@ const AddQuestion = () => {
       return;
     }
 
+    // removing the whitespaces from the data
+    setInputData({
+      question: inputData.question.trim(),
+      option1: inputData.option1.trim(),
+      option2: inputData.option2.trim(),
+      option3: inputData.option3.trim(),
+      option4: inputData.option4.trim(),
+      correctOption: state.correctOption,
+      categoryName: state.categoryName,
+      description: inputData.description.trim(),
+    });
+
     // checking for the new question
     if (!state.id) {
       // calling the api to add data

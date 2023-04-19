@@ -6,7 +6,7 @@ import { AppDispatch, RootState } from "../redux/Store";
 import { toast } from "react-hot-toast";
 import Loader from "../components/Loader/Loader";
 import Modal from "../components/Modal";
-import { ImyQuestionData } from "../config/interfaces";
+import { IquestionSchema } from "../config/interfaces";
 
 const Quiz = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -52,14 +52,9 @@ const Quiz = () => {
 
   // function to check full screen
   const handleFullScreenChange = () => {
-    debugger;
-
     if (!document.fullscreenElement) {
       toast.error("Quiz submitted because of suspicious activity");
       document.exitFullscreen();
-      // if (questions.length > 0 && userAnswers.length > 0) {
-
-      // }
       navigate("/result", {
         state: { questions, userAnswers },
       });
@@ -99,7 +94,7 @@ const Quiz = () => {
       );
 
       // for checking the number of enough question
-      const response = res.payload as ImyQuestionData[];
+      const response = res.payload as IquestionSchema[];
       if (response.length < length) {
         document.exitFullscreen();
         toast.error("Sorry! Not enough questions in this category");
@@ -126,7 +121,6 @@ const Quiz = () => {
     };
   }, [userAnswers]);
 
-  useEffect(() => {}, [userAnswers]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   return isLoading ? (
     <Loader />

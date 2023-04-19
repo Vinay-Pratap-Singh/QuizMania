@@ -1,13 +1,14 @@
 import { useLocation } from "react-router-dom";
 import AnswerResult from "../components/AnswerResult";
 import PieChart from "../components/PieChart";
-import { IchartData } from "../redux/QuizSlice";
+import { IchartData, getRandomQuesAnswers } from "../redux/QuizSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../redux/Store";
 import { useEffect } from "react";
 import { updateUserDetails } from "../redux/AuthSlice";
 import useAuth from "../hooks/useAuth";
 import Loader from "../components/Loader/Loader";
+import { ImyQuestionData } from "../config/interfaces";
 
 const Result = () => {
   const { questions, userAnswers } = useLocation().state;
@@ -15,23 +16,45 @@ const Result = () => {
   const { failed, quizAttempted, passed } = useSelector(
     (state: RootState) => state.auth
   );
+  const { answers, isLoading: answerLoading } = useSelector(
+    (state: RootState) => state.quiz
+  );
   const { isLoggedIn, uid } = useAuth();
-  const { isLoading } = useSelector((state: RootState) => state.auth);
+  const { isLoading: authLoading } = useSelector(
+    (state: RootState) => state.auth
+  );
 
   let correctAnswer = 0,
     inCorrectAnswer = 0,
     notAttempted = 0;
+
+  let questionsToBeDisplayed: ImyQuestionData[] = [];
   // matching the user answers
   for (let i = 0; i < questions.length; i++) {
-    if (questions[i].correctOption === userAnswers[i]) {
-      correctAnswer++;
-    } else if (userAnswers[i] === "") {
-      notAttempted++;
-    } else {
-      inCorrectAnswer++;
-    }
+    answers.map((element) => {
+      if (element.qid === questions[i].id) {
+        const data: ImyQuestionData = {
+          question: questions[i].question,
+          option1: questions[i].option1,
+          option2: questions[i].option2,
+          option3: questions[i].option3,
+          option4: questions[i].option4,
+          categoryName: questions[i].categoryName,
+          correctOption: element.correctOption,
+          description: element.description,
+          id: questions[i].id,
+        };
+        questionsToBeDisplayed = [...questionsToBeDisplayed, data];
+        if (element.correctOption === userAnswers[i]) {
+          correctAnswer++;
+        } else if (userAnswers[i] === "") {
+          notAttempted++;
+        } else {
+          inCorrectAnswer++;
+        }
+      }
+    });
   }
-
   // for storing correct, incorrect and not answered numbers
   const chartData: number[] = [correctAnswer, inCorrectAnswer, notAttempted];
 
@@ -47,8 +70,16 @@ const Result = () => {
     ],
   };
 
+  // for getting the answers from db
   useEffect(() => {
-    if (isLoggedIn && uid !== "") {
+    (async () => {
+      const res = await dispatch(getRandomQuesAnswers(questions));
+    })();
+  }, []);
+
+  // for setting the quiz status in db
+  useEffect(() => {
+    if (authLoading && uid !== "") {
       let data = {
         failed,
         quizAttempted,
@@ -72,9 +103,9 @@ const Result = () => {
         await dispatch(updateUserDetails({ ...data }));
       })();
     }
-  }, [isLoggedIn, uid, dispatch]);
+  }, [authLoading, uid, dispatch]);
 
-  return isLoading ? (
+  return authLoading || answerLoading ? (
     <Loader />
   ) : (
     <div className="flex flex-col items-center justify-center text-center min-h-screen w-full ml-60 my-10">
@@ -131,7 +162,7 @@ const Result = () => {
 
       {/* displaying the quiz Q&A summary */}
       <AnswerResult
-        questionsToBeDisplayed={questions}
+        questionsToBeDisplayed={questionsToBeDisplayed}
         answersSelectedByUser={userAnswers}
       />
     </div>

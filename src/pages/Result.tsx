@@ -79,7 +79,7 @@ const Result = () => {
 
   // for setting the quiz status in db
   useEffect(() => {
-    if (authLoading && uid !== "") {
+    if (isLoggedIn && uid !== "") {
       let data = {
         failed,
         quizAttempted,
@@ -100,10 +100,11 @@ const Result = () => {
         data.failed = failed + 1;
       }
       (async () => {
+        console.log("inside updation");
         await dispatch(updateUserDetails({ ...data }));
       })();
     }
-  }, [authLoading, uid, dispatch]);
+  }, [isLoggedIn, uid, dispatch]);
 
   return authLoading || answerLoading ? (
     <Loader />

@@ -233,10 +233,9 @@ export const getRandomQuesAnswers = createAsyncThunk(
           });
         })
       );
-      console.log(ans);
+
       return ans;
     } catch (error) {
-      console.log(error);
       toast.error("Oops! operation failed");
     }
   }

@@ -163,6 +163,7 @@ export const updateUserDetails = createAsyncThunk(
         passed: data?.passed,
         quizAttempted: data?.quizAttempted,
       });
+
       return res;
     } catch (error) {
       toast.error("Failed to update the result of user");

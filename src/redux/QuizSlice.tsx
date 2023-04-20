@@ -13,7 +13,6 @@ import { toast } from "react-hot-toast";
 import { db } from "../config/firebase";
 import {
   IanswerSchema,
-  ImyQuestionData,
   InewQuestionData,
   IquestionSchema,
   IquizSliceState,

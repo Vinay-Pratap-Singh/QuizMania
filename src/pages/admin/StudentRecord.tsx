@@ -1,10 +1,7 @@
 import { useEffect, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  IinitialStateUser,
-  IinitialStateUserData,
-} from "../../config/interfaces";
+import { IinitialStateUserData } from "../../config/interfaces";
 import { AppDispatch, RootState } from "../../redux/Store";
 import { toast } from "react-hot-toast";
 import { getUsersData } from "../../redux/UserSlice";
@@ -69,7 +66,7 @@ const StudentsRecord = () => {
     }
     const data = orgUsers.filter((element) => {
       const userName = element?.name.toLowerCase();
-      const inputName = searchByName.toLowerCase();
+      const inputName = searchByName.toLowerCase().trim();
       return userName.includes(inputName);
     });
     setFilteredUsers([...data]);

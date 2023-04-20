@@ -2,11 +2,7 @@ import React, { useState, useEffect } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import {
-  ImyQuestionData,
-  IquestionSchema,
-  IupdateFunctionData,
-} from "../../config/interfaces";
+import { ImyQuestionData, IupdateFunctionData } from "../../config/interfaces";
 import { getCategory } from "../../redux/CategorySlice";
 import {
   deleteQuestion,
@@ -118,7 +114,7 @@ const Question = () => {
     }
     const data: IupdateFunctionData[] = orgQuesList.filter((element) => {
       const questionName = element?.question.toLowerCase();
-      const inputQuestion = searchByName.toLowerCase();
+      const inputQuestion = searchByName.toLowerCase().trim();
       return questionName.includes(inputQuestion);
     });
     setFilteredQues([...data]);

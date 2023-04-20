@@ -4,16 +4,24 @@ QuizMania is a web application that provides users with quizzes to help them sha
 
 ## **Table of Contents**
 
-1. ### **[Features](#features)**
+1. ### **[Technology Used](#technology)**
+2. ### **[Features](#features)**
    - ### **[User Features](#features)**
    - ### **[Admin Features](#adminfeatures)**
-2. ### **[Installation](#installation)**
-3. ### **[Usage](#usage)**
-4. ### **[Contributing](#contributing)**
-5. ### **[Issues](#issues)**
-6. ### **[License](#license)**
-7. ### **[Links](#links)**
-8. ### **[Output Sample](#sample)**
+3. ### **[Installation](#installation)**
+4. ### **[Usage](#usage)**
+5. ### **[Contributing](#contributing)**
+6. ### **[Issues](#issues)**
+7. ### **[License](#license)**
+8. ### **[Links](#links)**
+9. ### **[Output Sample](#sample)**
+
+### **Technology Used**
+
+- React JS
+- Typescript
+- Firebase
+- Tailwind CSS
 
 ### **User Features <a id="features"></a>**
 

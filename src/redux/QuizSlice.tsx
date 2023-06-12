@@ -295,11 +295,13 @@ const quizSlice = createSlice({
       .addCase(deleteQuestion.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(deleteQuestion.fulfilled, (state) => {
+      .addCase(deleteQuestion.fulfilled, (state, action) => {
         state.isLoading = false;
-        toast.success("Question deleted successfully");
+        if (action.payload) {
+          toast.success("Question deleted successfully");
+        }
       })
-      .addCase(deleteQuestion.rejected, (state) => {
+      .addCase(deleteQuestion.rejected, (state, action) => {
         state.isLoading = false;
         toast.error("Failed to delete question");
       });

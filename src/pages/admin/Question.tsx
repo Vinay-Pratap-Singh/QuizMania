@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -12,10 +12,17 @@ import {
 import { AppDispatch, RootState } from "../../redux/Store";
 import { toast } from "react-hot-toast";
 import Loader from "../../components/Loader/Loader";
+import { Dialog, Transition } from "@headlessui/react";
 
 const Question = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  // for handling the modal
+  const [isOpen, setIsOpen] = useState(false);
+  const [deleteOperationData, setDeleteOperationData] = useState({
+    quesID: "",
+    ansID: "",
+  });
 
   // for storing the orignal questions list
   const [orgQuesList, setOrgQuesList] = useState<IupdateFunctionData[]>([]);
@@ -46,14 +53,10 @@ const Question = () => {
     quesID: string;
     ansID: string;
   }) => {
-    const userOption = window.confirm(
-      "Are you sure you want to delete this question?"
-    );
-    if (userOption) {
-      await dispatch(deleteQuestion(data));
-    }
+    await dispatch(deleteQuestion(data));
     // getting the updated questions
     await dispatch(getQuestions());
+    setIsOpen(false);
   };
 
   // function to handle add question button click
@@ -341,12 +344,15 @@ const Question = () => {
                     </td>
                     <td
                       className="w-14 text-center py-1 font-medium text-red-600 cursor-pointer"
-                      onClick={() =>
-                        dispatchDeleteOperation({
-                          quesID: element.id,
-                          ansID: element.ansID,
-                        })
-                      }
+                      onClick={() => {
+                        setIsOpen(true);
+                        deleteOperationData.ansID = element.id;
+                        deleteOperationData.quesID = element.ansID;
+                        setDeleteOperationData({
+                          ansID: element.id,
+                          quesID: element.ansID,
+                        });
+                      }}
                     >
                       Delete
                     </td>
@@ -380,6 +386,74 @@ const Question = () => {
           </button>
         </div>
       </footer>
+
+      {/* adding the modal for delete operation */}
+      <Transition appear show={isOpen} as={Fragment}>
+        <Dialog
+          as="div"
+          className="relative z-10"
+          onClose={() => setIsOpen(false)}
+        >
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black bg-opacity-25" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title
+                    as="h3"
+                    className="text-lg font-medium leading-6 text-gray-900"
+                  >
+                    Delete Question?
+                  </Dialog.Title>
+                  <div className="mt-2">
+                    <p className="text-sm text-gray-500">
+                      Are you sure you want to delete the question?
+                    </p>
+                  </div>
+
+                  <div className="mt-4 space-x-5">
+                    <button
+                      onClick={() =>
+                        dispatchDeleteOperation(deleteOperationData)
+                      }
+                      type="button"
+                      className="inline-flex justify-center rounded-md border border-transparent  bg-red-500 px-4 py-2 text-sm font-medium text-white  hover:shadow-[0_0_3px_red] transition-all duration-300 ease-in-out"
+                    >
+                      Delete Question
+                    </button>
+                    <button
+                      type="button"
+                      className="inline-flex justify-center rounded-md border border-transparent bg-[#00C8AC] px-4 py-2 text-sm font-medium text-white  hover:shadow-[0_0_3px_#00C8AC] transition-all duration-300 ease-in-out"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
     </div>
   );
 };
